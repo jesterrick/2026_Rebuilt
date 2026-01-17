@@ -10,6 +10,7 @@ import frc.robot.constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private boolean m_fieldRelative = true;
 
   // The driver's controller
     Joystick m_driverJoystick = new Joystick(OIConstants.kDriverJoystickPort);
@@ -35,7 +37,7 @@ public class RobotContainer {
             () -> m_driverJoystick.getY(),
             () -> m_driverJoystick.getX(),
             () -> m_driverJoystick.getZ(),
-            () -> false));
+            () -> m_fieldRelative));
 
     // Configure the trigger bindings
     configureBindings();
@@ -51,6 +53,9 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    new Trigger(() -> m_driverJoystick.getRawButton(1))
+        .onTrue(new InstantCommand(() -> m_fieldRelative = !m_fieldRelative));
+    new Trigger(() -> m_driverJoystick.getRawButton(2)).onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
     /*/ Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_exampleSubsystem));

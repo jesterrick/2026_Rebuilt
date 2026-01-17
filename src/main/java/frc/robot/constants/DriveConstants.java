@@ -7,14 +7,36 @@ import edu.wpi.first.math.util.Units;
 public class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
-    public static final double kMaxAutonomousSpeed = 3.0;
 
+    // Speed reducers for real world - Let's keep things under control
+    public static final double speedAdjustTeleOp = 0.9;
+    public static final double speedAdjustAuto = 0.5;
+
+    // Specific Hardware Specs
+    public static final double kWheelDiameterInches = 2.875; // 2 7/8 inches
+    public static final double kGearReduction = 5.08;        // "Medium" ratio
+    public static final double kMaxMotorRPM = 5676.0;        // Max RPM for Neo Motor
+
+    // The Calculation (Feet Per Second)
+    // (RPM / 60) gives rotations per second
+    // Multiply by (Diameter * PI) to get inches per second
+    // Divide by 12 to get feet
+    public static final double kMaxSpeedFeetPerSecond = (kMaxMotorRPM / 60.0) * (1.0 / kGearReduction) * (kWheelDiameterInches * Math.PI / 12.0);
+
+    // The Calculation (Meters Per Second) - Needed for WPILib
+    public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(kMaxSpeedFeetPerSecond);
+            
+    // Real World Adjusted (90% of theoretical)
+    public static final double kAdjustedMaxSpeedMbpsTeleOp = kMaxSpeedMetersPerSecond * speedAdjustTeleOp;
+    public static final double kAdjustedMaxSpeedMbpsAuto = kMaxSpeedMetersPerSecond * speedAdjustAuto;
+    
+    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
+    
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(26);
     // Distance between centers of right and left wheels on robot
     public static final double kWheelBase = Units.inchesToMeters(26);
+
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
             new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -40,7 +62,4 @@ public class DriveConstants {
     public static final int kRearRightTurningCanId = 5;
 
     public static final boolean kGyroReversed = false;
-
-    public static final double kElevatorSafeHeight = 25.0;
-    public static final double kElevatorSpeedReductionFactor = 0.4;
 }

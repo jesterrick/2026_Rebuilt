@@ -11,6 +11,9 @@ public final class DriveConfigs {
         public static final SparkMaxConfig drivingConfig = new SparkMaxConfig();
         public static final SparkMaxConfig turningConfig = new SparkMaxConfig();
 
+        public static final IdleMode driveIdle = IdleMode.kCoast;
+        public static final IdleMode turnIdle = IdleMode.kBrake;
+
         static {
             // Use module constants to calculate conversion factors and feed forward gain.
             double drivingFactor = ModuleConstants.kWheelDiameterMeters * Math.PI
@@ -19,7 +22,7 @@ public final class DriveConfigs {
             //double drivingVelocityFeedForward = 1 / ModuleConstants.kDriveWheelFreeSpeedRps;
 
             drivingConfig
-                    .idleMode(IdleMode.kBrake)
+                    .idleMode(driveIdle)
                     .smartCurrentLimit(50);
             drivingConfig.encoder
                     .positionConversionFactor(drivingFactor) // meters
@@ -31,7 +34,7 @@ public final class DriveConfigs {
                     .outputRange(-1, 1);
 
             turningConfig
-                    .idleMode(IdleMode.kBrake)
+                    .idleMode(turnIdle)
                     .smartCurrentLimit(20);
             turningConfig.absoluteEncoder
                     // Invert the turning encoder, since the output shaft rotates in the opposite
