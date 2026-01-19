@@ -4,12 +4,15 @@
 
 package frc.robot;
 
-//import frc.robot.commands.Autos;
+import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -28,6 +31,10 @@ public class RobotContainer {
     Joystick m_driverJoystick = new Joystick(OIConstants.kDriverJoystickPort);
     Joystick m_operatorJoystick = new Joystick(OIConstants.kOperatorJoystickPort);
 
+    // A chooser for autonomous commands
+    private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
      // Configure default commands
@@ -41,6 +48,13 @@ public class RobotContainer {
 
     // Configure the trigger bindings
     configureBindings();
+
+    // Add commands to the autonomous command chooser
+    m_autoChooser.setDefaultOption("Do Nothing", Commands.none());
+    m_autoChooser.addOption("Simple Auto", Autos.exampleAuto(m_robotDrive));
+
+    // Put the chooser on the dashboard
+    SmartDashboard.putData("Auto choices", m_autoChooser);
   }
 
   /**
@@ -73,7 +87,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    //return Autos.exampleAuto(m_exampleSubsystem);
-    return null;
+    return m_autoChooser.getSelected();
   }
 }
