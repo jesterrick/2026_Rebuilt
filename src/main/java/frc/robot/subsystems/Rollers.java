@@ -8,31 +8,32 @@ package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.ResetMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.RollerConstants;
+import frc.robot.constants.RollerConstants;
 
 public class Rollers extends SubsystemBase { 
-   SparkMax m_RollerMotor;
+   public final SparkMax m_RollerMotor;
 
     /** Creates new roller */
     public Rollers() {
-      this.m_RollerMotor = new SparkMax(RollerConstants.m_RollerMotor, MotorType.kBrushless);
-    
+      this.m_RollerMotor = new SparkMax(RollerConstants.kRollerMotor, MotorType.kBrushless);
+  
      SparkMaxConfig m_RollerMotorconfig = new SparkMaxConfig();
 
       this.m_RollerMotor.configure(m_RollerMotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     
     }
 
+    /** Turns roller on */
     public void rollerOn(double speed) {
     this.m_RollerMotor.set(speed);
     }
 
+    /** Turns roller off */
     public void rollerOff(){
     this.m_RollerMotor.set(0);
     }
