@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 public final class Autos {
   /** Example static factory for an autonomous command. */
   public static Command exampleAuto(DriveSubsystem subsystem) {
-    //return Commands.sequence(subsystem.exampleMethodCommand(), new ExampleCommand(subsystem));
-    return null;
+    // Drive forward at 50% speed for 3 seconds
+    return new DriveStraight(subsystem, 0.5).withTimeout(3);
   }
 
   private Autos() {

@@ -2,19 +2,29 @@ package frc.robot.constants;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import frc.robot.constants.NeoSwerveModuleConstants;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
-    public static final double kMaxAutonomousSpeed = 3.0;
 
+    // Speed reducers for real world - Let's keep things under control
+    public static final double speedAdjustTeleOp = 0.9;
+    public static final double speedAdjustAuto = 0.5;
+
+            
+    // Real World Adjusted (90% of theoretical)
+    public static final double kAdjustedMaxSpeedMbpsTeleOp = NeoSwerveModuleConstants.kMaxSpeedMetersPerSecond * speedAdjustTeleOp;
+    public static final double kAdjustedMaxSpeedMbpsAuto = NeoSwerveModuleConstants.kMaxSpeedMetersPerSecond * speedAdjustAuto;
+    
+    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
+    
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(26);
     // Distance between centers of right and left wheels on robot
     public static final double kWheelBase = Units.inchesToMeters(26);
+
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
             new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -40,7 +50,4 @@ public class DriveConstants {
     public static final int kRearRightTurningCanId = 5;
 
     public static final boolean kGyroReversed = false;
-
-    public static final double kElevatorSafeHeight = 25.0;
-    public static final double kElevatorSpeedReductionFactor = 0.4;
 }

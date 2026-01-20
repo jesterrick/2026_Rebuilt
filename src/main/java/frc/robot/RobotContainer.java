@@ -4,12 +4,16 @@
 
 package frc.robot;
 
-//import frc.robot.commands.Autos;
+import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -21,10 +25,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private boolean m_fieldRelative = true;
 
   // The driver's controller
     Joystick m_driverJoystick = new Joystick(OIConstants.kDriverJoystickPort);
     Joystick m_operatorJoystick = new Joystick(OIConstants.kOperatorJoystickPort);
+
+    // A chooser for autonomous commands
+    private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -35,10 +44,17 @@ public class RobotContainer {
             () -> m_driverJoystick.getY(),
             () -> m_driverJoystick.getX(),
             () -> m_driverJoystick.getZ(),
-            () -> false));
+            () -> m_fieldRelative));
 
     // Configure the trigger bindings
     configureBindings();
+
+    // Add commands to the autonomous command chooser
+    m_autoChooser.setDefaultOption("Do Nothing", Commands.none());
+    m_autoChooser.addOption("Simple Auto", Autos.exampleAuto(m_robotDrive));
+
+    // Put the chooser on the dashboard
+    SmartDashboard.putData("Auto choices", m_autoChooser);
   }
 
   /**
@@ -51,6 +67,9 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    new Trigger(() -> m_driverJoystick.getRawButton(1))
+        .onTrue(new InstantCommand(() -> m_fieldRelative = !m_fieldRelative));
+    new Trigger(() -> m_driverJoystick.getRawButton(2)).onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
     /*/ Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_exampleSubsystem));
@@ -68,7 +87,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    //return Autos.exampleAuto(m_exampleSubsystem);
-    return null;
+    return m_autoChooser.getSelected();
   }
 }
