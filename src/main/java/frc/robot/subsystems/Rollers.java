@@ -17,24 +17,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.RollerConstants;
 
 public class Rollers extends SubsystemBase { 
-   SparkMax kRollorMotor1;
+   SparkMax m_RollerMotor;
 
     /** Creates new roller */
     public Rollers() {
-      this.kRollorMotor1 = new SparkMax(RollerConstants.kRollorMotor1, MotorType.kBrushless);
+      this.m_RollerMotor = new SparkMax(RollerConstants.m_RollerMotor, MotorType.kBrushless);
     
-     SparkMaxConfig kRollorMotor1config = new SparkMaxConfig();
+     SparkMaxConfig m_RollerMotorconfig = new SparkMaxConfig();
 
-      this.kRollorMotor1.configure(kRollorMotor1config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      this.m_RollerMotor.configure(m_RollerMotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     
     }
 
     public void rollerOn(double speed) {
-    this.kRollorMotor1.set(speed);
+    this.m_RollerMotor.set(speed);
     }
 
     public void rollerOff(){
-    this.kRollorMotor1.set(0);
+    this.m_RollerMotor.set(0);
     }
 
 

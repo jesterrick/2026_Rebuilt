@@ -5,4 +5,6 @@
 package frc.robot.constants;
 
 /** Add your docs here. */
-public class RollerConstants {}
+public class RollerConstants {
+    public static int kRollerMotor
+}
