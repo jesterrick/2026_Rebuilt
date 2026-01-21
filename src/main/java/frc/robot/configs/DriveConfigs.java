@@ -4,6 +4,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import frc.robot.constants.NeoSwerveModuleConstants;
+import frc.robot.constants.GlobalConstants;
 
 public final class DriveConfigs {
     public static final class MAXSwerveModule {
@@ -17,7 +18,7 @@ public final class DriveConfigs {
             // --- Driving Motor Configuration ---
             drivingConfig
                     .idleMode(driveIdle) //
-                    .smartCurrentLimit(50); //
+                    .smartCurrentLimit(GlobalConstants.kLHighCurrentLimit); //
 
             drivingConfig.encoder
                     .positionConversionFactor(NeoSwerveModuleConstants.kDriveEncoderPositionFactor) //
@@ -31,7 +32,7 @@ public final class DriveConfigs {
             // --- Turning Motor Configuration ---
             turningConfig
                     .idleMode(turnIdle) //
-                    .smartCurrentLimit(20); //
+                    .smartCurrentLimit(GlobalConstants.kLowCurrentLimit); //
 
             turningConfig.absoluteEncoder
                     .inverted(true) //
