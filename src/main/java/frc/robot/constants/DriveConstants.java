@@ -50,4 +50,12 @@ public class DriveConstants {
     public static final int kRearRightTurningCanId = 5;
 
     public static final boolean kGyroReversed = false;
+
+    public static final double kDriveP = 0.04;
+    public static final double kDriveI = 0.0;
+    public static final double kDriveD = 0.0;
+
+    public static final double kTurnP = 1.0;
+    public static final double kTurnI = 0.0;
+    public static final double kTurnD = 0.0;
 }
