@@ -18,7 +18,7 @@ public final class DriveConfigs {
             // --- Driving Motor Configuration ---
             drivingConfig
                     .idleMode(driveIdle) //
-                    .smartCurrentLimit(GlobalConstants.kLHighCurrentLimit); //
+                    .smartCurrentLimit(GlobalConstants.kHighCurrentLimit); //
 
             drivingConfig.encoder
                     .positionConversionFactor(NeoSwerveModuleConstants.kDriveEncoderPositionFactor) //
