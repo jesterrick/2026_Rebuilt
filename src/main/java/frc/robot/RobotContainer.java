@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveStraight;
 import frc.robot.commands.ExtenderIn;
@@ -43,11 +44,15 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final ShooterSubsystem m_shooter= new ShooterSubsystem();
+  private final IntakeSubsystem m_Intake= new IntakeSubsystem();
   private boolean m_fieldRelative = true;
 
   // The driver's controller
     Joystick m_driverJoystick = new Joystick(OIConstants.kDriverJoystickPort);
     Joystick m_operatorJoystick = new Joystick(OIConstants.kOperatorJoystickPort);
+    JoystickButton ShooterOn = new JoystickButton(m_operatorJoystick, OIConstants.kShooterButton);
+    JoystickButton intakeRecieve = new JoystickButton(m_operatorJoystick, OIConstants.kIntakeReceiveButton);
 
     // A chooser for autonomous commands
     private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
@@ -85,9 +90,13 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    new Trigger(() -> m_driverJoystick.getRawButton(1))
-        .onTrue(new InstantCommand(() -> m_fieldRelative = !m_fieldRelative));
-    new Trigger(() -> m_driverJoystick.getRawButton(2)).onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
+   //ShooterOn.whileTrue(new ShooterOn(this.m_shooter));
+   intakeRecieve.whileTrue(new IntakeReceive(this.m_Intake, 0.3));
+
+
+    //new Trigger(() -> m_driverJoystick.getRawButton(1))
+    //    .onTrue(new InstantCommand(() -> m_fieldRelative = !m_fieldRelative));
+    //new Trigger(() -> m_driverJoystick.getRawButton(2)).onTrue(new InstantCommand(m_robotDrive::zeroHeading, m_robotDrive));
     /*/ Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_exampleSubsystem));
