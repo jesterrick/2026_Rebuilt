@@ -4,6 +4,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import frc.robot.constants.NeoSwerveModuleConstants;
+import frc.robot.constants.DriveConstants;
 import frc.robot.constants.GlobalConstants;
 
 public final class DriveConfigs {
@@ -26,7 +27,7 @@ public final class DriveConfigs {
 
             drivingConfig.closedLoop
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder) //
-                    .pid(0.04, 0, 0) //
+                    .pid(DriveConstants.kDriveP, DriveConstants.kDriveI, DriveConstants.kDriveD) //
                     .outputRange(-1, 1); //
 
             // --- Turning Motor Configuration ---
@@ -41,7 +42,7 @@ public final class DriveConfigs {
 
             turningConfig.closedLoop
                     .feedbackSensor(FeedbackSensor.kAbsoluteEncoder) //
-                    .pid(1, 0, 0) //
+                    .pid(DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD) //
                     .outputRange(-1, 1) //
                     .positionWrappingEnabled(true) //
                     .positionWrappingInputRange(0, NeoSwerveModuleConstants.kTurningEncoderPositionFactor); //

@@ -20,7 +20,7 @@ public class ExtenderConfigs {
         
         config.closedLoop.maxMotion
             .cruiseVelocity(5600 * ExtenderConstants.kExtenderMotorSpeed * (ExtenderConstants.kPositionFactor / 60.0))
-            .maxAcceleration(.10)
+            .maxAcceleration(ExtenderConstants.kExtAcceleration)
             .allowedProfileError(0.1);
 
         config.softLimit

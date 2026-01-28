@@ -11,7 +11,6 @@ public class DriveConstants {
     // Speed reducers for real world - Let's keep things under control
     public static final double speedAdjustTeleOp = 0.9;
     public static final double speedAdjustAuto = 0.5;
-
             
     // Real World Adjusted (90% of theoretical)
     public static final double kAdjustedMaxSpeedMbpsTeleOp = NeoSwerveModuleConstants.kMaxSpeedMetersPerSecond * speedAdjustTeleOp;
