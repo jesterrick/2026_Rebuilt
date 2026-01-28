@@ -5,9 +5,8 @@
 package frc.robot.constants;
 
 /** Add your docs here. */
-public class ShooterConstants {
+public class LauncherConstants {
 
-    public static final int kShooterMotor = 9;
-    public static final double kShooterMotorSpeedIdle = 0.5;
-    public static final double kShooterMotorStop = 0.0;
+    public static final double kLauncherMotorSpeedIdle = 0.5;
+    public static final double kLauncherMotorStop = 0.0;
 }

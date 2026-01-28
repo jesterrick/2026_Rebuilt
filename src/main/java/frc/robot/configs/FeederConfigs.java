@@ -4,5 +4,17 @@
 
 package frc.robot.configs;
 
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import frc.robot.constants.GlobalConstants;
+
 /** Add your docs here. */
-public class FeederConfigs {}
+public class FeederConfigs {
+    public static final SparkMaxConfig config = new SparkMaxConfig();
+
+    static {
+        config.inverted(false);
+        config.smartCurrentLimit(GlobalConstants.kLowCurrentLimit);    
+        config.idleMode(IdleMode.kCoast); 
+    }
+}

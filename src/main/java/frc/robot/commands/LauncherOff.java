@@ -5,11 +5,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.LauncherSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ShooterIdle extends Command {
-  /** Creates a new ShooterIdle. */
-  public ShooterIdle() {
+public class LauncherOff extends Command {
+  LauncherSubsystem m_Launcher;
+  /** Creates a new LauncherOf. */
+  public LauncherOff(LauncherSubsystem launcher) {
+    this.m_Launcher = launcher;
+    addRequirements(this.m_Launcher);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -19,7 +23,9 @@ public class ShooterIdle extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    this.m_Launcher.stopLauncher();
+  }
 
   // Called once the command ends or is interrupted.
   @Override

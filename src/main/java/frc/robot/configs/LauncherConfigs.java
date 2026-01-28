@@ -10,7 +10,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.constants.GlobalConstants;
 
 /** Add your docs here. */
-public class ShooterConfigs {
+public class LauncherConfigs {
     public static final SparkMaxConfig config = new SparkMaxConfig();
     
     static {

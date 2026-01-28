@@ -3,7 +3,6 @@ package frc.robot.configs;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import frc.robot.constants.ExtenderConstants;
 import frc.robot.constants.GlobalConstants;
 
@@ -18,6 +17,11 @@ public class ExtenderConfigs {
         config.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(ExtenderConstants.kIntakeP, ExtenderConstants.kIntakeI, ExtenderConstants.kIntakeD);
+        
+        config.closedLoop.maxMotion
+            .cruiseVelocity(5600 * ExtenderConstants.kExtenderMotorSpeed * (ExtenderConstants.kPositionFactor / 60.0))
+            .maxAcceleration(.10)
+            .allowedProfileError(0.1);
 
         config.softLimit
             .forwardSoftLimitEnabled(true)

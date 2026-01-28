@@ -5,12 +5,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.ExtenderSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ExtenderIn extends Command {
+  ExtenderSubsystem extenderSubsystem;
+
   /** Creates a new ExtenderIn. */
-  public ExtenderIn() {
+  public ExtenderIn(ExtenderSubsystem extendSub) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.extenderSubsystem = extendSub;
+    addRequirements(extenderSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -19,11 +24,15 @@ public class ExtenderIn extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    this.extenderSubsystem.moveIn();
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    this.extenderSubsystem.stop();
+  }
 
   // Returns true when the command should end.
   @Override

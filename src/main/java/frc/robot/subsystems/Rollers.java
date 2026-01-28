@@ -13,14 +13,14 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.ResetMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.RollerConstants;
+import frc.robot.constants.CanIdConstants;
 
 public class Rollers extends SubsystemBase { 
    public final SparkMax m_RollerMotor;
 
     /** Creates new roller */
     public Rollers() {
-      this.m_RollerMotor = new SparkMax(RollerConstants.kRollerMotor, MotorType.kBrushless);
+      this.m_RollerMotor = new SparkMax(CanIdConstants.kRollerMotor, MotorType.kBrushless);
   
      SparkMaxConfig m_RollerMotorconfig = new SparkMaxConfig();
 
