@@ -9,7 +9,7 @@ public class RollerConfigs {
 
     static{
         config.inverted(false);
-        config.idleMode(IdleMode.kBrake);
+        config.idleMode(IdleMode.kCoast);
         config.smartCurrentLimit(GlobalConstants.kLowCurrentLimit);
     }
 

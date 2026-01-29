@@ -7,7 +7,6 @@ package frc.robot.constants;
 /** Add your docs here. */
 public class FeederConstants {
 
-    public static final int kFeederMotor = 9;
     public static final double kFeederMotorStop = 0.0;
     public static final double kFeederSpeed = 0.5;
 }

@@ -1,95 +1,69 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.EncoderConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkBase.ControlType; // Required for 2026 API
+import com.revrobotics.spark.SparkClosedLoopController; // Required for 2026 API
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.configs.ExtenderConfigs;
+import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.ExtenderConstants;
 
 public class ExtenderSubsystem extends SubsystemBase {
   private final SparkMax m_ExtenderMotor;
-  private final RelativeEncoder m_ExtenderMotorEncoder;
+  private final SparkClosedLoopController m_closedLoopController; // New for 2026
+  private double m_targetInches;
 
-  private double targetPosition = ExtenderConstants.kExtenderMotorIn; // Start up
-
-  /** Creates a new IntakeRotator. */
   public ExtenderSubsystem() {
-    this.m_ExtenderMotor = new SparkMax(ExtenderConstants.kExtenderMotor, MotorType.kBrushless);
-
-    SparkMaxConfig extenderConfig = new SparkMaxConfig();
-    extenderConfig.inverted(true);
-    extenderConfig.idleMode(IdleMode.kBrake);
-    extenderConfig.smartCurrentLimit(40);
-
-    this.m_ExtenderMotorEncoder = m_ExtenderMotor.getEncoder();
-    EncoderConfig extenderEncoderConfig = new EncoderConfig();
-    extenderConfig.encoder.apply(extenderEncoderConfig);
+    this.m_ExtenderMotor = new SparkMax(CanIdConstants.kExtenderMotor, MotorType.kBrushless);
     
-    this.m_ExtenderMotor.configure(extenderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // Initialize the closed loop controller from the motor object
+    this.m_closedLoopController = m_ExtenderMotor.getClosedLoopController();
+
+    // Apply the configuration from ExtenderConfigs
+    this.m_ExtenderMotor.configure(ExtenderConfigs.config, ResetMode.kResetSafeParameters,
+        PersistMode.kPersistParameters);
+    
+    m_targetInches = getPositionInInches(); // Initialize target to current position
   }
 
   @Override
   public void periodic() {
-    double currentPos = this.m_ExtenderMotorEncoder.getPosition();
-    double error = targetPosition - currentPos;
-    
-    double output = ExtenderConstants.kExtenderMotorSpeed;
-    
-    // Simple bang-bang control with slow zone
-    if (error > 5.0) {
-      output = output * 1.0; // Move down fast
-    } else if (error > 1.0) {
-      output = output * 0.35; // Slow down near target
-    } else if (error < -5.0) {
-      output = output * -1.0; // Move up fast
-    } else if (error < -1.0) {
-      output = output * -0.35; // Slow down near target
-    } else {
-      output = 0.0; // At target, stop (brake mode will hold it)
-    }
-    
-    // Safety limits
-    if (currentPos <= ExtenderConstants.kExtenderMotorIn && output < 0) {
-      output = 0.0;
-    }
-    if (currentPos >= ExtenderConstants.kExtenderMotorOut && output > 0) {
-      output = 0.0;
-    }
-    
-    this.m_ExtenderMotor.set(output);
-    
-    SmartDashboard.putNumber("Intake/pos", currentPos);
-    SmartDashboard.putNumber("Intake/target", targetPosition);
-    SmartDashboard.putNumber("Intake/error", error);
-    SmartDashboard.putNumber("Intake/output", output);
+    SmartDashboard.putNumber("Extender/Position (Inches)", getPositionInInches());
+    SmartDashboard.putNumber("Extender/Target (Inches)", m_targetInches);
   }
 
-  // Simple methods to move up or down
-  public void moveUp() {
-    this.targetPosition = ExtenderConstants.kExtenderMotorIn;
+  public double getPositionInInches() {
+    return m_ExtenderMotor.getEncoder().getPosition();
   }
-  
-  public void moveDown() {
-    this.targetPosition = ExtenderConstants.kExtenderMotorOut;
+
+  /**
+   * Moves the extender to the 'In' position using PID.
+   */
+  public void moveIn() {
+    m_targetInches = ExtenderConstants.kExtenderMotorIn;
+    // Uses ControlType.kPosition to move to the specific distance
+    m_closedLoopController.setSetpoint(m_targetInches, ControlType.kPosition);
   }
-  
-  // Check if at target (within 1 rotation)
+
+  /**
+   * Moves the extender to the 'Out' position using PID.
+   */
+  public void moveOut() {
+    m_targetInches = ExtenderConstants.kExtenderMotorOut;
+    // The library handles conversion because of the factor set in ExtenderConfigs
+    m_closedLoopController.setSetpoint(m_targetInches, ControlType.kPosition);
+  }
+
   public boolean atTarget() {
-    return Math.abs(this.targetPosition - this.m_ExtenderMotorEncoder.getPosition()) < 1.0;
+    return Math.abs(m_targetInches - getPositionInInches()) < 0.1;
   }
-  
-  public double getPosition() {
-    return this.m_ExtenderMotorEncoder.getPosition();
+
+  public void stop() {
+    m_ExtenderMotor.stopMotor();
   }
 }
