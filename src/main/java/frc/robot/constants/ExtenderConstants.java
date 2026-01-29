@@ -18,5 +18,6 @@ public class ExtenderConstants {
     public static final double kIntakeI = 0.0;
     public static final double kIntakeD = 0.03;
 
+    public static final double kExtAcceleration = .10;
 
 }
