@@ -8,6 +8,9 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.DriveCommand;
 import frc.robot.constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
+
+import javax.print.attribute.standard.JobHoldUntil;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,16 +28,15 @@ import frc.robot.commands.IntakeEject;
 import frc.robot.commands.IntakeReceive;
 import frc.robot.commands.IntakeStop;
 import frc.robot.commands.RollerOff;
-import frc.robot.commands.RollerOn;
-import frc.robot.commands.ShooterIdle;
-import frc.robot.commands.ShooterOff;
-import frc.robot.commands.ShooterOn;
+import frc.robot.commands.RollerForward;
+import frc.robot.commands.RollerReverse;
 import frc.robot.subsystems.ExtenderSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Rollers;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.LauncherSubsystem;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -43,16 +45,18 @@ import frc.robot.subsystems.ShooterSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final ShooterSubsystem m_shooter= new ShooterSubsystem();
-  private final IntakeSubsystem m_Intake= new IntakeSubsystem();
+  //private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  //private final LauncherSubsystem m_Launcher= new LauncherSubsystem();
+  private final ExtenderSubsystem m_extender= new ExtenderSubsystem();
   private boolean m_fieldRelative = true;
 
   // The driver's controller
     Joystick m_driverJoystick = new Joystick(OIConstants.kDriverJoystickPort);
     Joystick m_operatorJoystick = new Joystick(OIConstants.kOperatorJoystickPort);
-    JoystickButton ShooterOn = new JoystickButton(m_operatorJoystick, OIConstants.kShooterButton);
-    JoystickButton intakeRecieve = new JoystickButton(m_operatorJoystick, OIConstants.kIntakeReceiveButton);
+    //JoystickButton LauncherOn = new JoystickButton(m_operatorJoystick, OIConstants.kLauncherButton);
+    //JoystickButton intakeRecieve = new JoystickButton(m_operatorJoystick, OIConstants.kIntakeReceiveButton);
+    JoystickButton extendOut = new JoystickButton(m_operatorJoystick, OIConstants.kExtenderOutButton);
+    JoystickButton extendIn = new JoystickButton(m_operatorJoystick, OIConstants.kExtenderInButton);
 
     // A chooser for autonomous commands
     private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
@@ -61,20 +65,20 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
      // Configure default commands
-      m_robotDrive.setDefaultCommand(
+      /*m_robotDrive.setDefaultCommand(
         new DriveCommand(
           m_robotDrive,
             () -> m_driverJoystick.getY(),
             () -> m_driverJoystick.getX(),
             () -> m_driverJoystick.getZ(),
             () -> m_fieldRelative));
-
+*/
     // Configure the trigger bindings
     configureBindings();
 
     // Add commands to the autonomous command chooser
     m_autoChooser.setDefaultOption("Do Nothing", Commands.none());
-    m_autoChooser.addOption("Simple Auto", Autos.exampleAuto(m_robotDrive));
+    //m_autoChooser.addOption("Simple Auto", Autos.exampleAuto(m_robotDrive));
 
     // Put the chooser on the dashboard
     SmartDashboard.putData("Auto choices", m_autoChooser);
@@ -89,10 +93,13 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {
-   //ShooterOn.whileTrue(new ShooterOn(this.m_shooter));
-   intakeRecieve.whileTrue(new IntakeReceive(this.m_Intake, 0.3));
-
+  private void configureBindings() {   
+   //intakeRecieve.whileTrue(new IntakeReceive(this.m_Intake, IntakeConstants.kIntakeMotorSpeed));
+   extendOut.onTrue(new ExtenderOut(m_extender));
+   
+   extendIn.onTrue(new ExtenderIn(m_extender));
+   
+   //LauncherOn.whileTrue(new LauncherOn(this.m_Launcher));
 
     //new Trigger(() -> m_driverJoystick.getRawButton(1))
     //    .onTrue(new InstantCommand(() -> m_fieldRelative = !m_fieldRelative));

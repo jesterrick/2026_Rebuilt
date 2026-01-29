@@ -17,5 +17,4 @@ public class FeederConfigs {
         config.idleMode(IdleMode.kBrake); 
         config.smartCurrentLimit(GlobalConstants.kLowCurrentLimit);
     }
-
 }

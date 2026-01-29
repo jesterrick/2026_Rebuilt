@@ -12,9 +12,9 @@ public class ExtenderOut extends Command {
   ExtenderSubsystem extenderSubsystem;
 
   /** Creates a new IntakeRotateDown. */
-  public ExtenderOut(ExtenderSubsystem intRotSub) {
+  public ExtenderOut(ExtenderSubsystem extendSub) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.extenderSubsystem = intRotSub;
+    this.extenderSubsystem = extendSub;
     addRequirements(extenderSubsystem);
   }
 
@@ -25,12 +25,14 @@ public class ExtenderOut extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.extenderSubsystem.moveDown();
+    this.extenderSubsystem.moveOut();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    this.extenderSubsystem.stop();
+  }
 
   // Returns true when the command should end.
   @Override

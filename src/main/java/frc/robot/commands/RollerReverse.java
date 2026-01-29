@@ -6,15 +6,16 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Rollers;
+import frc.robot.constants.RollerConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class RollerOff extends Command {
-  Rollers m_Rollers;
-  /** Creates a new RollerOff. */
-  public RollerOff(Rollers roller) {
-    this.m_Rollers = roller;
-    addRequirements(this.m_Rollers);
+public class RollerReverse extends Command {
+  Rollers m_rollers;
+  /** Creates a new RollerOn. */
+  public RollerReverse(Rollers roller) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.m_rollers = roller;
+    addRequirements(this.m_rollers);
   }
 
   // Called when the command is initially scheduled.
@@ -24,12 +25,14 @@ public class RollerOff extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.m_Rollers.rollerOff();
+    m_rollers.rollerOn(-RollerConstants.kRollerSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    this.m_rollers.rollerOff();
+  }
 
   // Returns true when the command should end.
   @Override

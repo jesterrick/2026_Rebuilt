@@ -5,11 +5,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.FeederSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class FeederOff extends Command {
+  FeederSubsystem m_Feeder;
+
   /** Creates a new FeederOff. */
-  public FeederOff() {
+  public FeederOff(FeederSubsystem feeder) {
+    this.m_Feeder = feeder;
+    addRequirements(this.m_Feeder);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -19,7 +24,9 @@ public class FeederOff extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    this.m_Feeder.stopFeeder();
+  }
 
   // Called once the command ends or is interrupted.
   @Override

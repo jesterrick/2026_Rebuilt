@@ -6,7 +6,6 @@ package frc.robot.constants;
 
 /** Add your docs here. */
 public class IntakeConstants {
-    public static final int kIntakeMotor = 12;
 
     public static final double kIntakeMotorSpeed = 0.5;
 }

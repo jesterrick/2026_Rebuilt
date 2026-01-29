@@ -8,11 +8,10 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.IntakeConstants;;
+import frc.robot.configs.IntakeConfigs;
+import frc.robot.constants.CanIdConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new Intake. */
@@ -20,20 +19,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private final SparkMax m_FrontPickupMotor;
 
   public IntakeSubsystem() {
-    this.m_FrontPickupMotor = new SparkMax(IntakeConstants.kIntakeMotor, MotorType.kBrushless);
-
-    SparkMaxConfig frontMotorConfig = new SparkMaxConfig();
-    frontMotorConfig.inverted(true);
-    frontMotorConfig.idleMode(IdleMode.kBrake);
-    frontMotorConfig.smartCurrentLimit(40);
-    this.m_FrontPickupMotor.configure(frontMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-
-  }
-
-  @Override
-  public void periodic() {
-
+    this.m_FrontPickupMotor = new SparkMax(CanIdConstants.kIntakeMotor, MotorType.kBrushless);
+    this.m_FrontPickupMotor.configure(IntakeConfigs.config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   /*
@@ -42,8 +29,6 @@ public class IntakeSubsystem extends SubsystemBase {
    * Negative will push the coral our of the intake
    */
   public void engageIntake(double speed) {
-    //speed = Math.max(-IntakeConstants.kIntakeMotorSpeed,
-    //    Math.min(IntakeConstants.kIntakeMotorSpeed, speed));
     this.m_FrontPickupMotor.set(speed);
   }
 
