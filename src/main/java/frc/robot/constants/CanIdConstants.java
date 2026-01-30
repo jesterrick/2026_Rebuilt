@@ -13,7 +13,9 @@ public class CanIdConstants {
     public static final int kRearRightDrivingCanId = 6;
 
    // CAN IDs for the Extender
-    public static final int kExtenderMotor = 9;
+    public static final int kExtenderMotor1 = 9;
+    public static final int kExtenderMotor2 = 9;
+
 
    // CAN IDs for the Intake
     public static final int kIntakeMotor = 18;
