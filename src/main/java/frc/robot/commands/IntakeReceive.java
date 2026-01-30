@@ -5,17 +5,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeReceive extends Command {
     IntakeSubsystem intakeSubsystem;
-    double speed;
+    
   /** Creates a new IntakeReceive. */
-  public IntakeReceive(IntakeSubsystem intSub, double rot) {
+  public IntakeReceive(IntakeSubsystem intSub) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.intakeSubsystem = intSub;
-    this.speed = rot;
     addRequirements(intakeSubsystem);
   }
 
@@ -26,7 +26,7 @@ public class IntakeReceive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.intakeSubsystem.engageIntake(speed);
+    this.intakeSubsystem.engageIntake(IntakeConstants.kIntakeMotorSpeed);
   }
 
   // Called once the command ends or is interrupted.
