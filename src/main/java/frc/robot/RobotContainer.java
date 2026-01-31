@@ -29,12 +29,11 @@ import frc.robot.commands.IntakeEject;
 import frc.robot.commands.IntakeReceive;
 import frc.robot.commands.IntakeStop;
 import frc.robot.commands.RollerOff;
-import frc.robot.commands.RollerOn;
+import frc.robot.commands.RollerForward;
 import frc.robot.commands.RollerReverse;
 import frc.robot.commands.LauncherIdle;
 import frc.robot.commands.LauncherOff;
 import frc.robot.commands.LauncherOn;
-import frc.robot.commands.RollerForward;
 import frc.robot.subsystems.ExtenderSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -109,7 +108,7 @@ public class RobotContainer {
    //LauncherOn.whileTrue(new LauncherOn(this.m_Launcher));
    intakeRecieve.whileTrue(
     new ParallelCommandGroup(
-    new IntakeReceive(m_Intake),
+      new IntakeReceive(m_Intake),
       new RollerForward(m_Rollers)
     )
    );
@@ -117,7 +116,7 @@ public class RobotContainer {
    intakeEject.whileTrue(
     new ParallelCommandGroup(
       new IntakeEject(m_Intake),
-        new RollerReverse(m_Rollers)
+      new RollerReverse(m_Rollers)
      )
    );
    
@@ -127,16 +126,16 @@ public class RobotContainer {
 
     extenderIn.onTrue(
       new ParallelCommandGroup(
-        new IntakeStop(m_Intake),
-          new ExtenderIn(m_Extender)
+      new IntakeStop(m_Intake),
+        new ExtenderIn(m_Extender)
       )
     );
     
     launch.whileTrue(
       new ParallelCommandGroup(
         new RollerForward(m_Rollers),
-          new LauncherOn(m_Launcher, 0),
-            new FeederOn(m_Feeder)
+        new LauncherOn(m_Launcher, 0),
+        new FeederOn(m_Feeder)
       )
     );
 
