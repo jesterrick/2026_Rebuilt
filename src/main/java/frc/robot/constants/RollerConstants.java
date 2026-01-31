@@ -6,6 +6,5 @@ package frc.robot.constants;
 
 /** Add your docs here. */
 public class RollerConstants {
-
     public static final double kRollerSpeed = 0.5;
 }
