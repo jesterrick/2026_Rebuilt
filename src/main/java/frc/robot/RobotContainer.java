@@ -141,7 +141,7 @@ public class RobotContainer {
     launch.whileTrue(
         new ParallelCommandGroup(
             new RollerForward(m_Rollers),
-            new LauncherOn(m_Launcher, 0)
+            new LauncherOn(m_Launcher)
           ).andThen(
             new WaitUntilCommand(() -> m_Launcher.atSpeed()),
             new FeederOn(m_Feeder)

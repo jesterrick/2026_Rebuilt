@@ -10,12 +10,10 @@ import frc.robot.subsystems.LauncherSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class LauncherOn extends Command {
   LauncherSubsystem m_launcher;
-  double launcherSpeed;
   /** Creates a new LauncherOn. */
-  public LauncherOn(LauncherSubsystem launcher, double speed) {
+  public LauncherOn(LauncherSubsystem launcher) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.m_launcher = launcher;
-    launcherSpeed = speed;
   }
 
   // Called when the command is initially scheduled.
@@ -25,6 +23,7 @@ public class LauncherOn extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double launcherSpeed = m_launcher.calculateRPMFromLimeLight();
     this.m_launcher.setLauncherVelocity(launcherSpeed);
   }
 

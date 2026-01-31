@@ -11,6 +11,9 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.configs.LauncherConfigs;
@@ -22,6 +25,9 @@ public class LauncherSubsystem extends SubsystemBase {
   private final SparkMax m_LauncherMotor;
   private final SparkClosedLoopController m_ClosedLoopController;
   private double targetRPM;
+  private final Timer m_emptyTimer = new Timer();
+  private final DigitalInput m_hopperSensor = new DigitalInput(LauncherConstants.kLauncherIdleSensor);
+  
 
   public LauncherSubsystem() {
     this.m_LauncherMotor = new SparkMax(CanIdConstants.kLauncherMotor, MotorType.kBrushless);
@@ -29,10 +35,29 @@ public class LauncherSubsystem extends SubsystemBase {
     this.m_LauncherMotor.configure(LauncherConfigs.config, ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
     this.targetRPM = 0.0;
+
+    m_emptyTimer.start();
   }
 
   @Override
   public void periodic() {
+    // if there isn't any other command for the launcher
+    if (this.getCurrentCommand() == null) {
+      // if there is a ball in the hopper
+      if (isBallPresent()) {
+        this.targetRPM = LauncherConstants.kLauncherMotorSpeedIdle;
+        m_emptyTimer.reset();
+        m_emptyTimer.stop();
+      } else {
+        m_emptyTimer.start();
+        
+        // If 3 seconds pass without a ball, shut down to save battery
+        if (m_emptyTimer.hasElapsed(LauncherConstants.kWaitForEmptyTime)) {
+          this.targetRPM = 0.0;
+        }
+      }
+    }
+
     // Only use the PID controller if we have a target speed.
     // Otherwise, let the motor be still or coast.
     if (this.targetRPM > 0) {
@@ -47,6 +72,9 @@ public class LauncherSubsystem extends SubsystemBase {
     
     // True if spinning and within tolerance; False if bogged down or stopped
     SmartDashboard.putBoolean("Launcher/At Speed", this.atSpeed());
+
+    // Display if there is a ball in the hopper
+    SmartDashboard.putBoolean("Launcher/Ball Present", this.isBallPresent());
   }
 
   /**
@@ -70,5 +98,28 @@ public class LauncherSubsystem extends SubsystemBase {
   public boolean atSpeed() {
     return (this.targetRPM > 0)
         && (Math.abs(this.targetRPM - getActualVelocity()) < LauncherConstants.kLauncherTolerance);
+  }
+
+  public boolean isBallPresent()
+  {
+    return m_hopperSensor.get();
+  }
+
+  public double calculateRPMFromLimeLight()
+  {
+    // 1. Get the vertical offset (ty) from the Limelight
+    double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+
+    // 2. Calculate distance using trigonometry
+    // d = (targetHeight - cameraHeight) / tan(mountingAngle + ty)
+    double distance = (LauncherConstants.kTargetHeight - LauncherConstants.kCameraHeight) / 
+                      Math.tan(Math.toRadians(LauncherConstants.kMountAngle + ty));
+
+    // 3. Convert distance to RPM using a simple formula or lookup table
+    // Example: RPM = (Distance * 10) + 2000
+    //double calculatedRPM = (distance * LauncherConstants.kRPMPerInch) + LauncherConstants.kBaseRPM;
+
+    //return calculatedRPM;
+    return 0.0;
   }
 }
