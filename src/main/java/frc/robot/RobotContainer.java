@@ -25,6 +25,7 @@ import frc.robot.commands.ExtenderIn;
 import frc.robot.commands.ExtenderOut;
 import frc.robot.commands.FeederOff;
 import frc.robot.commands.FeederOn;
+import frc.robot.commands.HomeExtender;
 import frc.robot.commands.IntakeEject;
 import frc.robot.commands.IntakeReceive;
 import frc.robot.commands.IntakeStop;
@@ -167,6 +168,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
+    new HomeExtender(m_Extender);
     return m_autoChooser.getSelected();
   }
 }
