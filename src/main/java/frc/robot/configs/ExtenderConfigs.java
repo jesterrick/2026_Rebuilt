@@ -4,58 +4,44 @@ import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.constants.ExtenderConstants;
+import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.GlobalConstants;
 
 public class ExtenderConfigs {
-    public static final SparkMaxConfig config = new SparkMaxConfig();
-    public static final SparkMaxConfig config2 = new SparkMaxConfig();
+    public static final SparkMaxConfig leaderConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig followConfig = new SparkMaxConfig();
 
     static {
-        config.encoder
+        leaderConfig.encoder
             .positionConversionFactor(ExtenderConstants.kPositionFactor) // Set units to inches
             .velocityConversionFactor(ExtenderConstants.kPositionFactor / 60.0); // Set units to inches/sec
 
-        config.closedLoop
+        leaderConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
             .pid(ExtenderConstants.kIntakeP, ExtenderConstants.kIntakeI, ExtenderConstants.kIntakeD);
         
-        config.closedLoop.maxMotion
+        leaderConfig.closedLoop.maxMotion
             .cruiseVelocity(5600 * ExtenderConstants.kExtenderMotorSpeed * (ExtenderConstants.kPositionFactor / 60.0))
             .maxAcceleration(ExtenderConstants.kExtAcceleration)
             .allowedProfileError(0.1);
 
-        config.softLimit
+        leaderConfig.softLimit
             .forwardSoftLimitEnabled(true)
             .forwardSoftLimit(ExtenderConstants.kExtenderMotorOut)
             .reverseSoftLimitEnabled(true)
             .reverseSoftLimit(ExtenderConstants.kExtenderMotorIn);
 
-        config.inverted(false);
-        config.smartCurrentLimit(GlobalConstants.kLowCurrentLimit);    
-        config.idleMode(IdleMode.kBrake); 
+        leaderConfig.inverted(false);
+        leaderConfig.smartCurrentLimit(GlobalConstants.kLowCurrentLimit);    
+        leaderConfig.idleMode(IdleMode.kBrake); 
 
-         config2.encoder
-            .positionConversionFactor(ExtenderConstants.kPositionFactor) // Set units to inches
-            .velocityConversionFactor(ExtenderConstants.kPositionFactor / 60.0); // Set units to inches/sec
+        followConfig.apply(leaderConfig);
 
-        config2.closedLoop
-            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(ExtenderConstants.kIntakeP, ExtenderConstants.kIntakeI, ExtenderConstants.kIntakeD);
-        
-        config2.closedLoop.maxMotion
-            .cruiseVelocity(5600 * ExtenderConstants.kExtenderMotorSpeed * (ExtenderConstants.kPositionFactor / 60.0))
-            .maxAcceleration(ExtenderConstants.kExtAcceleration)
-            .allowedProfileError(0.1);
+        followConfig.follow(CanIdConstants.kExtenderMotor1);
+        followConfig.inverted(true); 
 
-        config2.softLimit
-            .forwardSoftLimitEnabled(true)
-            .forwardSoftLimit(ExtenderConstants.kExtenderMotorOut)
-            .reverseSoftLimitEnabled(true)
-            .reverseSoftLimit(ExtenderConstants.kExtenderMotorIn);
-
-        config2.inverted(false);
-        config2.smartCurrentLimit(GlobalConstants.kLowCurrentLimit);    
-        config2.idleMode(IdleMode.kBrake); 
+        followConfig.softLimit.forwardSoftLimitEnabled(false);
+        followConfig.softLimit.reverseSoftLimitEnabled(false);
     
     }
 }
