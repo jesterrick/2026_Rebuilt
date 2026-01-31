@@ -4,7 +4,6 @@ import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.constants.ExtenderConstants;
-import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.GlobalConstants;
 
 public class ExtenderConfigs {
@@ -37,7 +36,6 @@ public class ExtenderConfigs {
 
         followConfig.apply(leaderConfig);
 
-        followConfig.follow(CanIdConstants.kExtenderMotor1);
         followConfig.inverted(true); 
 
         followConfig.softLimit.forwardSoftLimitEnabled(false);

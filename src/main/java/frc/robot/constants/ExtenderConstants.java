@@ -20,4 +20,8 @@ public class ExtenderConstants {
 
     public static final double kExtAcceleration = .10;
 
+    public static final double kHomingVoltage = -1.5;
+    public static final double kMaxHomingVoltage = 10.0;
+    public static final double kMaxPositionDifference = 0.5;
+
 }
