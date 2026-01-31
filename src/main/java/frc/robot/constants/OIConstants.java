@@ -6,9 +6,13 @@ public class OIConstants {
     
     public static final double kDriveDeadband = 0.05;
 
-    public static final int kIntakeReceiveButton = 1;
-
-    public static final int kExtenderOutButton = 5;
-    public static final int kExtenderInButton = 6;
-
+    public static final int kIntakeReceiveButton = 5;
+    public static final int kIntakeEjectButton = 4;
+    public static final int kLauncherButton = 10;
+    public static final int kExtenderOutButton = 2;
+    public static final int kExtenderInButton = 3;
+    public static final int kFeederOnButton = 18;
+    public static final int kLauncherIdleOnButton = 16;
+    public static final int kLauncherIdleOffButton = 17;
+    
 }
