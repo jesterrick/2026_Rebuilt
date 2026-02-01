@@ -5,15 +5,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.ExtenderSubsystem;
+import frc.robot.constants.ExtenderConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class LauncherOn extends Command {
-  LauncherSubsystem m_launcher;
-  /** Creates a new LauncherOn. */
-  public LauncherOn(LauncherSubsystem launcher) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.m_launcher = launcher;
+public class HomeExtender extends Command {
+  private final ExtenderSubsystem m_extender;
+  /** Creates a new HomeExtender. */
+  public HomeExtender(ExtenderSubsystem extender) {
+    this.m_extender = extender;
+    addRequirements(this.m_extender);
   }
 
   // Called when the command is initially scheduled.
@@ -23,19 +24,19 @@ public class LauncherOn extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double launcherSpeed = m_launcher.calculateRPMFromLimeLight();
-    this.m_launcher.setLauncherVelocity(launcherSpeed);
+    m_extender.setHomingVoltages(ExtenderConstants.kHomingVoltage);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.m_launcher.stopLauncher();
+    m_extender.resetEncoders(); // Set the new 0 point
+    m_extender.stop();          // Turn motors off
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_extender.getLeaderCurrent() > ExtenderConstants.kMaxHomingVoltage && m_extender.getFollowerCurrent() > ExtenderConstants.kMaxHomingVoltage;
   }
 }
