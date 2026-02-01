@@ -29,8 +29,6 @@ public class ClimberSubsystem extends SubsystemBase {
   private final SparkMax m_ClimberFollowMotor;
   /** Closed-loop controller for the leader motor. */
   private final SparkClosedLoopController m_LeaderController;
-  /** Closed-loop controller for the follower motor. */
-  private final SparkClosedLoopController m_FollowController;
 
   /** The target position for the climber, in encoder units (usually inches or rotations). */
   private double m_targetPosition = 0.0;
@@ -41,7 +39,6 @@ public class ClimberSubsystem extends SubsystemBase {
     this.m_ClimberFollowMotor = new SparkMax(CanIdConstants.kClimberMotor2, MotorType.kBrushless);
 
     this.m_LeaderController = m_ClimberLeaderMotor.getClosedLoopController();
-    this.m_FollowController = m_ClimberFollowMotor.getClosedLoopController();
 
     // Configure both leader and follower motors with predefined configurations
     this.m_ClimberLeaderMotor.configure(ClimberConfigs.leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
