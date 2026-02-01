@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.configs.LauncherConfigs;
 import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.LauncherConstants;
+import frc.robot.utils.VisionUtils;
 
 public class LauncherSubsystem extends SubsystemBase {
   /** Creates a new LauncherSubsystem. */
@@ -27,7 +28,6 @@ public class LauncherSubsystem extends SubsystemBase {
   private double targetRPM;
   private final Timer m_emptyTimer = new Timer();
   private final DigitalInput m_hopperSensor = new DigitalInput(LauncherConstants.kLauncherIdleSensor);
-  
 
   public LauncherSubsystem() {
     this.m_LauncherMotor = new SparkMax(CanIdConstants.kLauncherMotor, MotorType.kBrushless);
@@ -50,7 +50,7 @@ public class LauncherSubsystem extends SubsystemBase {
         m_emptyTimer.stop();
       } else {
         m_emptyTimer.start();
-        
+
         // If 3 seconds pass without a ball, shut down to save battery
         if (m_emptyTimer.hasElapsed(LauncherConstants.kWaitForEmptyTime)) {
           this.targetRPM = 0.0;
@@ -69,7 +69,7 @@ public class LauncherSubsystem extends SubsystemBase {
     // This sends two lines to a graph so you can see them overlap
     SmartDashboard.putNumber("Launcher/Target RPM", this.targetRPM);
     SmartDashboard.putNumber("Launcher/Actual RPM", this.getActualVelocity());
-    
+
     // True if spinning and within tolerance; False if bogged down or stopped
     SmartDashboard.putBoolean("Launcher/At Speed", this.atSpeed());
 
@@ -96,30 +96,37 @@ public class LauncherSubsystem extends SubsystemBase {
   }
 
   public boolean atSpeed() {
-    return (this.targetRPM > 0)
-        && (Math.abs(this.targetRPM - getActualVelocity()) < LauncherConstants.kLauncherTolerance);
-  }
+    // 1. Calculate the difference between actual and target
+    boolean isNearTarget = Math.abs(this.targetRPM - getActualVelocity()) < LauncherConstants.kLauncherTolerance;
 
-  public boolean isBallPresent()
-  {
+    // 2. Ensure the target itself is a "Launch" speed, not an "Idle" speed
+    boolean isNotIdle = this.targetRPM > (LauncherConstants.kLauncherMotorSpeedIdle + LauncherConstants.kLaunchMinShotBuffer);
+
+    return isNearTarget && isNotIdle;
+}
+
+  public boolean isBallPresent() {
     return m_hopperSensor.get();
   }
 
-  public double calculateRPMFromLimeLight()
-  {
-    // 1. Get the vertical offset (ty) from the Limelight
-    double ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+  public double calculateRPMFromLimeLight() {
+    var table = NetworkTableInstance.getDefault().getTable("limelight");
 
-    // 2. Calculate distance using trigonometry
-    // d = (targetHeight - cameraHeight) / tan(mountingAngle + ty)
-    double distance = (LauncherConstants.kTargetHeight - LauncherConstants.kCameraHeight) / 
-                      Math.tan(Math.toRadians(LauncherConstants.kMountAngle + ty));
+    // Check for target valid AND correct ID
+    boolean hasTarget = table.getEntry("tv").getDouble(0) == 1.0;
+    int tagID = (int) table.getEntry("tid").getInteger(-1);
 
-    // 3. Convert distance to RPM using a simple formula or lookup table
-    // Example: RPM = (Distance * 10) + 2000
-    //double calculatedRPM = (distance * LauncherConstants.kRPMPerInch) + LauncherConstants.kBaseRPM;
+    if (hasTarget && VisionUtils.isTargetingCorrectHoop(tagID)) {
+      double ty = table.getEntry("ty").getDouble(0);
 
-    //return calculatedRPM;
-    return 0.0;
+      double distance = (LauncherConstants.kAprilTagHeight - LauncherConstants.kCameraHeight) /
+          Math.tan(Math.toRadians(LauncherConstants.kMountAngle + ty));
+
+      return (distance * LauncherConstants.kRPMPerInch) + LauncherConstants.kBaseRPM;
+    } else {
+      // IMPORTANT: Return IDLE if we lose the target.
+      // This will cause atSpeed() to become FALSE immediately, stopping the feeder.
+      return LauncherConstants.kLauncherMotorSpeedIdle;
+    }
   }
 }

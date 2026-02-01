@@ -7,9 +7,10 @@ package frc.robot.constants;
 /** Add your docs here. */
 public class LauncherConstants {
 
-    public static final double kLauncherMotorSpeedIdle = 0.5;
+    public static final double kLauncherMotorSpeedIdle = 500;
     public static final double kLauncherMotorStop = 0.0;
     public static final double kLauncherTolerance = 50.0;
+    public static final double kLaunchMinShotBuffer = 500;
 
     public static final int kLauncherIdleSensor = 0;
     public static final double kWaitForEmptyTime = 3.0;
@@ -23,7 +24,10 @@ public class LauncherConstants {
 
     // values of the field components for the limelight calculations
     public static final double kTargetHeight = 72.0;
+    public static final double kAprilTagHeight = 44.25;
     public static final double kCameraHeight = 12.0;
     public static final double kMountAngle = 15.0;
 
+    public static final int kBaseRPM = 15;
+    public static final int kRPMPerInch = 15;
 }
