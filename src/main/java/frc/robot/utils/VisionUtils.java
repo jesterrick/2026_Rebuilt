@@ -7,25 +7,24 @@ package frc.robot.utils;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.AprilTagConstants;
 
-
 /** Add your docs here. */
 public class VisionUtils {
     public static boolean isTargetingCorrectHoop(int currentTagID) {
-    var alliance = DriverStation.getAlliance();
-    int[] validTags;
+        var alliance = DriverStation.getAlliance();
+        int[] validTags;
 
-    if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-        validTags = AprilTagConstants.kRedHubTags;
-    } else {
-        validTags = AprilTagConstants.kBlueHubTags;
-    }
-
-    // Check if the current tag is in our "valid" list
-    for (int tag : validTags) {
-        if (currentTagID == tag) {
-            return true;
+        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+            validTags = AprilTagConstants.kRedHubTags;
+        } else {
+            validTags = AprilTagConstants.kBlueHubTags;
         }
+
+        // Check if the current tag is in our "valid" list
+        for (int tag : validTags) {
+            if (currentTagID == tag) {
+                return true;
+            }
+        }
+        return false;
     }
-    return false;
-}
 }
