@@ -7,14 +7,22 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Rollers;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * The RollerOff command is responsible for stopping the robot's roller mechanism.
+ * It continuously commands the Rollers subsystem to turn its motors off.
+ */
 public class RollerOff extends Command {
+  /** The Rollers subsystem instance that this command will control. */
   Rollers m_Rollers;
-  /** Creates a new RollerOff. */
+  
+  /**
+   * Creates a new RollerOff command.
+   *
+   * @param roller The Rollers subsystem to be controlled by this command.
+   */
   public RollerOff(Rollers roller) {
     this.m_Rollers = roller;
     addRequirements(this.m_Rollers);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
@@ -24,6 +32,7 @@ public class RollerOff extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Turn the rollers off.
     this.m_Rollers.rollerOff();
   }
 
@@ -34,6 +43,8 @@ public class RollerOff extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // This command is designed to run indefinitely until interrupted,
+    // so it never explicitly finishes on its own.
     return false;
   }
 }

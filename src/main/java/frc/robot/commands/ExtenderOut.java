@@ -7,11 +7,19 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ExtenderSubsystem;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * The ExtenderOut command is responsible for extending the robot's extender mechanism.
+ * It continuously commands the ExtenderSubsystem to move to its outward (extended) position.
+ */
 public class ExtenderOut extends Command {
+  /** The ExtenderSubsystem instance that this command will control. */
   ExtenderSubsystem extenderSubsystem;
 
-  /** Creates a new IntakeRotateDown. */
+  /**
+   * Creates a new ExtenderOut command.
+   *
+   * @param extendSub The ExtenderSubsystem to be controlled by this command.
+   */
   public ExtenderOut(ExtenderSubsystem extendSub) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.extenderSubsystem = extendSub;
@@ -25,18 +33,22 @@ public class ExtenderOut extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Command the extender to move to its outward (extended) position.
     this.extenderSubsystem.moveOut();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    // Stop the extender motors when the command ends or is interrupted.
     this.extenderSubsystem.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // This command is designed to run indefinitely until interrupted by another command
+    // or a button release, so it never explicitly finishes on its own.
     return false;
   }
 }

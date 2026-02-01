@@ -1,5 +1,9 @@
 package frc.robot.constants;
 
+/**
+ * Contains constants related to AprilTag IDs and their physical measurements on the field.
+ * These are used for vision processing and autonomous navigation.
+ */
 public class AprilTagConstants {
     public static final int[] kRedHubTags = {8,9,10,11};
     public static final int[] kBlueHubTags = {24,25,26,27};

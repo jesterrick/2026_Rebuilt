@@ -8,12 +8,21 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.RollerConstants;
 import frc.robot.subsystems.Rollers;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * The RollerForward command is responsible for running the robot's roller mechanism
+ * in the forward direction at a predefined speed. This is typically used for intaking
+ * or indexing game pieces.
+ */
 public class RollerForward extends Command {
+  /** The Rollers subsystem instance that this command will control. */
   Rollers m_rollers;
-  /** Creates a new RollerOn. */
+  
+  /**
+   * Creates a new RollerForward command.
+   *
+   * @param roller The Rollers subsystem to be controlled by this command.
+   */
   public RollerForward(Rollers roller) {
-    // Use addRequirements() here to declare subsystem dependencies.
     this.m_rollers = roller;
     addRequirements(this.m_rollers);
   }
@@ -25,18 +34,22 @@ public class RollerForward extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Turn the rollers on at the predefined forward speed.
     m_rollers.rollerOn(RollerConstants.kRollerSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    // Turn the rollers off when the command ends or is interrupted.
     this.m_rollers.rollerOff();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // This command is designed to run indefinitely until interrupted,
+    // for example, by releasing a button or another command taking over.
     return false;
   }
 }

@@ -7,11 +7,19 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.FeederSubsystem;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * The FeederOff command is responsible for stopping the robot's feeder mechanism.
+ * It continuously commands the FeederSubsystem to stop its motor.
+ */
 public class FeederOff extends Command {
+  /** The FeederSubsystem instance that this command will control. */
   FeederSubsystem m_Feeder;
 
-  /** Creates a new FeederOff. */
+  /**
+   * Creates a new FeederOff command.
+   *
+   * @param feeder The FeederSubsystem to be controlled by this command.
+   */
   public FeederOff(FeederSubsystem feeder) {
     this.m_Feeder = feeder;
     addRequirements(this.m_Feeder);
@@ -25,6 +33,7 @@ public class FeederOff extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Command the feeder to stop.
     this.m_Feeder.stopFeeder();
   }
 
@@ -35,6 +44,8 @@ public class FeederOff extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // This command is designed to run indefinitely until interrupted,
+    // so it never explicitly finishes on its own.
     return false;
   }
 }

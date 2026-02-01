@@ -7,13 +7,25 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LauncherSubsystem;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * The LauncherOn command is responsible for engaging the robot's launcher mechanism.
+ * It continuously calculates the required launcher speed using Limelight vision data
+ * and commands the LauncherSubsystem to maintain that velocity.
+ */
 public class LauncherOn extends Command {
+  /** The LauncherSubsystem instance that this command will control. */
   LauncherSubsystem m_launcher;
-  /** Creates a new LauncherOn. */
+  
+  /**
+   * Creates a new LauncherOn command.
+   *
+   * @param launcher The LauncherSubsystem to be controlled by this command.
+   */
   public LauncherOn(LauncherSubsystem launcher) {
-    // Use addRequirements() here to declare subsystem dependencies.
     this.m_launcher = launcher;
+    // This command should require the LauncherSubsystem to prevent other commands from
+    // interfering with launcher operation.
+    addRequirements(this.m_launcher);
   }
 
   // Called when the command is initially scheduled.
@@ -23,19 +35,24 @@ public class LauncherOn extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Calculate the target launcher speed based on vision data (e.g., distance to target).
     double launcherSpeed = m_launcher.calculateRPMFromLimeLight();
+    // Set the launcher motor to the calculated velocity.
     this.m_launcher.setLauncherVelocity(launcherSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    // Stop the launcher motor completely when the command ends or is interrupted.
     this.m_launcher.stopLauncher();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // This command is designed to run indefinitely until interrupted,
+    // for example, by releasing a button or another command taking over.
     return false;
   }
 }
