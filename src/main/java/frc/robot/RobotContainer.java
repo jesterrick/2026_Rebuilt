@@ -11,6 +11,7 @@ import frc.robot.commands.ExtenderIn;
 import frc.robot.commands.ExtenderOut;
 import frc.robot.commands.FeederOff;
 import frc.robot.commands.FeederOn;
+import frc.robot.commands.HomeClimber;
 import frc.robot.commands.HomeExtender;
 import frc.robot.commands.IntakeEject;
 import frc.robot.commands.IntakeReceive;
@@ -216,6 +217,9 @@ public class RobotContainer {
 
     // 2. Wrap it: Run HomeExtender FIRST, then run the selected auto
     // This ensures the extender is in a known state before autonomous actions begin.
-    return new HomeExtender(m_Extender).andThen(selectedAuto);
+    return Commands.parallel(
+        new HomeExtender(m_Extender),
+        new HomeClimber(m_Climber)
+    ).andThen(selectedAuto);
   }
 }

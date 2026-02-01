@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import frc.robot.utils.RobotUtils;
+
 /**
  * The ExtenderConstants class centralizes all constant values related to the robot's extender mechanism.
  * This includes motor speeds, extension limits, physical conversion factors (e.g., inches per rotation),
@@ -8,7 +10,7 @@ package frc.robot.constants;
 public class ExtenderConstants {
 
     /** Default speed for the extender motor during operation. */
-    public static final double kExtenderMotorSpeed = 0.05;
+    public static final double kExtenderMotorSpeed = 0.15;
     /** The target position for the extender when fully retracted, in inches. */
     public static final double kExtenderMotorIn = 0.0;
     /** The target position for the extender when fully extended, in inches. */
@@ -27,14 +29,20 @@ public class ExtenderConstants {
      * Conversion factor to translate motor rotations into inches of extension.
      * Calculated as (1.0 / kGearRatio) * kInchesPerRotation.
      */
-    public static final double kPositionFactor = (1.0 / kGearRatio) * kInchesPerRotation;
+    public static final double kPositionFactor = RobotUtils.calculateLinearFactor(kGearRatio, pitchDiameter);;
+    public static final double kVelocityFactor = RobotUtils.toVelocityPerSecond(kPositionFactor);
+
+    public static final double kExtenderFF = 0.5;
+    public static final double kExtenderStatic = 0.2;
 
     /** Proportional gain for the extender's position PID controller. */
-    public static final double kIntakeP = 4.0;
+    public static final double kExtenderP = 4.0;
     /** Integral gain for the extender's position PID controller. */
-    public static final double kIntakeI = 0.0;
+    public static final double kExtenderI = 0.0;
     /** Derivative gain for the extender's position PID controller. */
-    public static final double kIntakeD = 0.03;
+    public static final double kExtenderD = 0.03;
+
+    public static final double kExtenderAllowedError = 0.10;
 
     /** Acceleration constant for the extender, likely used in motion profiling or trapezoidal control. */
     public static final double kExtAcceleration = .10;
@@ -50,4 +58,6 @@ public class ExtenderConstants {
     public static final double kSyncP = 0.1;
     /** Tolerance for checking if the extender has reached its target position, in inches. */
     public static final double kAtTargetTolerance = 0.1;
+
+    public static final double kExtenderCruiseVelocity = NeoMotorConstants.kFreeSpeedRpm * kExtenderMotorSpeed * kVelocityFactor;
 }

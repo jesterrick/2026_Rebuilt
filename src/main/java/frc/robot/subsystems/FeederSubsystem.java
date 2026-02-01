@@ -43,6 +43,6 @@ public class FeederSubsystem extends SubsystemBase {
    * Stops the feeder motor.
    */
   public void stopFeeder() {
-    this.m_FeederMotor.set(0);
+    this.m_FeederMotor.stopMotor();
   }
 }

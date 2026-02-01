@@ -16,12 +16,17 @@ public class LauncherConfigs {
     public static final SparkMaxConfig config = new SparkMaxConfig();
     
     static {
+        config.encoder
+            .positionConversionFactor(LauncherConstants.kPositionFactor)
+            .velocityConversionFactor(LauncherConstants.kPositionFactor);
+
         config.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pid(LauncherConstants.kLauncherP, LauncherConstants.kLauncherI, LauncherConstants.kLauncherD);
         
         config.closedLoop.feedForward
-        .kV(LauncherConstants.kLauncherkV);
+        .kV(LauncherConstants.kLauncherkV)
+        .kS(LauncherConstants.kLauncherStatic);
 
         config.inverted(false);        
         config.idleMode(IdleMode.kCoast); 

@@ -10,8 +10,14 @@ package frc.robot.constants;
  */
 public class FeederConstants {
 
-    /** The speed at which the feeder motor is stopped (0.0 for off). */
-    public static final double kFeederMotorStop = 0.0;
     /** The default operational speed for the feeder motor. */
     public static final double kFeederSpeed = 0.5;
+
+    // direct motor - no gears, sprockets, chains etc.
+    // measure with direct RPM
+    public static final double kPositionFactor = 1.0;
+    public static final double kVelocityFactor = 1.0;
+
+    public static final double kFeederFF = 0.2;
+    public static final double kFeederStatic = 0.02;
 }

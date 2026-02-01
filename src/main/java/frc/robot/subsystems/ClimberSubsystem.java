@@ -32,6 +32,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   /** The target position for the climber, in encoder units (usually inches or rotations). */
   private double m_targetPosition = 0.0;
+  private boolean m_isHomed = false;
 
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
@@ -61,7 +62,7 @@ public class ClimberSubsystem extends SubsystemBase {
    * Sets the target position for the climber to its maximum extended position.
    * The actual movement will be handled in the `periodic()` method by the PID controller.
    */
-  public  void climberUp()
+  public void climberUp()
   {
     this.m_targetPosition = ClimberConstants.kClimberMaxExtend;
   }
@@ -92,5 +93,20 @@ public class ClimberSubsystem extends SubsystemBase {
   {
     this.m_targetPosition = getClimberHeight();
     this.m_ClimberLeaderMotor.stopMotor();
+  }
+
+  public void resetEncoders()
+  {
+    this.m_ClimberLeaderMotor.getEncoder().setPosition(0.0);
+    this.m_targetPosition = 0; // Reset target to zero
+    this.m_isHomed = true;
+  }
+
+   public double getLeaderCurrent() {
+    return this.m_ClimberLeaderMotor.getOutputCurrent();
+  }
+
+   public void setHomingVoltages(double voltage) {
+    this.m_ClimberLeaderMotor.setVoltage(voltage);
   }
 }

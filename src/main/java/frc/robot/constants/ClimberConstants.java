@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import frc.robot.utils.RobotUtils;
+
 /**
  * The ClimberConstants class stores constant values related to the robot's climber mechanism.
  * This includes motor speeds, extension limits, gear ratios, and PID controller gains
@@ -25,16 +27,27 @@ public class ClimberConstants {
      * Conversion factor to translate motor rotations into inches of extension.
      * Calculated as (1 / GearRatio) * InchesPerRotation.
      */
-    public static final double kPositionFactor = (1.0 / kGearRatio) * kInchesPerRotation;
+    public static final double kPositionFactor = RobotUtils.calculateLinearFactor(kGearRatio, pitchDiameter);;
+    public static final double kVelocityFactor = RobotUtils.toVelocityPerSecond(kPositionFactor);
+
+    public static final double kClimberFF = 0.5;
+    public static final double kClimberGravity = 0.08;
+    public static final double kClimberStatic = 0.2;
 
     /** Proportional gain for the climber's position PID controller. */
-    public static final double kIntakeP = 4.0;
+    public static final double kClimberP = 4.0;
     /** Integral gain for the climber's position PID controller. */
-    public static final double kIntakeI = 0.0;
+    public static final double kClimberI = 0.0;
     /** Derivative gain for the climber's position PID controller. */
-    public static final double kIntakeD = 0.03;
+    public static final double kClimberD = 0.03;
+
+    public static final double kClimberAllowedError = 0.1;
 
     /** Acceleration constant for the extender, likely used in motion profiling or trapezoidal control. */
-    public static final double kExtAcceleration = .10;
+    public static final double kClimberAcceleration = .10;
 
+    public static final double kClimberCruiseVelocity = NeoMotorConstants.kFreeSpeedRpm * kClimberMotorSpeed * kVelocityFactor;
+
+    public static final double kHomingVoltage = -1.5;
+    public static final double kMaxHomingVoltage = 10.0;
 }

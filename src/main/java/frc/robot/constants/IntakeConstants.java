@@ -12,4 +12,12 @@ public class IntakeConstants {
 
     /** The default operational speed for the intake motor. */
     public static final double kIntakeMotorSpeed = 0.5;
+
+    public static final double kIntakeFF = 0.2;
+    public static final double kIntakeStatic = 0.02;
+
+    // direct motor - no gears, sprockets, chains etc.
+    // measure with direct RPM
+    public static final double kPositionFactor = 1.0;
+    public static final double kVelocityFactor = 1.0;
 }
