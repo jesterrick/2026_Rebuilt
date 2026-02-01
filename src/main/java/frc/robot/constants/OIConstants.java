@@ -14,4 +14,6 @@ public class OIConstants {
     public static final int kLauncherIdleOnButton = 16;
     public static final int kLauncherIdleOffButton = 17;
     public static final int kExtenderHomeButton = 8;
+    public static final int kClimberExtendButton = 1;
+    public static final int kClimberRetractButton = 2;
 }

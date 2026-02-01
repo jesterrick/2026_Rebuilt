@@ -5,9 +5,33 @@
 package frc.robot;
 
 import frc.robot.commands.Autos;
+import frc.robot.commands.ClimberExtend;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.ExtenderIn;
+import frc.robot.commands.ExtenderOut;
+import frc.robot.commands.FeederOff;
+import frc.robot.commands.FeederOn;
+import frc.robot.commands.HomeExtender;
+import frc.robot.commands.IntakeEject;
+import frc.robot.commands.IntakeReceive;
+import frc.robot.commands.IntakeStop;
+import frc.robot.commands.RollerForward;
+import frc.robot.commands.RollerOff;
+import frc.robot.commands.RollerReverse;
+import frc.robot.commands.LauncherIdle;
+import frc.robot.commands.LauncherOff;
+import frc.robot.commands.LauncherOn;
+import frc.robot.commands.ClimberRetract;
+
 import frc.robot.constants.OIConstants;
+
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ExtenderSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.Rollers;
+import frc.robot.subsystems.LauncherSubsystem;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,26 +40,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ExtenderIn;
-import frc.robot.commands.ExtenderOut;
-import frc.robot.commands.FeederOn;
-import frc.robot.commands.HomeExtender;
-import frc.robot.commands.IntakeEject;
-import frc.robot.commands.IntakeReceive;
-import frc.robot.commands.IntakeStop;
-import frc.robot.commands.RollerForward;
-import frc.robot.commands.RollerReverse;
-import frc.robot.commands.LauncherIdle;
-import frc.robot.commands.LauncherOff;
-import frc.robot.commands.LauncherOn;
-import frc.robot.subsystems.ExtenderSubsystem;
-import frc.robot.subsystems.FeederSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.Rollers;
-import frc.robot.subsystems.LauncherSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -54,13 +59,13 @@ public class RobotContainer {
   private final ExtenderSubsystem m_Extender = new ExtenderSubsystem();
   private final Rollers m_Rollers = new Rollers();
   private final FeederSubsystem m_Feeder = new FeederSubsystem();
+  private final ClimberSubsystem m_Climber = new ClimberSubsystem();
+
   private boolean m_fieldRelative = true;
 
   // The driver's controller
   Joystick m_driverJoystick = new Joystick(OIConstants.kDriverJoystickPort);
   Joystick m_operatorJoystick = new Joystick(OIConstants.kOperatorJoystickPort);
-  // JoystickButton LauncherOn = new JoystickButton(m_operatorJoystick,
-  // OIConstants.kLauncherButton);
   JoystickButton intakeRecieve = new JoystickButton(m_operatorJoystick, OIConstants.kIntakeReceiveButton);
   JoystickButton intakeEject = new JoystickButton(m_operatorJoystick, OIConstants.kIntakeEjectButton);
   JoystickButton launch = new JoystickButton(m_operatorJoystick, OIConstants.kLauncherButton);
@@ -69,6 +74,8 @@ public class RobotContainer {
   JoystickButton launcherIdleOn = new JoystickButton(m_operatorJoystick, OIConstants.kLauncherIdleOnButton);
   JoystickButton launcherIdleOff = new JoystickButton(m_operatorJoystick, OIConstants.kLauncherIdleOffButton);
   JoystickButton homeExtender = new JoystickButton(m_operatorJoystick, OIConstants.kExtenderHomeButton);
+  JoystickButton climbExtend = new JoystickButton(m_operatorJoystick, OIConstants.kClimberExtendButton);
+  JoystickButton climbRetract = new JoystickButton(m_operatorJoystick, OIConstants.kClimberRetractButton);
 
   // A chooser for autonomous commands
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
@@ -97,20 +104,6 @@ public class RobotContainer {
     SmartDashboard.putData("Auto choices", m_autoChooser);
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be
-   * created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-   * an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-   * {@link
-   * CommandXboxController
-   * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or
-   * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
   private void configureBindings() {
     // LauncherOn.whileTrue(new LauncherOn(this.m_Launcher));
     intakeRecieve.whileTrue(
@@ -134,21 +127,38 @@ public class RobotContainer {
     launch.whileTrue(
         new ParallelCommandGroup(
             new RollerForward(m_Rollers),
-            new LauncherOn(m_Launcher)
-          ).andThen(
-            new WaitUntilCommand(() -> m_Launcher.atSpeed()),
-            new FeederOn(m_Feeder)
-          )
-    );
+            new LauncherOn(m_Launcher),
+            new WaitUntilCommand(() -> m_Launcher.atSpeed()).andThen(
+                new FeederOn(m_Feeder)
+            )
+        ).onlyIf(m_Launcher::isBallPresent)); // Only starts if there's actually a ball to shoot;
 
     homeExtender.onTrue(
-      new HomeExtender(m_Extender));
+        new HomeExtender(m_Extender));
 
     launcherIdleOn.onTrue(
         new LauncherIdle(m_Launcher));
 
     launcherIdleOff.onTrue(
         new LauncherOff(m_Launcher));
+
+    climbExtend.whileTrue(
+      new ParallelCommandGroup(
+        new LauncherOff(m_Launcher),
+        new RollerOff(m_Rollers),
+        new IntakeStop(m_Intake),
+        new FeederOff(m_Feeder),
+        new ClimberExtend(m_Climber)
+        ));
+
+    climbRetract.whileTrue(
+      new ParallelCommandGroup(
+        new LauncherOff(m_Launcher),
+        new RollerOff(m_Rollers),
+        new IntakeStop(m_Intake),
+        new FeederOff(m_Feeder),
+        new ClimberRetract(m_Climber)
+        ));
 
     // new Trigger(() -> m_driverJoystick.getRawButton(1))
     // .onTrue(new InstantCommand(() -> m_fieldRelative = !m_fieldRelative));

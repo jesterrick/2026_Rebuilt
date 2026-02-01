@@ -14,14 +14,17 @@ public class CanIdConstants {
 
    // CAN IDs for the Extender
     public static final int kExtenderMotor1 = 9;
-    public static final int kExtenderMotor2 = 9;
+    public static final int kExtenderMotor2 = 10;
 
+    // CAN IDs for Climber
+    public static final int kClimberMotor1 = 11;
+    public static final int kClimberMotor2 = 12;
 
    // CAN IDs for the Intake
-    public static final int kIntakeMotor = 18;
+    public static final int kIntakeMotor = 13;
 
    // CAN IDs for the Rollers
-    public static final int kRollerMotor = 17;
+    public static final int kRollerMotor = 14;
 
    // CAN IDs for the Feeder
     public static final int kFeederMotor = 16;

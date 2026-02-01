@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.MathUtil;
 import frc.robot.configs.LauncherConfigs;
 import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.LauncherConstants;
@@ -41,29 +42,40 @@ public class LauncherSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if there isn't any other command for the launcher
-    if (this.getCurrentCommand() == null) {
-      // if there is a ball in the hopper
-      if (isBallPresent()) {
-        this.targetRPM = LauncherConstants.kLauncherMotorSpeedIdle;
+    boolean ballPresent = isBallPresent();
+
+    // 1. Manage the Timer
+    if (ballPresent) {
         m_emptyTimer.reset();
         m_emptyTimer.stop();
-      } else {
+    } else {
         m_emptyTimer.start();
-
-        // If 3 seconds pass without a ball, shut down to save battery
-        if (m_emptyTimer.hasElapsed(LauncherConstants.kWaitForEmptyTime)) {
-          this.targetRPM = 0.0;
-        }
-      }
     }
 
-    // Only use the PID controller if we have a target speed.
-    // Otherwise, let the motor be still or coast.
+    // 2. Decision Engine
+    if (this.getCurrentCommand() != null) {
+        // While the button is held, the command (LauncherOn) controls the speed.
+        // The timer is ignored because the driver wants to shoot.
+    } 
+    else if (!ballPresent && m_emptyTimer.hasElapsed(LauncherConstants.kWaitForEmptyTime)) {
+        // Scenario A: Hopper is empty AND 3 seconds have passed. 
+        // SHUT DOWN completely.
+        this.targetRPM = 0.0;
+    } 
+    else if (ballPresent) {
+        // Scenario B: Ball is sitting in the hopper, but we aren't shooting.
+        // Stay at IDLE.
+        this.targetRPM = LauncherConstants.kLauncherMotorSpeedIdle;
+    }
+    // Scenario C: Ball just left (timer < 3s) and no command is running.
+    // The targetRPM will naturally stay at whatever it was last (High Speed) 
+    // until the timer hits 3 seconds, then it will hit Scenario A and shut off.
+
+    // 3. Actuator Output
     if (this.targetRPM > 0) {
-      this.m_ClosedLoopController.setSetpoint(this.targetRPM, ControlType.kVelocity);
+        this.m_ClosedLoopController.setSetpoint(this.targetRPM, ControlType.kVelocity);
     } else {
-      this.m_LauncherMotor.stopMotor();
+        this.m_LauncherMotor.stopMotor();
     }
 
     // This sends two lines to a graph so you can see them overlap
@@ -122,7 +134,9 @@ public class LauncherSubsystem extends SubsystemBase {
       double distance = (LauncherConstants.kAprilTagHeight - LauncherConstants.kCameraHeight) /
           Math.tan(Math.toRadians(LauncherConstants.kMountAngle + ty));
 
-      return (distance * LauncherConstants.kRPMPerInch) + LauncherConstants.kBaseRPM;
+      double calculatedRPM = (distance * LauncherConstants.kRPMPerInch) + LauncherConstants.kBaseRPM;
+      // Clamps the speed between your minimum viable shot and your maximum safe speed
+      return MathUtil.clamp(calculatedRPM, LauncherConstants.kLaunchMinRPM, LauncherConstants.kLaunchMaxRPM);
     } else {
       // IMPORTANT: Return IDLE if we lose the target.
       // This will cause atSpeed() to become FALSE immediately, stopping the feeder.

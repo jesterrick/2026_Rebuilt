@@ -17,8 +17,7 @@ public class ExtenderSubsystem extends SubsystemBase {
   private final SparkMax m_ExtenderLeaderMotor;
   private final SparkMax m_ExtenderFollowMotor;
   private final SparkClosedLoopController m_LeaderController;
-  private final SparkClosedLoopController m_FollowController;
-  
+  private final SparkClosedLoopController m_FollowController;  
   
   private double m_globalTargetInches = 0.0;
   private boolean m_isHomed = false; // Track if the box is squared and zeroed

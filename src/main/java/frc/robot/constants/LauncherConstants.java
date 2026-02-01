@@ -12,6 +12,9 @@ public class LauncherConstants {
     public static final double kLauncherTolerance = 50.0;
     public static final double kLaunchMinShotBuffer = 500;
 
+    public static final double kLaunchMinRPM = 1500;
+    public static final double kLaunchMaxRPM = 4500;
+
     public static final int kLauncherIdleSensor = 0;
     public static final double kWaitForEmptyTime = 3.0;
 
