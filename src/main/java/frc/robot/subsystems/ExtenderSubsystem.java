@@ -158,21 +158,23 @@ public class ExtenderSubsystem extends SubsystemBase {
     m_ExtenderFollowMotor.setVoltage(voltage);
   }
 
-  /**
-   * Retrieves the output current of the leader extender motor.
-   * Useful for detecting if the motor is stalled or hitting a physical limit during homing.
-   * @return The output current of the leader motor in Amperes.
-   */
-  public double getLeaderCurrent() {
-    return m_ExtenderLeaderMotor.getOutputCurrent();
+  public boolean isAtHome()
+  {
+    return m_ExtenderLeaderMotor.getOutputCurrent() > ExtenderConstants.kMaxHomingVoltage && m_ExtenderFollowMotor.getOutputCurrent() > ExtenderConstants.kMaxHomingVoltage;
   }
 
-  /**
-   * Retrieves the output current of the follower extender motor.
-   * Useful for detecting if the motor is stalled or hitting a physical limit during homing.
-   * @return The output current of the follower motor in Amperes.
-   */
-  public double getFollowerCurrent() {
-    return m_ExtenderFollowMotor.getOutputCurrent();
+  public void setIsHomed(boolean homed)
+  {
+    this.m_isHomed = homed;
+  }
+
+  public void prepareForHoming()
+  {
+    m_ExtenderLeaderMotor.configure(ExtenderConfigs.homingConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+  }
+
+  public void enableSoftLimits()
+  {
+    m_ExtenderLeaderMotor.configure(ExtenderConfigs.leaderConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 }

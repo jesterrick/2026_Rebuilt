@@ -50,12 +50,20 @@ public class ClimberSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     double climberPos = getClimberHeight();
-
-    // Set the leader motor's target position using a motion position control loop
-    this.m_LeaderController.setSetpoint(m_targetPosition, ControlType.kMAXMotionPositionControl);
-
+    if (m_isHomed) {
+      // Set the leader motor's target position using a motion position control loop
+      this.m_LeaderController.setSetpoint(m_targetPosition, ControlType.kMAXMotionPositionControl);
+    }
     // Update SmartDashboard with current climber height for debugging and monitoring
-    SmartDashboard.putNumber("Climber Height", climberPos);
+    SmartDashboard.putNumber("Climber/Height", climberPos);
+    SmartDashboard.putBoolean("Climber/Is Homed", m_isHomed);
+
+    // Provide a warning on SmartDashboard if the robot is enabled but the extender is not homed
+    if (!m_isHomed) {
+      SmartDashboard.putString("Climber/Status", "RE-ZERO REQUIRED");
+    } else {
+      SmartDashboard.putString("Climber/Status", "READY");
+    }
   }
 
   /**
@@ -64,6 +72,7 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public void climberUp()
   {
+    if (!m_isHomed) return; 
     this.m_targetPosition = ClimberConstants.kClimberMaxExtend;
   }
 
@@ -73,6 +82,7 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public void climberDown()
   {
+    if (!m_isHomed) return; 
     this.m_targetPosition = ClimberConstants.kClimberZero;
   }
 
@@ -99,7 +109,11 @@ public class ClimberSubsystem extends SubsystemBase {
   {
     this.m_ClimberLeaderMotor.getEncoder().setPosition(0.0);
     this.m_targetPosition = 0; // Reset target to zero
-    this.m_isHomed = true;
+  }
+
+  public void setIsHomed(boolean homed)
+  {
+    this.m_isHomed = homed;
   }
 
    public double getLeaderCurrent() {
@@ -108,5 +122,20 @@ public class ClimberSubsystem extends SubsystemBase {
 
    public void setHomingVoltages(double voltage) {
     this.m_ClimberLeaderMotor.setVoltage(voltage);
+  }
+
+  public boolean isAtBottom() {
+    // If the motor is drawing more than our threshold, it has hit the mechanical stop
+    return m_ClimberLeaderMotor.getOutputCurrent() > ClimberConstants.kMaxHomingVoltage;
+  }
+
+  public void prepareForHoming()
+  {
+    m_ClimberLeaderMotor.configure(ClimberConfigs.homingConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+  }
+
+  public void enableSoftLimits()
+  {
+    m_ClimberLeaderMotor.configure(ClimberConfigs.leaderConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 }

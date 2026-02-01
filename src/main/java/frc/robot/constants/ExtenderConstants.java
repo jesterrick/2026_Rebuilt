@@ -51,6 +51,7 @@ public class ExtenderConstants {
     public static final double kHomingVoltage = -1.5;
     /** Maximum allowed voltage during the homing process. */
     public static final double kMaxHomingVoltage = 10.0;
+    
     /** Maximum allowed difference in position between the leader and follower motors before an error is flagged, in inches. */
     public static final double kMaxPositionDifference = 0.5;
 

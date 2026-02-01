@@ -11,6 +11,7 @@ public class ExtenderConfigs {
     public static final SparkMaxConfig leaderConfig = new SparkMaxConfig();
     public static final SparkMaxConfig followConfig = new SparkMaxConfig();
 
+    public static final SparkMaxConfig homingConfig = new SparkMaxConfig();
     private static boolean leaderInverted = false;
 
     static {
@@ -46,8 +47,14 @@ public class ExtenderConfigs {
 
         followConfig.inverted(!leaderInverted); 
 
-        followConfig.softLimit.forwardSoftLimitEnabled(false);
-        followConfig.softLimit.reverseSoftLimitEnabled(false);
+        followConfig.softLimit
+            .forwardSoftLimitEnabled(false)
+            .reverseSoftLimitEnabled(false);
     
+        homingConfig.apply(leaderConfig);
+
+        homingConfig.softLimit
+            .forwardSoftLimitEnabled(false)
+            .reverseSoftLimitEnabled(false);
     }
 }

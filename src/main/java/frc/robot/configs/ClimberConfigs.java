@@ -13,6 +13,7 @@ import frc.robot.constants.GlobalConstants;
 public class ClimberConfigs {
     public static final SparkMaxConfig leaderConfig = new SparkMaxConfig();
     public static final SparkMaxConfig followConfig = new SparkMaxConfig();
+    public static final SparkMaxConfig homingConfig = new SparkMaxConfig();
 
     private static boolean leaderInverted = false;
 
@@ -51,6 +52,10 @@ public class ClimberConfigs {
 
         followConfig.softLimit.forwardSoftLimitEnabled(false);
         followConfig.softLimit.reverseSoftLimitEnabled(false);
+
+        homingConfig.apply(leaderConfig);
+        homingConfig.softLimit.forwardSoftLimitEnabled(false);
+        homingConfig.softLimit.reverseSoftLimitEnabled(false);
     
     }
 }

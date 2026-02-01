@@ -34,7 +34,9 @@ public class HomeExtender extends Command {
    * No specific initialization is required for this command.
    */
   @Override
-  public void initialize() {}
+  public void initialize() {
+    this.m_extender.prepareForHoming();
+  }
 
   /**
    * Called every time the scheduler runs while the command is scheduled.
@@ -42,7 +44,7 @@ public class HomeExtender extends Command {
    */
   @Override
   public void execute() {
-    m_extender.setHomingVoltages(ExtenderConstants.kHomingVoltage);
+    this.m_extender.setHomingVoltages(ExtenderConstants.kHomingVoltage);
   }
 
   /**
@@ -53,8 +55,14 @@ public class HomeExtender extends Command {
    */
   @Override
   public void end(boolean interrupted) {
-    m_extender.resetEncoders(); // Set the new 0 point after homing is complete.
-    m_extender.stop();          // Turn motors off to prevent further movement.
+    this.m_extender.stop();
+
+    if (!interrupted)
+    {
+      this.m_extender.resetEncoders(); // Set the new 0 point after homing is complete.
+      this.m_extender.setIsHomed(true);
+    }
+    this.m_extender.enableSoftLimits();
   }
 
   /**
@@ -65,6 +73,6 @@ public class HomeExtender extends Command {
    */
   @Override
   public boolean isFinished() {
-    return m_extender.getLeaderCurrent() > ExtenderConstants.kMaxHomingVoltage && m_extender.getFollowerCurrent() > ExtenderConstants.kMaxHomingVoltage;
+    return this.m_extender.isAtHome();
   }
 }

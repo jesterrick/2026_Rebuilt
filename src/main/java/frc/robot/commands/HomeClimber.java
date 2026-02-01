@@ -20,7 +20,9 @@ public class HomeClimber extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_climber.prepareForHoming();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -31,13 +33,20 @@ public class HomeClimber extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_climber.resetEncoders();
     m_climber.stop();
+
+    if (!interrupted)
+    {
+      m_climber.resetEncoders();
+      m_climber.setIsHomed(true);
+    }
+
+    m_climber.enableSoftLimits();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_climber.getLeaderCurrent() > ClimberConstants.kMaxHomingVoltage;
+    return m_climber.isAtBottom();
   }
 }
