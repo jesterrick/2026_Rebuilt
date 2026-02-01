@@ -8,33 +8,61 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ExtenderSubsystem;
 import frc.robot.constants.ExtenderConstants;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * The HomeExtender command is responsible for homing the robot's extender mechanism.
+ * This typically involves driving the extender inwards at a set voltage until a stall
+ * condition (indicated by high current draw) is met, then resetting the encoders
+ * to establish a known zero position.
+ */
 public class HomeExtender extends Command {
+  /** The ExtenderSubsystem instance that this command will control. */
   private final ExtenderSubsystem m_extender;
-  /** Creates a new HomeExtender. */
+  
+  /**
+   * Creates a new HomeExtender command.
+   *
+   * @param extender The ExtenderSubsystem to be controlled by this command.
+   */
   public HomeExtender(ExtenderSubsystem extender) {
     this.m_extender = extender;
+    // Declare that this command requires the ExtenderSubsystem, ensuring exclusive access.
     addRequirements(this.m_extender);
   }
 
-  // Called when the command is initially scheduled.
+  /**
+   * Called when the command is initially scheduled.
+   * No specific initialization is required for this command.
+   */
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
+  /**
+   * Called every time the scheduler runs while the command is scheduled.
+   * This method continuously sets a homing voltage to drive the extender inward.
+   */
   @Override
   public void execute() {
     m_extender.setHomingVoltages(ExtenderConstants.kHomingVoltage);
   }
 
-  // Called once the command ends or is interrupted.
+  /**
+   * Called once the command ends or is interrupted.
+   * When homing is complete (or interrupted), the encoders are reset to zero
+   * and the motors are stopped.
+   * @param interrupted True if the command was interrupted by another, false otherwise.
+   */
   @Override
   public void end(boolean interrupted) {
-    m_extender.resetEncoders(); // Set the new 0 point
-    m_extender.stop();          // Turn motors off
+    m_extender.resetEncoders(); // Set the new 0 point after homing is complete.
+    m_extender.stop();          // Turn motors off to prevent further movement.
   }
 
-  // Returns true when the command should end.
+  /**
+   * Returns true when the command should end.
+   * The command finishes when both the leader and follower motors of the extender
+   * detect a current draw exceeding the maximum homing voltage, indicating a stall.
+   * @return True if the extender is stalled (homed), false otherwise.
+   */
   @Override
   public boolean isFinished() {
     return m_extender.getLeaderCurrent() > ExtenderConstants.kMaxHomingVoltage && m_extender.getFollowerCurrent() > ExtenderConstants.kMaxHomingVoltage;

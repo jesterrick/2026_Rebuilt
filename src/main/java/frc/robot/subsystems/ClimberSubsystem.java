@@ -17,12 +17,22 @@ import frc.robot.configs.ClimberConfigs;
 import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.ClimberConstants;
 
+/**
+ * The ClimberSubsystem controls the robot's climbing mechanism.
+ * It manages two motors to extend and retract the climber, using PID control
+ * to maintain target positions.
+ */
 public class ClimberSubsystem extends SubsystemBase {
+  /** The lead motor for the climber mechanism. */
   private final SparkMax m_ClimberLeaderMotor;
+  /** The follower motor for the climber mechanism, synchronized with the leader. */
   private final SparkMax m_ClimberFollowMotor;
+  /** Closed-loop controller for the leader motor. */
   private final SparkClosedLoopController m_LeaderController;
+  /** Closed-loop controller for the follower motor. */
   private final SparkClosedLoopController m_FollowController;
 
+  /** The target position for the climber, in encoder units (usually inches or rotations). */
   private double m_targetPosition = 0.0;
 
   /** Creates a new ClimberSubsystem. */
@@ -33,34 +43,54 @@ public class ClimberSubsystem extends SubsystemBase {
     this.m_LeaderController = m_ClimberLeaderMotor.getClosedLoopController();
     this.m_FollowController = m_ClimberFollowMotor.getClosedLoopController();
 
+    // Configure both leader and follower motors with predefined configurations
     this.m_ClimberLeaderMotor.configure(ClimberConfigs.leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     this.m_ClimberFollowMotor.configure(ClimberConfigs.followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
   public void periodic() {
+    // This method will be called once per scheduler run
     double climberPos = getClimberHeight();
 
+    // Set the leader motor's target position using a motion position control loop
     this.m_LeaderController.setSetpoint(m_targetPosition, ControlType.kMAXMotionPositionControl);
 
+    // Update SmartDashboard with current climber height for debugging and monitoring
     SmartDashboard.putNumber("Climber Height", climberPos);
   }
 
+  /**
+   * Sets the target position for the climber to its maximum extended position.
+   * The actual movement will be handled in the `periodic()` method by the PID controller.
+   */
   public  void climberUp()
   {
     this.m_targetPosition = ClimberConstants.kClimberMaxExtend;
   }
 
+  /**
+   * Sets the target position for the climber to its zero (retracted) position.
+   * The actual movement will be handled in the `periodic()` method by the PID controller.
+   */
   public void climberDown()
   {
     this.m_targetPosition = ClimberConstants.kClimberZero;
   }
 
+  /**
+   * Retrieves the current height of the climber from the follower motor's encoder.
+   * @return The current height of the climber in encoder units (e.g., inches).
+   */
   private double getClimberHeight()
   {
     return this.m_ClimberFollowMotor.getEncoder().getPosition();
   }
 
+  /**
+   * Stops the climber motors and holds the current position.
+   * The target position is updated to the current height to prevent further movement.
+   */
   public void stop()
   {
     this.m_targetPosition = getClimberHeight();

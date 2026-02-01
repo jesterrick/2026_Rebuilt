@@ -9,18 +9,24 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
- * The methods in this class are called automatically corresponding to each mode, as described in
- * the TimedRobot documentation. If you change the name of this class or the package after creating
- * this project, you must also update the Main.java file in the project.
+ * The VM is configured to automatically run this class, and to call the methods corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the Main.java file in the project.
+ *
+ * This class is the main robot class and is responsible for managing the robot's lifecycle,
+ * including initialization, periodic updates for different robot modes (Disabled, Autonomous,
+ * Teleoperated, Test, Simulation), and scheduling commands.
  */
 public class Robot extends TimedRobot {
+  /** The command that will be run during the autonomous period. */
   private Command m_autonomousCommand;
 
+  /** The RobotContainer object, which handles all button bindings and autonomous command selection. */
   private final RobotContainer m_robotContainer;
 
   /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
+   * Constructs the Robot class. This function is run when the robot is first started up and
+   * should be used for any initialization code.
    */
   public Robot() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -44,28 +50,44 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
   }
 
-  /** This function is called once each time the robot enters Disabled mode. */
+  /**
+   * This function is called once each time the robot enters Disabled mode.
+   * Any initialization specific to the disabled state should be performed here.
+   */
   @Override
   public void disabledInit() {}
 
+  /**
+   * This function is called periodically while the robot is in Disabled mode.
+   * Use this for tasks that need to run continuously during disabled.
+   */
   @Override
   public void disabledPeriodic() {}
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  /**
+   * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
+   * This function is called once each time the robot enters Autonomous mode.
+   */
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
+    // Schedule the autonomous command (if one is selected).
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
   }
 
-  /** This function is called periodically during autonomous. */
+  /**
+   * This function is called periodically during autonomous mode.
+   * Use this for tasks that need to run continuously during autonomous.
+   */
   @Override
   public void autonomousPeriodic() {}
 
+  /**
+   * This function is called once each time the robot enters Teleoperated mode.
+   */
   @Override
   public void teleopInit() {
     // This makes sure that the autonomous stops running when
@@ -77,25 +99,41 @@ public class Robot extends TimedRobot {
     }
   }
 
-  /** This function is called periodically during operator control. */
+  /**
+   * This function is called periodically during operator control mode (teleop).
+   * Use this for tasks that need to run continuously during teleop.
+   */
   @Override
   public void teleopPeriodic() {}
 
+  /**
+   * This function is called once each time the robot enters Test mode.
+   * It cancels all running commands to ensure a clean slate for testing.
+   */
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
 
-  /** This function is called periodically during test mode. */
+  /**
+   * This function is called periodically during test mode.
+   * Use this for tasks that need to run continuously during testing.
+   */
   @Override
   public void testPeriodic() {}
 
-  /** This function is called once when the robot is first started up. */
+  /**
+   * This function is called once when the robot is first started up in simulation.
+   * Any simulation-specific initialization code should be placed here.
+   */
   @Override
   public void simulationInit() {}
 
-  /** This function is called periodically whilst in simulation. */
+  /**
+   * This function is called periodically whilst in simulation.
+   * Use this for tasks that need to run continuously during simulation.
+   */
   @Override
   public void simulationPeriodic() {}
 }

@@ -4,7 +4,11 @@
 
 package frc.robot.constants;
 
-/** Add your docs here. */
+/**
+ * The RollerConstants class stores all constant values related to the robot's roller mechanism.
+ * These constants define motor speeds and other operational parameters for the rollers.
+ */
 public class RollerConstants {
+    /** The default operational speed for the roller motor. */
     public static final double kRollerSpeed = 0.5;
 }

@@ -7,13 +7,22 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimberSubsystem;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * The ClimberRetract command is responsible for retracting the robot's climber mechanism.
+ * It continuously commands the climber subsystem to move downwards until the command is interrupted.
+ */
 public class ClimberRetract extends Command {
+  /** The ClimberSubsystem instance that this command will control. */
   ClimberSubsystem m_climber;
 
-  /** Creates a new ClimberUp. */
+  /**
+   * Creates a new ClimberRetract command.
+   *
+   * @param climber The ClimberSubsystem to be controlled by this command.
+   */
   public ClimberRetract(ClimberSubsystem climber) {
     this.m_climber = climber;
+    // Declare that this command requires the ClimberSubsystem, ensuring exclusive access.
     addRequirements(this.m_climber);
   }
 
@@ -24,18 +33,22 @@ public class ClimberRetract extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Command the climber to move downwards (retract).
     this.m_climber.climberDown();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    // Stop the climber motors when the command ends or is interrupted.
     this.m_climber.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // This command is designed to run indefinitely until interrupted by another command
+    // or a button release, so it never explicitly finishes on its own.
     return false;
   }
 }

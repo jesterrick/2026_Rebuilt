@@ -1,5 +1,9 @@
 package frc.robot.constants;
 
+/**
+ * The CanIdConstants class centralizes all CAN IDs for the robot's motors,
+ * ensuring easy management and modification of hardware addresses.
+ */
 public class CanIdConstants {
     // CAN IDs for the Swerve Modules
     public static final int kFrontLeftTurningCanId = 1;

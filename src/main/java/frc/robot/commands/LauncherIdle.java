@@ -8,15 +8,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.LauncherConstants;
 import frc.robot.subsystems.LauncherSubsystem;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/**
+ * The LauncherIdle command is responsible for setting the robot's launcher mechanism
+ * to a predefined idle speed. This keeps the launcher spinning at a low RPM,
+ * ready for a quick ramp-up to launch speed.
+ */
 public class LauncherIdle extends Command {
+  /** The LauncherSubsystem instance that this command will control. */
   LauncherSubsystem m_Launcher;
 
-  /** Creates a new LauncherIdle. */
+  /**
+   * Creates a new LauncherIdle command.
+   *
+   * @param launcher The LauncherSubsystem to be controlled by this command.
+   */
   public LauncherIdle(LauncherSubsystem launcher) {
     this.m_Launcher = launcher;
     addRequirements(this.m_Launcher);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
@@ -26,18 +34,22 @@ public class LauncherIdle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Set the launcher motor to the predefined idle speed.
     this.m_Launcher.setLauncherVelocity(LauncherConstants.kLauncherMotorSpeedIdle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    // Stop the launcher motor completely when the command ends or is interrupted.
     this.m_Launcher.stopLauncher();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // This command is designed to run indefinitely until interrupted,
+    // for example, by releasing a button or another command taking over.
     return false;
   }
 }

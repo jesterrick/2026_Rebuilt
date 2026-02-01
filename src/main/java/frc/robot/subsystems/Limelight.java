@@ -11,18 +11,29 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.cscore.HttpCamera;
 
-
+/**
+ * The Limelight subsystem is responsible for initializing and managing the Limelight
+ * vision camera. It provides access to the Limelight's NetworkTable data and
+ * streams its video feed to the FRC Driver Station.
+ */
 public class Limelight extends SubsystemBase {
+  /** The NetworkTable instance for accessing Limelight data. */
   private final NetworkTable limelightTable;
-  /** Creates a new Limelight. */
+  
+  /**
+   * Constructs a new Limelight subsystem.
+   * Initializes the NetworkTable for the Limelight and starts streaming its video feed.
+   */
   public Limelight() {
     limelightTable = NetworkTableInstance.getDefault().getTable(VisionConstants.LIMELIGHT_NAME);
     HttpCamera limelightCamera = new HttpCamera(VisionConstants.LIMELIGHT_NAME, VisionConstants.LIMELIGHT_URL);
+    // Start automatically capturing the camera feed from the Limelight.
     CameraServer.startAutomaticCapture(limelightCamera);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    // Any periodic tasks for the Limelight (e.g., updating modes) can go here.
   }
 }
