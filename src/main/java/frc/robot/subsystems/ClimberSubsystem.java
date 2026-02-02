@@ -4,18 +4,12 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.configs.ClimberConfigs;
-import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.ClimberConstants;
+import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
  * The ClimberSubsystem controls the robot's climbing mechanism.
@@ -24,26 +18,15 @@ import frc.robot.constants.ClimberConstants;
  */
 public class ClimberSubsystem extends SubsystemBase {
   /** The lead motor for the climber mechanism. */
-  private final SparkMax m_ClimberLeaderMotor;
-  /** The follower motor for the climber mechanism, synchronized with the leader. */
-  private final SparkMax m_ClimberFollowMotor;
-  /** Closed-loop controller for the leader motor. */
-  private final SparkClosedLoopController m_LeaderController;
+  private final MotorControllerWrapper m_ClimberLeaderMotor;;
 
   /** The target position for the climber, in encoder units (usually inches or rotations). */
   private double m_targetPosition = 0.0;
   private boolean m_isHomed = false;
 
   /** Creates a new ClimberSubsystem. */
-  public ClimberSubsystem() {
-    this.m_ClimberLeaderMotor = new SparkMax(CanIdConstants.kClimberMotor1, MotorType.kBrushless);
-    this.m_ClimberFollowMotor = new SparkMax(CanIdConstants.kClimberMotor2, MotorType.kBrushless);
-
-    this.m_LeaderController = m_ClimberLeaderMotor.getClosedLoopController();
-
-    // Configure both leader and follower motors with predefined configurations
-    this.m_ClimberLeaderMotor.configure(ClimberConfigs.leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    this.m_ClimberFollowMotor.configure(ClimberConfigs.followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  public ClimberSubsystem(MotorControllerWrapper motor) {
+    this.m_ClimberLeaderMotor = motor;
   }
 
   @Override
@@ -52,7 +35,7 @@ public class ClimberSubsystem extends SubsystemBase {
     double climberPos = getClimberHeight();
     if (m_isHomed) {
       // Set the leader motor's target position using a motion position control loop
-      this.m_LeaderController.setSetpoint(m_targetPosition, ControlType.kMAXMotionPositionControl);
+      this.m_ClimberLeaderMotor.setTargetValue(m_targetPosition, ControlType.kMAXMotionPositionControl);
     }
     // Update SmartDashboard with current climber height for debugging and monitoring
     SmartDashboard.putNumber("Climber/Height", climberPos);
@@ -92,7 +75,7 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   private double getClimberHeight()
   {
-    return this.m_ClimberFollowMotor.getEncoder().getPosition();
+    return this.m_ClimberLeaderMotor.getPosition();
   }
 
   /**
@@ -102,12 +85,12 @@ public class ClimberSubsystem extends SubsystemBase {
   public void stop()
   {
     this.m_targetPosition = getClimberHeight();
-    this.m_ClimberLeaderMotor.stopMotor();
+    this.m_ClimberLeaderMotor.stop();
   }
 
   public void resetEncoders()
   {
-    this.m_ClimberLeaderMotor.getEncoder().setPosition(0.0);
+    this.m_ClimberLeaderMotor.setPosition(0.0);
     this.m_targetPosition = 0; // Reset target to zero
   }
 
@@ -117,25 +100,25 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
    public double getLeaderCurrent() {
-    return this.m_ClimberLeaderMotor.getOutputCurrent();
+    return this.m_ClimberLeaderMotor.getOuputVoltage();
   }
 
    public void setHomingVoltages(double voltage) {
-    this.m_ClimberLeaderMotor.setVoltage(voltage);
+    this.m_ClimberLeaderMotor.setOutputVoltage(voltage);
   }
 
   public boolean isAtBottom() {
     // If the motor is drawing more than our threshold, it has hit the mechanical stop
-    return m_ClimberLeaderMotor.getOutputCurrent() > ClimberConstants.kMaxHomingVoltage;
+    return m_ClimberLeaderMotor.getOuputVoltage() > ClimberConstants.kMaxHomingVoltage;
   }
 
   public void prepareForHoming()
   {
-    m_ClimberLeaderMotor.configure(ClimberConfigs.homingConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    m_ClimberLeaderMotor.setConfiguration(ClimberConfigs.homingConfig);
   }
 
   public void enableSoftLimits()
   {
-    m_ClimberLeaderMotor.configure(ClimberConfigs.leaderConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    m_ClimberLeaderMotor.setConfiguration(ClimberConfigs.leaderConfig);
   }
 }

@@ -4,12 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -17,11 +12,10 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.MathUtil;
-import frc.robot.configs.LauncherConfigs;
-import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.LauncherConstants;
 import frc.robot.constants.VisionConstants;
-import frc.robot.utils.VisionUtils;
+import frc.robot.util.VisionUtils;
+import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
  * The LauncherSubsystem controls the robot's launcher mechanism.
@@ -31,9 +25,7 @@ import frc.robot.utils.VisionUtils;
  */
 public class LauncherSubsystem extends SubsystemBase {
   /** The motor responsible for driving the launcher mechanism. */
-  private final SparkMax m_LauncherMotor;
-  /** Closed-loop controller for the launcher motor, used for velocity control. */
-  private final SparkClosedLoopController m_ClosedLoopController;
+  private final MotorControllerWrapper m_LauncherMotor;
   /** The desired target RPM for the launcher motor. */
   private double targetRPM;
   /** Timer used to track how long the hopper has been empty. */
@@ -46,13 +38,9 @@ public class LauncherSubsystem extends SubsystemBase {
    * Initializes the launcher motor, its closed-loop controller, and configures it
    * with predefined settings. The initial target RPM is set to 0.
    */
-  public LauncherSubsystem() {
-    this.m_LauncherMotor = new SparkMax(CanIdConstants.kLauncherMotor, MotorType.kBrushless);
-    this.m_ClosedLoopController = m_LauncherMotor.getClosedLoopController();
-    this.m_LauncherMotor.configure(LauncherConfigs.config, ResetMode.kResetSafeParameters,
-        PersistMode.kPersistParameters);
+  public LauncherSubsystem(MotorControllerWrapper motor) {
+    this.m_LauncherMotor = motor;
     this.targetRPM = 0.0;
-
     m_emptyTimer.start();
   }
 
@@ -93,10 +81,10 @@ public class LauncherSubsystem extends SubsystemBase {
     // 3. Actuator Output: Apply the calculated target RPM to the motor.
     if (this.targetRPM > 0) {
         // If a positive target RPM is set, use the closed-loop velocity controller.
-        this.m_ClosedLoopController.setSetpoint(this.targetRPM, ControlType.kVelocity);
+        this.m_LauncherMotor.setTargetValue(this.targetRPM, ControlType.kVelocity);
     } else {
         // If target RPM is 0 or negative, stop the motor.
-        this.m_LauncherMotor.stopMotor();
+        this.m_LauncherMotor.stop();
     }
 
     // Update SmartDashboard with launcher status for debugging and monitoring
@@ -120,7 +108,7 @@ public class LauncherSubsystem extends SubsystemBase {
    * @return The actual velocity of the launcher motor in RPM.
    */
   public double getActualVelocity() {
-    return this.m_LauncherMotor.getEncoder().getVelocity();
+    return this.m_LauncherMotor.getVelocity();
   }
 
   /**
@@ -129,7 +117,7 @@ public class LauncherSubsystem extends SubsystemBase {
    */
   public void stopLauncher() {
     this.targetRPM = 0.0;
-    this.m_LauncherMotor.stopMotor();
+    this.m_LauncherMotor.stop();
   }
 
   /**

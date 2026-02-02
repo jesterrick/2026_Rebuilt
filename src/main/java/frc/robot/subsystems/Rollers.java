@@ -4,14 +4,8 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.ResetMode;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.CanIdConstants;
+import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
  * The Rollers subsystem controls the robot's roller mechanism,
@@ -19,21 +13,14 @@ import frc.robot.constants.CanIdConstants;
  */
 public class Rollers extends SubsystemBase { 
    /** The motor responsible for driving the rollers. */
-   public final SparkMax m_RollerMotor;
+   public final MotorControllerWrapper m_RollerMotor;
 
     /**
      * Constructs a new Rollers subsystem.
      * Initializes the roller motor and configures it with predefined settings.
      */
-    public Rollers() {
-      this.m_RollerMotor = new SparkMax(CanIdConstants.kRollerMotor, MotorType.kBrushless);
-  
-      // Create a new SparkMax configuration object.
-      // This object can be populated with various motor settings (PID, current limits, etc.).
-      SparkMaxConfig m_RollerMotorconfig = new SparkMaxConfig();
-
-      // Configure the roller motor with safe parameters and persist settings across power cycles.
-      this.m_RollerMotor.configure(m_RollerMotorconfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    public Rollers(MotorControllerWrapper motor) {
+      this.m_RollerMotor = motor;
     }
 
     /**

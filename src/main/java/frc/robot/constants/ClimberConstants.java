@@ -1,6 +1,6 @@
 package frc.robot.constants;
 
-import frc.robot.utils.RobotUtils;
+import frc.robot.util.RobotUtils;
 
 /**
  * The ClimberConstants class stores constant values related to the robot's climber mechanism.

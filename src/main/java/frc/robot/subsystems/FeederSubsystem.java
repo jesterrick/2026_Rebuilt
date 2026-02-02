@@ -4,14 +4,8 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.configs.FeederConfigs;
-import frc.robot.constants.CanIdConstants;
+import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
  * The FeederSubsystem controls the robot's feeder mechanism, responsible for
@@ -19,16 +13,14 @@ import frc.robot.constants.CanIdConstants;
  */
 public class FeederSubsystem extends SubsystemBase {
   /** The motor responsible for driving the feeder mechanism. */
-  private final SparkMax m_FeederMotor;
+  private final MotorControllerWrapper m_FeederMotor;
   
   /**
    * Constructs a new FeederSubsystem.
    * Initializes the feeder motor and configures it with predefined settings.
    */
-  public FeederSubsystem() {
-    this.m_FeederMotor = new SparkMax(CanIdConstants.kFeederMotor, MotorType.kBrushless);
-    // Configure the feeder motor with safe parameters and persist settings across power cycles.
-    this.m_FeederMotor.configure(FeederConfigs.config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  public FeederSubsystem(MotorControllerWrapper motor) {
+    this.m_FeederMotor = motor;
   }
 
   /**
@@ -43,6 +35,6 @@ public class FeederSubsystem extends SubsystemBase {
    * Stops the feeder motor.
    */
   public void stopFeeder() {
-    this.m_FeederMotor.stopMotor();
+    this.m_FeederMotor.stop();
   }
 }

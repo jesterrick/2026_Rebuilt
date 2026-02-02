@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.utils;
+package frc.robot.util;
 
 public class RobotUtils {
 
@@ -21,5 +21,16 @@ public class RobotUtils {
      */
     public static double toVelocityPerSecond(double positionFactor) {
         return positionFactor / 60.0;
+    }
+
+    /**
+     * Calculates the distance traveled given a velocity and time.
+     * Result is in the same unit as velocity * time.
+     * @param velocity The velocity of the object.
+     * @param time The time duration.
+     * @return The distance traveled.
+     */
+    public static double calculateDistance(double velocity, double time) {
+        return velocity * time;
     }
 }

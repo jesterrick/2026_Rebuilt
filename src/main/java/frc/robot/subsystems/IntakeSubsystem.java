@@ -4,14 +4,8 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.configs.IntakeConfigs;
-import frc.robot.constants.CanIdConstants;
+import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
  * The IntakeSubsystem controls the robot's intake mechanism,
@@ -19,16 +13,14 @@ import frc.robot.constants.CanIdConstants;
  */
 public class IntakeSubsystem extends SubsystemBase {
   /** The motor responsible for driving the front pickup mechanism of the intake. */
-  private final SparkMax m_FrontPickupMotor;
+  private final MotorControllerWrapper m_FrontPickupMotor;
 
   /**
    * Constructs a new IntakeSubsystem.
    * Initializes the intake motor and configures it with predefined settings.
    */
-  public IntakeSubsystem() {
-    this.m_FrontPickupMotor = new SparkMax(CanIdConstants.kIntakeMotor, MotorType.kBrushless);
-    // Configure the intake motor with safe parameters and persist settings across power cycles.
-    this.m_FrontPickupMotor.configure(IntakeConfigs.config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  public IntakeSubsystem(MotorControllerWrapper motor) {
+    this.m_FrontPickupMotor = motor;
   }
 
   /**

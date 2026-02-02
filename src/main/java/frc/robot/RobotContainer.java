@@ -23,7 +23,13 @@ import frc.robot.commands.LauncherIdle;
 import frc.robot.commands.LauncherOff;
 import frc.robot.commands.LauncherOn;
 import frc.robot.commands.ClimberRetract;
-
+import frc.robot.configs.ClimberConfigs;
+import frc.robot.configs.ExtenderConfigs;
+import frc.robot.configs.FeederConfigs;
+import frc.robot.configs.IntakeConfigs;
+import frc.robot.configs.LauncherConfigs;
+import frc.robot.configs.RollerConfigs;
+import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.OIConstants;
 
 import frc.robot.subsystems.ClimberSubsystem;
@@ -31,8 +37,9 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtenderSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.Rollers;
 import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.Rollers;
+import frc.robot.util.hardware.HardwareFactory;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -62,20 +69,21 @@ public class RobotContainer {
   /** The robot's drive subsystem, controlling movement. */
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   /** The robot's launcher subsystem, responsible for shooting game pieces. */
-  private final LauncherSubsystem m_Launcher = new LauncherSubsystem();
+  private final LauncherSubsystem m_Launcher = new LauncherSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kLauncherMotor, LauncherConfigs.config));
   /** The robot's intake subsystem, for acquiring game pieces. */
-  private final IntakeSubsystem m_Intake = new IntakeSubsystem();
+  private final IntakeSubsystem m_Intake = new IntakeSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kIntakeMotor, IntakeConfigs.config));
   /** The robot's extender subsystem, for extending and retracting mechanisms. */
-  private final ExtenderSubsystem m_Extender = new ExtenderSubsystem();
+  private final ExtenderSubsystem m_Extender = new ExtenderSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kExtenderMotor1, ExtenderConfigs.leaderConfig), 
+                            HardwareFactory.createSparkMax(CanIdConstants.kExtenderMotor2,ExtenderConfigs.followConfig));
   /** The robot's roller subsystem, for manipulating game pieces within the robot. */
-  private final Rollers m_Rollers = new Rollers();
+  private final Rollers m_Rollers = new Rollers(HardwareFactory.createSparkMax(CanIdConstants.kRollerMotor, RollerConfigs.config));
   /** The robot's feeder subsystem, for transferring game pieces to the launcher. */
-  private final FeederSubsystem m_Feeder = new FeederSubsystem();
+  private final FeederSubsystem m_Feeder = new FeederSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kFeederMotor, FeederConfigs.config));
   /** The robot's climber subsystem, for ascending vertical structures. */
-  private final ClimberSubsystem m_Climber = new ClimberSubsystem();
+  private final ClimberSubsystem m_Climber = new ClimberSubsystem(HardwareFactory.createFollowerSparkMax(CanIdConstants.kClimberMotor1, CanIdConstants.kClimberMotor2, ClimberConfigs.leaderConfig, true));
 
   /** A boolean flag to toggle between field-relative and robot-relative driving. */
-  private boolean m_fieldRelative = true;
+  private boolean m_fieldRelative = false;
 
   // Operator Interface (OI) devices and their button bindings
   /** The joystick used by the driver for robot movement. */
