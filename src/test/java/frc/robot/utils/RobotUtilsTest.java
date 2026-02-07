@@ -1,7 +1,8 @@
-package frc.robot.utils;
+package frc.robot.util;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import frc.robot.util.RobotUtils;
 
 public class RobotUtilsTest {
 
