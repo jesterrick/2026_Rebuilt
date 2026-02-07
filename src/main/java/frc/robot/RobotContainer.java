@@ -31,6 +31,7 @@ import frc.robot.configs.LauncherConfigs;
 import frc.robot.configs.RollerConfigs;
 import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.OIConstants;
+import frc.robot.constants.GlobalConstants;
 
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -120,6 +121,13 @@ public class RobotContainer {
    * mappings are established.
    */
   public RobotContainer() {
+    // 1. Check the serial number the code is actually reading
+    System.out.println("System Serial: " + edu.wpi.first.wpilibj.RobotController.getSerialNumber());
+    
+    // 2. Check the final boolean result
+    System.out.println("Is Benchtop Detection: " + GlobalConstants.IS_BENCHTOP);
+
+    SmartDashboard.putBoolean("Is Benchtop?", GlobalConstants.IS_BENCHTOP);
     // Configure default commands for subsystems.
     // The DriveSubsystem's default command allows the driver to control the robot's movement.
     m_robotDrive.setDefaultCommand(
