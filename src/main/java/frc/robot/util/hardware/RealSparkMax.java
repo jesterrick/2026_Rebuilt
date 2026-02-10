@@ -1,10 +1,12 @@
 package frc.robot.util.hardware;
 
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
 import com.revrobotics.ResetMode;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
@@ -62,5 +64,37 @@ public class RealSparkMax implements MotorControllerWrapper {
     public void setConfiguration(SparkMaxConfig config){
         m_motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     };
+
+    @Override
+    public void setOutputVoltage(double voltage){
+        m_motor.setVoltage(voltage);
+    }
+
+    @Override
+    public double getOutputCurrent() { 
+        return m_motor.getOutputCurrent(); 
+    }
+
+    @Override
+    public void setPID(double p, double i, double d, double ff){
+        SparkMaxConfig config = new SparkMaxConfig();
+
+        config.closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .pid(p, i, d);
+        
+        config.closedLoop.feedForward
+        .kV(ff);
+
+        m_motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    }
+
+    @Override
+    public void setMaxAccel(double accel)
+    {
+        SparkMaxConfig config = new SparkMaxConfig();
+        config.closedLoop.maxMotion
+        .maxAcceleration(accel);
+    }
 
 }

@@ -42,6 +42,8 @@ import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.Rollers;
 import frc.robot.util.hardware.HardwareFactory;
 
+import edu.wpi.first.wpilibj.XboxController;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -91,6 +93,8 @@ public class RobotContainer {
   Joystick m_driverJoystick = new Joystick(OIConstants.kDriverJoystickPort);
   /** The joystick used by the operator for controlling mechanisms. */
   Joystick m_operatorJoystick = new Joystick(OIConstants.kOperatorJoystickPort);
+  //XboxController m_operatorJoystick = new XboxController(OIConstants.kOperatorJoystickPort);
+  
   /** Button for initiating the intake receive action. */
   JoystickButton intakeRecieve = new JoystickButton(m_operatorJoystick, OIConstants.kIntakeReceiveButton);
   /** Button for initiating the intake eject action. */

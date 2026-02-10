@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimberSubsystem;
 
@@ -34,6 +35,7 @@ public class ClimberRetract extends Command {
   @Override
   public void execute() {
     // Command the climber to move downwards (retract).
+    SmartDashboard.putString("Current Command", this.getClass().getSimpleName());
     this.m_climber.climberDown();
   }
 

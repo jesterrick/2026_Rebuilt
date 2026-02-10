@@ -69,11 +69,7 @@ public class ClimberConfigs {
         // Configure the follower motor to follow the leader motor.
         // The 'true' argument indicates that the follower's direction should be inverted relative to the leader.
         followConfig.follow(CanIdConstants.kClimberMotor1, true);
-
-        // Disable soft limits for the follower motor as they are managed by the leader.
-        followConfig.softLimit.forwardSoftLimitEnabled(false);
-        followConfig.softLimit.reverseSoftLimitEnabled(false);
-
+        
         // Apply the leader's configuration to the homing motor config as a base.
         homingConfig.apply(leaderConfig);
         // Disable soft limits for homing, allowing the climber to reach a mechanical stop.

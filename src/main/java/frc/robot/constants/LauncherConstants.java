@@ -40,12 +40,12 @@ public class LauncherConstants {
      * Velocity feed-forward gain (kV) for the launcher motor.
      * Calculated as (max voltage / max RPM), e.g., 11.0 / 5676 (Max RPM of NEO).
      */
-    public static final double kLauncherkV = 0.0019;
+    public static final double kLauncherkV = .0021;
 
-    public static final double kLauncherStatic = 0.02;
+    public static final double kLauncherStatic = 0.002;
     
     /** Proportional gain for the launcher's velocity PID controller. */
-    public static final double kLauncherP = 0.0001;
+    public static final double kLauncherP = 0.00038;
     /** Integral gain for the launcher's velocity PID controller. */
     public static final double kLauncherI = 0.0;
     /** Derivative gain for the launcher's velocity PID controller. */

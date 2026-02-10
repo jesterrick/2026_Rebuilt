@@ -10,7 +10,7 @@ import frc.robot.util.RobotUtils;
 public class ExtenderConstants {
 
     /** Default speed for the extender motor during operation. */
-    public static final double kExtenderMotorSpeed = 0.15;
+    public static final double kExtenderMotorSpeed = 0.05;
     /** The target position for the extender when fully retracted, in inches. */
     public static final double kExtenderMotorIn = 0.0;
     /** The target position for the extender when fully extended, in inches. */
@@ -33,28 +33,28 @@ public class ExtenderConstants {
     public static final double kVelocityFactor = RobotUtils.toVelocityPerSecond(kPositionFactor);
 
     /** Feedforward gain (kV) for the extender, compensating for motor voltage proportional to velocity. */
-    public static final double kExtenderFF = 0.5;
+    public static final double kExtenderFF = 0.15;
     /** Static friction feedforward gain (kS) for the extender, compensating for static friction. */
-    public static final double kExtenderStatic = 0.2;
+    public static final double kExtenderStatic = 0.005;
 
     /** Proportional gain for the extender's position PID controller. */
-    public static final double kExtenderP = 4.0;
+    public static final double kExtenderP = 0.001;
     /** Integral gain for the extender's position PID controller. */
     public static final double kExtenderI = 0.0;
     /** Derivative gain for the extender's position PID controller. */
-    public static final double kExtenderD = 0.03;
-
+    public static final double kExtenderD = 0.0;
+    
+    public static final double kExtAcceleration = 25.0;
+    
     /**
      * Allowed error (in inches) for the extender's closed-loop position control.
      * If the extender is within this tolerance of the target, it's considered "at target".
      */
-    public static final double kExtenderAllowedError = 0.10;
+    public static final double kExtenderAllowedError = 0.1;
 
     /**
      * Maximum acceleration for the extender mechanism, likely used in motion profiling or trapezoidal control
      * to ensure smooth and controlled movement.
-     */
-    public static final double kExtAcceleration = .10;
 
     /** The voltage used for homing the extender mechanism. */
     public static final double kHomingVoltage = -1.5;
@@ -62,12 +62,13 @@ public class ExtenderConstants {
     public static final double kMaxHomingVoltage = 10.0;
     
     /** Maximum allowed difference in position between the leader and follower motors before an error is flagged, in inches. */
-    public static final double kMaxPositionDifference = 0.5;
+    public static final double kMaxPositionDifference = 0.25;
 
     /** Proportional gain for synchronizing the extender's leader and follower motors. */
     public static final double kSyncP = 0.1;
+
     /** Tolerance for checking if the extender has reached its target position, in inches. */
-    public static final double kAtTargetTolerance = 0.1;
+    public static final double kAtTargetTolerance = 0.03;
 
     /**
      * Cruise velocity for the extender mechanism, used in motion profiling.

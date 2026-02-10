@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LauncherSubsystem;
 
@@ -36,6 +37,7 @@ public class LauncherOn extends Command {
   @Override
   public void execute() {
     // Calculate the target launcher speed based on vision data (e.g., distance to target).
+    SmartDashboard.putString("Current Command", this.getClass().getSimpleName());
     double launcherSpeed = m_launcher.calculateRPMFromLimeLight();
     // Set the launcher motor to the calculated velocity.
     this.m_launcher.setLauncherVelocity(launcherSpeed);

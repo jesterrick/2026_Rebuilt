@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.configs.ClimberConfigs;
 import frc.robot.constants.ClimberConstants;
+import frc.robot.constants.GlobalConstants;
 import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
@@ -18,15 +19,23 @@ import frc.robot.util.hardware.MotorControllerWrapper;
  */
 public class ClimberSubsystem extends SubsystemBase {
   /** The lead motor for the climber mechanism. */
-  private final MotorControllerWrapper m_ClimberLeaderMotor;;
+  private final MotorControllerWrapper m_ClimberLeaderMotor;
 
   /** The target position for the climber, in encoder units (usually inches or rotations). */
   private double m_targetPosition = 0.0;
-  private boolean m_isHomed = false;
+  private boolean m_isHomed;
 
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem(MotorControllerWrapper motor) {
     this.m_ClimberLeaderMotor = motor;
+
+    if (GlobalConstants.IS_BENCHTOP) {
+      this.m_isHomed = true;
+      System.out.println(">>> [EXTENDER] Benchtop detected: Auto-Homing enabled.");
+    } else {
+      this.m_isHomed = false;
+
+    }
   }
 
   @Override
@@ -100,7 +109,7 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
    public double getLeaderCurrent() {
-    return this.m_ClimberLeaderMotor.getOuputVoltage();
+    return this.m_ClimberLeaderMotor.getOutputCurrent();
   }
 
    public void setHomingVoltages(double voltage) {
@@ -109,7 +118,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public boolean isAtBottom() {
     // If the motor is drawing more than our threshold, it has hit the mechanical stop
-    return m_ClimberLeaderMotor.getOuputVoltage() > ClimberConstants.kMaxHomingVoltage;
+    return m_ClimberLeaderMotor.getOutputCurrent() > ClimberConstants.kMaxHomingVoltage;
   }
 
   public void prepareForHoming()

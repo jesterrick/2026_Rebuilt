@@ -23,7 +23,7 @@ public interface MotorControllerWrapper {
 
     default void setOutputVoltage(double voltage){}
 
-    default double getOuputVoltage() { return 0.0; }
+    default double getOutputCurrent() { return 0.0; }
 
     /** Used by Climber and Extender. Default returns 0. */
     default double getPosition() { return 0.0; }
@@ -33,4 +33,10 @@ public interface MotorControllerWrapper {
 
     /** Used to stop any motor safely. */
     default void stop() { set(0); }
+
+    default void setPID(double p, double i, double d, double ff){}
+
+    default void setMaxAccel(double accel){}
+
+    default double getPositionConversion(){return 0.0;}
 }

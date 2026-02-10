@@ -10,7 +10,7 @@ package frc.robot.constants;
  */
 public class RollerConstants {
     /** The default operational speed for the roller motor. */
-    public static final double kRollerSpeed = 0.5;
+    public static final double kRollerSpeed = 0.05;
 
     // direct motor - no gears, sprockets, chains etc.
     // measure with direct RPM
