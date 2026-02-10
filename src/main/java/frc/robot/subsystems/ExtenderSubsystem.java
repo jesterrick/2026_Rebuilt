@@ -60,8 +60,8 @@ public class ExtenderSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Extender Flw Pos", followPos);
     SmartDashboard.putNumber("Extender Error", error);
 
-    System.out.println("L Units: " + m_ExtenderLeaderMotor.getPosition());
-    System.out.println("F Units: " + m_ExtenderFollowMotor.getPosition());
+    //System.out.println("L Units: " + m_ExtenderLeaderMotor.getPosition());
+    //System.out.println("F Units: " + m_ExtenderFollowMotor.getPosition());
     
     // Safety 1: The Skew Check (0.5 inches is a good 'real world' limit)
     if (error > 0.5) { // kMaxPositionDifference was 10.5, which is 'frame-snapping' territory

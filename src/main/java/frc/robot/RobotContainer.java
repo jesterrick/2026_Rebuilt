@@ -185,7 +185,8 @@ public class RobotContainer {
     launch.whileTrue(
         new ParallelCommandGroup(
             new RollerForward(m_Rollers),
-            new LauncherOn(m_Launcher),
+            new LauncherOn(m_Launcher, () -> m_operatorJoystick.getRawAxis(6)),
+            //new LauncherOn(m_Launcher),
             new WaitUntilCommand(() -> m_Launcher.atSpeed()).andThen(
                 new FeederOn(m_Feeder)
             )

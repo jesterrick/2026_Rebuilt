@@ -103,6 +103,11 @@ public class LauncherSubsystem extends SubsystemBase {
     this.targetRPM = setRPM;
   }
 
+  public void setVoltage(double voltage)
+  {
+    this.m_LauncherMotor.setOutputVoltage(voltage);
+  }
+
   /**
    * Retrieves the actual current velocity of the launcher motor from its encoder.
    * @return The actual velocity of the launcher motor in RPM.
@@ -142,6 +147,17 @@ public class LauncherSubsystem extends SubsystemBase {
    */
   public boolean isBallPresent() {
     return m_hopperSensor.get();
+  }
+
+  public double calcualteRPMFromSlider(double sliderValue){
+    // Because sometimes joysticks are garbage and give you -0.001
+    double clampedValue = Math.max(0.0, Math.min(1.0, sliderValue));
+
+    double minRPM = LauncherConstants.kLaunchMinRPM;
+    double maxRPM = LauncherConstants.kLaunchMaxRPM;
+
+    // Formula: Min + (Range * Percentage)
+    return minRPM + ((maxRPM - minRPM) * clampedValue);
   }
 
   /**
