@@ -4,12 +4,13 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import frc.robot.constants.GlobalConstants;
+
 public class HardwareFactory {
 
     public static MotorControllerWrapper createSparkMax(int id, SparkMaxConfig config, boolean isAbsolute) {
-        // REMOVE the IF statement that checks IS_BENCHTOP here.
-        // Instead, ALWAYS try to probe the motor first.
-
+        if (GlobalConstants.IS_BENCHTOP)
+{
         boolean found = false;
         // 1. Open and immediately close the probe to check if hardware exists
         try (SparkMax probe = new SparkMax(id, MotorType.kBrushless)) {
@@ -29,7 +30,10 @@ public class HardwareFactory {
             System.out.println("Benchtop: ID " + id + " missing. Using Mock.");
             return new MockSparkMax();
         }
+    } else {
+        return new RealSparkMax(id, config, isAbsolute);
     }
+}
 
     public static MotorControllerWrapper createSparkMax(int id, SparkMaxConfig config) {
         return createSparkMax(id, config, false);

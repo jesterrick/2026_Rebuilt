@@ -39,6 +39,10 @@ public class ExtenderSubsystem extends SubsystemBase {
     this.m_ExtenderLeaderMotor = leader;
     this.m_ExtenderFollowMotor = follower;
 
+    // Set the follower to mirror the leader's output, inverting it as needed.
+    // This is the most reliable way to keep two motors in sync.
+    this.m_ExtenderFollowMotor.follow(this.m_ExtenderLeaderMotor, true);
+
     if (GlobalConstants.IS_BENCHTOP) {
       this.m_isHomed = true;
       this.m_ExtenderLeaderMotor.setPosition(0.0);
@@ -64,7 +68,7 @@ public class ExtenderSubsystem extends SubsystemBase {
     //System.out.println("F Units: " + m_ExtenderFollowMotor.getPosition());
     
     // Safety 1: The Skew Check (0.5 inches is a good 'real world' limit)
-    if (error > 0.5) { // kMaxPositionDifference was 10.5, which is 'frame-snapping' territory
+    if (error > ExtenderConstants.kMaxPositionDifference) { // kMaxPositionDifference was 10.5, which is 'frame-snapping' territory
         emergencyStop("SKEW DETECTED: " + error);
         return;
     }

@@ -62,7 +62,7 @@ public class ExtenderConstants {
     public static final double kMaxHomingVoltage = 10.0;
     
     /** Maximum allowed difference in position between the leader and follower motors before an error is flagged, in inches. */
-    public static final double kMaxPositionDifference = 0.25;
+    public static final double kMaxPositionDifference = 0.5;
 
     /** Proportional gain for synchronizing the extender's leader and follower motors. */
     public static final double kSyncP = 0.1;

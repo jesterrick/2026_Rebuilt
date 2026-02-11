@@ -21,33 +21,33 @@ public class RealSparkMax implements MotorControllerWrapper {
         
 
     public RealSparkMax(int deviceId, SparkMaxConfig config, boolean isAbsolute) {
-        m_motor = new SparkMax(deviceId, MotorType.kBrushless);
-        m_controller = m_motor.getClosedLoopController();
+        this.m_motor = new SparkMax(deviceId, MotorType.kBrushless);
+        this.m_controller = this.m_motor.getClosedLoopController();
         
         if (isAbsolute) {
-            m_absoluteEncoder = m_motor.getAbsoluteEncoder();
+            m_absoluteEncoder = this.m_motor.getAbsoluteEncoder();
         } else {
-            m_relativeEncoder = m_motor.getEncoder();
+            m_relativeEncoder = this.m_motor.getEncoder();
         }
 
         // You can expand this config for PID or Current Limits later
-        m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        this.m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     @Override
     public void set(double speed) {
-        m_motor.set(speed);
+        this.m_motor.set(speed);
     }
 
     @Override
     public void setPosition(double position) {
-        m_motor.getEncoder().setPosition(position);
+        this.m_motor.getEncoder().setPosition(position);
     }
 
     @Override
     public void setTargetValue(double value, ControlType controlType) {
         // This replaces the "m_ClosedLoopController.setReference" in your launcher
-        m_controller.setSetpoint(value, controlType);
+        this.m_controller.setSetpoint(value, controlType);
     }
 
     @Override
@@ -62,17 +62,17 @@ public class RealSparkMax implements MotorControllerWrapper {
 
     @Override
     public void setConfiguration(SparkMaxConfig config){
-        m_motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+        this.m_motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     };
 
     @Override
     public void setOutputVoltage(double voltage){
-        m_motor.setVoltage(voltage);
+        this.m_motor.setVoltage(voltage);
     }
 
     @Override
     public double getOutputCurrent() { 
-        return m_motor.getOutputCurrent(); 
+        return this.m_motor.getOutputCurrent(); 
     }
 
     @Override
@@ -86,7 +86,7 @@ public class RealSparkMax implements MotorControllerWrapper {
         config.closedLoop.feedForward
         .kV(ff);
 
-        m_motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+        this.m_motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
     @Override
@@ -97,4 +97,15 @@ public class RealSparkMax implements MotorControllerWrapper {
         .maxAcceleration(accel);
     }
 
+    @Override
+    public SparkMax getSparkMax() {
+        return this.m_motor;
+    }
+
+    @Override
+    public void follow(MotorControllerWrapper leader, boolean invert) {
+        SparkMaxConfig config = new SparkMaxConfig();
+        config.follow(m_motor, invert);
+        this.m_motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    }
 }

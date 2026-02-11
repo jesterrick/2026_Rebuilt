@@ -1,5 +1,6 @@
 package frc.robot.util.hardware;
 
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -39,4 +40,16 @@ public interface MotorControllerWrapper {
     default void setMaxAccel(double accel){}
 
     default double getPositionConversion(){return 0.0;}
+
+    /**
+     * @return The underlying SparkMax object.
+     */
+    default SparkMax getSparkMax() { return null; }
+
+    /**
+     * Sets this motor controller to follow another.
+     * @param leader The motor controller to follow.
+     * @param invert True if this motor should be inverted relative to the leader.
+     */
+    default void follow(MotorControllerWrapper leader, boolean invert) {}
 }
