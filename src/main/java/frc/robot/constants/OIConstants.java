@@ -17,11 +17,11 @@ public class OIConstants {
     /** Button ID for the intake mechanism to receive game pieces. */
     public static final int kIntakeReceiveButton = 5;
     /** Button ID for the intake mechanism to eject game pieces. */
-    public static final int kIntakeEjectButton = 4;
+    public static final int kIntakeEjectButton = 6;
     /** Button ID for launching game pieces. */
     public static final int kLauncherButton = 18;
     /** Button ID for extending a mechanism outwards. */
-    public static final int kExtenderOutButton = 2;
+    public static final int kExtenderOutButton = 4;
     /** Button ID for retracting a mechanism inwards. */
     public static final int kExtenderInButton = 3;
     /** Button ID to activate the launcher's idle speed. */

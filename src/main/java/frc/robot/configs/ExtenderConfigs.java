@@ -1,45 +1,89 @@
 package frc.robot.configs;
 
 import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
 import frc.robot.constants.ExtenderConstants;
 import frc.robot.constants.GlobalConstants;
 
+/**
+ * Configuration class for the Extender subsystem's SparkMax motor controllers.
+ * Defines various settings for PID, feedforward, motion profiling, soft limits,
+ * and current limits for leader, follower, and homing operational modes.
+ */
 public class ExtenderConfigs {
+    /** Configuration for the primary extender motor (leader). */
     public static final SparkMaxConfig leaderConfig = new SparkMaxConfig();
+    /** Configuration for the secondary extender motor (follower). */
     public static final SparkMaxConfig followConfig = new SparkMaxConfig();
 
+    /** Configuration specifically for the homing sequence of the extender. */
+    public static final SparkMaxConfig homingConfig = new SparkMaxConfig();
+    // Indicates if the leader motor's direction needs to be inverted.
+    // This value will be applied to leaderConfig.
+    private static boolean leaderInverted = false;
+
     static {
+        // Configure the leader motor's encoder for position and velocity conversion
+        // factors.
         leaderConfig.encoder
-            .positionConversionFactor(ExtenderConstants.kPositionFactor) // Set units to inches
-            .velocityConversionFactor(ExtenderConstants.kPositionFactor / 60.0); // Set units to inches/sec
+                .positionConversionFactor(ExtenderConstants.kPositionFactor)
+                .velocityConversionFactor(ExtenderConstants.kVelocityFactor);
 
+        // Configure PID constants for closed-loop control.
         leaderConfig.closedLoop
-            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(ExtenderConstants.kIntakeP, ExtenderConstants.kIntakeI, ExtenderConstants.kIntakeD);
-        
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                .pid(ExtenderConstants.kExtenderP, ExtenderConstants.kExtenderI, ExtenderConstants.kExtenderD);
+
+        // Configure Feedforward constants to improve control accuracy.
+        leaderConfig.closedLoop.feedForward
+                .kV(ExtenderConstants.kExtenderFF)
+                .kS(ExtenderConstants.kExtenderStatic);
+
+        // Configure motion profiling parameters for smooth movement.
         leaderConfig.closedLoop.maxMotion
-            .cruiseVelocity(5600 * ExtenderConstants.kExtenderMotorSpeed * (ExtenderConstants.kPositionFactor / 60.0))
-            .maxAcceleration(ExtenderConstants.kExtAcceleration)
-            .allowedProfileError(0.1);
+                .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
+                .cruiseVelocity(ExtenderConstants.kExtenderCruiseVelocity)
+                .maxAcceleration(ExtenderConstants.kExtAcceleration)
+                .allowedProfileError(ExtenderConstants.kExtenderAllowedError);
 
+        // Configure soft limits to prevent physical over-extension or retraction.
         leaderConfig.softLimit
-            .forwardSoftLimitEnabled(true)
-            .forwardSoftLimit(ExtenderConstants.kExtenderMotorOut)
-            .reverseSoftLimitEnabled(true)
-            .reverseSoftLimit(ExtenderConstants.kExtenderMotorIn);
+                .forwardSoftLimitEnabled(true)
+                .forwardSoftLimit(ExtenderConstants.kExtenderMotorOut)
+                .reverseSoftLimitEnabled(true)
+                .reverseSoftLimit(ExtenderConstants.kExtenderMotorIn);
 
-        leaderConfig.inverted(false);
-        leaderConfig.smartCurrentLimit(GlobalConstants.kLowCurrentLimit);    
-        leaderConfig.idleMode(IdleMode.kBrake); 
+        // Apply the inverted setting to the leader motor.
+        leaderConfig.inverted(leaderInverted);
+        // Set a smart current limit to protect the motor and battery.
+        leaderConfig.smartCurrentLimit(GlobalConstants.kLowCurrentLimit);
+        // Set the idle mode to brake when the motor is not actively driven.
+        leaderConfig.idleMode(IdleMode.kBrake);
 
-        followConfig.apply(leaderConfig);
+        // Apply the leader's configuration to the follower motor as a base.
+        // followConfig.apply(leaderConfig);
 
-        followConfig.inverted(true); 
+        followConfig.encoder
+                .positionConversionFactor(ExtenderConstants.kPositionFactor)
+                .velocityConversionFactor(ExtenderConstants.kVelocityFactor);
 
-        followConfig.softLimit.forwardSoftLimitEnabled(false);
-        followConfig.softLimit.reverseSoftLimitEnabled(false);
-    
+        followConfig.inverted(leaderInverted); // Match physical direction
+        followConfig.idleMode(IdleMode.kBrake);
+        followConfig.smartCurrentLimit(GlobalConstants.kLowCurrentLimit);
+
+        // FOLLOWER CONFIGURATION IS SET IN THE SUBSYSTEM CONSTRUCTOR
+        // NO PID, NO FF, NO MOTION MAGIC. JUST FOLLOW.
+
+        // Apply the leader's configuration to the homing motor config as a base.
+        homingConfig.apply(leaderConfig);
+
+        // Disable soft limits for homing, allowing the extender to reach a mechanical
+        // stop.
+        homingConfig.softLimit
+                .forwardSoftLimitEnabled(false)
+                .reverseSoftLimitEnabled(false);
     }
 }

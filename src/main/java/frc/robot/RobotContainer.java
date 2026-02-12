@@ -11,6 +11,7 @@ import frc.robot.commands.ExtenderIn;
 import frc.robot.commands.ExtenderOut;
 import frc.robot.commands.FeederOff;
 import frc.robot.commands.FeederOn;
+import frc.robot.commands.HomeClimber;
 import frc.robot.commands.HomeExtender;
 import frc.robot.commands.IntakeEject;
 import frc.robot.commands.IntakeReceive;
@@ -22,16 +23,26 @@ import frc.robot.commands.LauncherIdle;
 import frc.robot.commands.LauncherOff;
 import frc.robot.commands.LauncherOn;
 import frc.robot.commands.ClimberRetract;
-
+import frc.robot.configs.ClimberConfigs;
+import frc.robot.configs.ExtenderConfigs;
+import frc.robot.configs.FeederConfigs;
+import frc.robot.configs.IntakeConfigs;
+import frc.robot.configs.LauncherConfigs;
+import frc.robot.configs.RollerConfigs;
+import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.OIConstants;
+import frc.robot.constants.GlobalConstants;
 
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtenderSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.Rollers;
 import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.Rollers;
+import frc.robot.util.hardware.HardwareFactory;
+
+import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -61,26 +72,29 @@ public class RobotContainer {
   /** The robot's drive subsystem, controlling movement. */
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   /** The robot's launcher subsystem, responsible for shooting game pieces. */
-  private final LauncherSubsystem m_Launcher = new LauncherSubsystem();
+  private final LauncherSubsystem m_Launcher = new LauncherSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kLauncherMotor, LauncherConfigs.config));
   /** The robot's intake subsystem, for acquiring game pieces. */
-  private final IntakeSubsystem m_Intake = new IntakeSubsystem();
+  private final IntakeSubsystem m_Intake = new IntakeSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kIntakeMotor, IntakeConfigs.config));
   /** The robot's extender subsystem, for extending and retracting mechanisms. */
-  private final ExtenderSubsystem m_Extender = new ExtenderSubsystem();
+  private final ExtenderSubsystem m_Extender = new ExtenderSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kExtenderMotor1, ExtenderConfigs.leaderConfig), 
+                            HardwareFactory.createSparkMax(CanIdConstants.kExtenderMotor2,ExtenderConfigs.followConfig));
   /** The robot's roller subsystem, for manipulating game pieces within the robot. */
-  private final Rollers m_Rollers = new Rollers();
+  private final Rollers m_Rollers = new Rollers(HardwareFactory.createSparkMax(CanIdConstants.kRollerMotor, RollerConfigs.config));
   /** The robot's feeder subsystem, for transferring game pieces to the launcher. */
-  private final FeederSubsystem m_Feeder = new FeederSubsystem();
+  private final FeederSubsystem m_Feeder = new FeederSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kFeederMotor, FeederConfigs.config));
   /** The robot's climber subsystem, for ascending vertical structures. */
-  private final ClimberSubsystem m_Climber = new ClimberSubsystem();
+  private final ClimberSubsystem m_Climber = new ClimberSubsystem(HardwareFactory.createFollowerSparkMax(CanIdConstants.kClimberMotor1, CanIdConstants.kClimberMotor2, ClimberConfigs.leaderConfig, true));
 
   /** A boolean flag to toggle between field-relative and robot-relative driving. */
-  private boolean m_fieldRelative = true;
+  private boolean m_fieldRelative = false;
 
   // Operator Interface (OI) devices and their button bindings
   /** The joystick used by the driver for robot movement. */
   Joystick m_driverJoystick = new Joystick(OIConstants.kDriverJoystickPort);
   /** The joystick used by the operator for controlling mechanisms. */
   Joystick m_operatorJoystick = new Joystick(OIConstants.kOperatorJoystickPort);
+  //XboxController m_operatorJoystick = new XboxController(OIConstants.kOperatorJoystickPort);
+  
   /** Button for initiating the intake receive action. */
   JoystickButton intakeRecieve = new JoystickButton(m_operatorJoystick, OIConstants.kIntakeReceiveButton);
   /** Button for initiating the intake eject action. */
@@ -111,6 +125,13 @@ public class RobotContainer {
    * mappings are established.
    */
   public RobotContainer() {
+    // 1. Check the serial number the code is actually reading
+    System.out.println("System Serial: " + edu.wpi.first.wpilibj.RobotController.getSerialNumber());
+    
+    // 2. Check the final boolean result
+    System.out.println("Is Benchtop Detection: " + GlobalConstants.IS_BENCHTOP);
+
+    SmartDashboard.putBoolean("Is Benchtop?", GlobalConstants.IS_BENCHTOP);
     // Configure default commands for subsystems.
     // The DriveSubsystem's default command allows the driver to control the robot's movement.
     m_robotDrive.setDefaultCommand(
@@ -164,7 +185,8 @@ public class RobotContainer {
     launch.whileTrue(
         new ParallelCommandGroup(
             new RollerForward(m_Rollers),
-            new LauncherOn(m_Launcher),
+            new LauncherOn(m_Launcher, () -> m_operatorJoystick.getRawAxis(6)),
+            //new LauncherOn(m_Launcher),
             new WaitUntilCommand(() -> m_Launcher.atSpeed()).andThen(
                 new FeederOn(m_Feeder)
             )
@@ -216,6 +238,9 @@ public class RobotContainer {
 
     // 2. Wrap it: Run HomeExtender FIRST, then run the selected auto
     // This ensures the extender is in a known state before autonomous actions begin.
-    return new HomeExtender(m_Extender).andThen(selectedAuto);
+    return Commands.parallel(
+        new HomeExtender(m_Extender),
+        new HomeClimber(m_Climber)
+    ).andThen(selectedAuto);
   }
 }

@@ -4,6 +4,9 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LauncherSubsystem;
 
@@ -14,15 +17,17 @@ import frc.robot.subsystems.LauncherSubsystem;
  */
 public class LauncherOn extends Command {
   /** The LauncherSubsystem instance that this command will control. */
-  LauncherSubsystem m_launcher;
+  private final LauncherSubsystem m_launcher;
+  private final double m_speedSource;
   
   /**
    * Creates a new LauncherOn command.
    *
    * @param launcher The LauncherSubsystem to be controlled by this command.
    */
-  public LauncherOn(LauncherSubsystem launcher) {
+  public LauncherOn(LauncherSubsystem launcher, DoubleSupplier launchSpeed) {
     this.m_launcher = launcher;
+    this.m_speedSource = (launchSpeed.getAsDouble() + 1) / 2;
     // This command should require the LauncherSubsystem to prevent other commands from
     // interfering with launcher operation.
     addRequirements(this.m_launcher);
@@ -36,9 +41,10 @@ public class LauncherOn extends Command {
   @Override
   public void execute() {
     // Calculate the target launcher speed based on vision data (e.g., distance to target).
-    double launcherSpeed = m_launcher.calculateRPMFromLimeLight();
+    SmartDashboard.putString("Current Command", this.getClass().getSimpleName());
+    //double launcherSpeed = m_launcher.calculateRPMFromLimeLight();
     // Set the launcher motor to the calculated velocity.
-    this.m_launcher.setLauncherVelocity(launcherSpeed);
+    this.m_launcher.setLauncherVelocity(m_launcher.calcualteRPMFromSlider(m_speedSource));
   }
 
   // Called once the command ends or is interrupted.

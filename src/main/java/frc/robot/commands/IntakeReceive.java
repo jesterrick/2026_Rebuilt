@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -35,6 +36,7 @@ public class IntakeReceive extends Command {
   @Override
   public void execute() {
     // Engage the intake motor at the predefined constant speed to receive game pieces.
+    SmartDashboard.putString("Current Command", this.getClass().getSimpleName());
     this.intakeSubsystem.engageIntake(IntakeConstants.kIntakeMotorSpeed);
   }
 
