@@ -1,6 +1,8 @@
 package frc.robot.util.hardware;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class MockSparkMax implements MotorControllerWrapper {
@@ -8,7 +10,7 @@ public class MockSparkMax implements MotorControllerWrapper {
     private double m_lastPos = 0;
     private double m_target = 0;
     private ControlType m_type;
-    private SparkMaxConfig m_config;
+    // Removed m_config as setConfiguration is removed from interface
 
     @Override
     public void set(double speed) {
@@ -40,6 +42,90 @@ public class MockSparkMax implements MotorControllerWrapper {
     public void setTargetValue(double value, ControlType type) {
         this.m_target = value;
         this.m_type = type;
+    }
+
+    // setConfiguration(SparkMaxConfig config) is removed from interface, so remove from here too.
+
+    @Override
+    public void setOutputVoltage(double voltage) {
+        // No-op for mock
+    }
+
+    @Override
+    public double getOutputCurrent() {
+        return 0.0; // No current for mock
+    }
+
+    @Override
+    public void setPID(double p, double i, double d, double ff) {
+        // No-op for mock
+    }
+
+    @Override
+    public void setMaxAccel(double accel) {
+        // No-op for mock
+    }
+
+    @Override
+    public double getPositionConversion() {
+        return 0.0; // No conversion for mock
+    }
+
+    @Override
+    public SparkMax getSparkMax() {
+        return null; // Mock does not have a real SparkMax
+    }
+
+    @Override
+    public TalonFX getTalonFX() {
+        return null; // Mock does not have a real TalonFX
+    }
+
+    @Override
+    public void follow(MotorControllerWrapper leader, boolean invert) {
+        // No-op for mock
+    }
+
+    // setConfiguration(SparkMaxConfig config) is removed from interface, so remove from here too.
+
+    @Override
+    public void setOutputVoltage(double voltage) {
+        // No-op for mock
+    }
+
+    @Override
+    public double getOutputCurrent() {
+        return 0.0; // No current for mock
+    }
+
+    @Override
+    public void setPID(double p, double i, double d, double ff) {
+        // No-op for mock
+    }
+
+    @Override
+    public void setMaxAccel(double accel) {
+        // No-op for mock
+    }
+
+    @Override
+    public double getPositionConversion() {
+        return 0.0; // No conversion for mock
+    }
+
+    @Override
+    public SparkMax getSparkMax() {
+        return null; // Mock does not have a real SparkMax
+    }
+
+    @Override
+    public TalonFX getTalonFX() {
+        return null; // Mock does not have a real TalonFX
+    }
+
+    @Override
+    public void follow(MotorControllerWrapper leader, boolean invert) {
+        // No-op for mock
     }
 
     @Override

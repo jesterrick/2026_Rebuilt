@@ -26,7 +26,8 @@ import frc.robot.util.hardware.MotorControllerWrapper;
  */
 public class LauncherSubsystem extends SubsystemBase {
   /** The motor responsible for driving the launcher mechanism. */
-  private final MotorControllerWrapper m_LauncherMotor;
+  private final MotorControllerWrapper m_LauncherLeaderMotor;
+  private final MotorControllerWrapper m_LauncherFollowMotor;
   /** The desired target RPM for the launcher motor. */
   private double targetRPM;
   /** Timer used to track how long the hopper has been empty. */
@@ -39,8 +40,9 @@ public class LauncherSubsystem extends SubsystemBase {
    * Initializes the launcher motor, its closed-loop controller, and configures it
    * with predefined settings. The initial target RPM is set to 0.
    */
-  public LauncherSubsystem(MotorControllerWrapper motor) {
-    this.m_LauncherMotor = motor;
+  public LauncherSubsystem(MotorControllerWrapper[] motors) {
+    this.m_LauncherLeaderMotor = motors[0];
+    this.m_LauncherFollowMotor = motors[1];
     this.targetRPM = 0.0;
     m_emptyTimer.start();
   }
@@ -93,10 +95,10 @@ public class LauncherSubsystem extends SubsystemBase {
     // 3. Actuator Output: Apply the calculated target RPM to the motor.
     if (this.targetRPM > 0) {
         // If a positive target RPM is set, use the closed-loop velocity controller.
-        this.m_LauncherMotor.setTargetValue(this.targetRPM, ControlType.kVelocity);
+        this.m_LauncherLeaderMotor.setTargetValue(this.targetRPM, ControlType.kVelocity);
     } else {
         // If target RPM is 0 or negative, stop the motor.
-        this.m_LauncherMotor.stop();
+        this.m_LauncherLeaderMotor.stop();
     }
 
     // Update SmartDashboard with launcher status for debugging and monitoring
@@ -117,7 +119,7 @@ public class LauncherSubsystem extends SubsystemBase {
 
   public void setVoltage(double voltage)
   {
-    this.m_LauncherMotor.setOutputVoltage(voltage);
+    this.m_LauncherLeaderMotor.setOutputVoltage(voltage);
   }
 
   /**
@@ -125,7 +127,7 @@ public class LauncherSubsystem extends SubsystemBase {
    * @return The actual velocity of the launcher motor in RPM.
    */
   public double getActualVelocity() {
-    return this.m_LauncherMotor.getVelocity();
+    return this.m_LauncherLeaderMotor.getVelocity();
   }
 
   /**
@@ -134,7 +136,7 @@ public class LauncherSubsystem extends SubsystemBase {
    */
   public void stopLauncher() {
     this.targetRPM = 0.0;
-    this.m_LauncherMotor.stop();
+    this.m_LauncherLeaderMotor.stop();
   }
 
   /**

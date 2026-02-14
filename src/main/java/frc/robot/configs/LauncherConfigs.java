@@ -4,32 +4,62 @@
 
 package frc.robot.configs;
 
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 
 import frc.robot.constants.GlobalConstants;
 import frc.robot.constants.LauncherConstants;
 
 /** Add your docs here. */
 public class LauncherConfigs {
-    public static final SparkMaxConfig config = new SparkMaxConfig();
+    public static final TalonFXConfiguration leaderConfig = new TalonFXConfiguration();
+    public static final TalonFXConfiguration followConfig = new TalonFXConfiguration();
     
     static {
-        config.encoder
-            .positionConversionFactor(LauncherConstants.kPositionFactor)
-            .velocityConversionFactor(LauncherConstants.kPositionFactor);
-
-        config.closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(LauncherConstants.kLauncherP.get(), LauncherConstants.kLauncherI.get(), LauncherConstants.kLauncherD.get());
+        leaderConfig.Feedback.SensorToMechanismRatio = LauncherConstants.kPositionFactor;
         
-        config.closedLoop.feedForward
-        .kV(LauncherConstants.kLauncherkV.get())
-        .kS(LauncherConstants.kLauncherStatic.get());
+        var slot0Lead = leaderConfig.Slot0;
+        slot0Lead.kP = LauncherConstants.kLauncherP;
+        slot0Lead.kI = LauncherConstants.kLauncherI;
+        slot0Lead.kD = LauncherConstants.kLauncherD;
+        slot0Lead.kV = LauncherConstants.kLauncherkV; // This is your Velocity Feedforward
+        slot0Lead.kS = LauncherConstants.kLauncherStatic; // This is your Static Feedforward (The "Oomph")
 
-        config.inverted(false);        
-        config.idleMode(IdleMode.kCoast); 
-        config.smartCurrentLimit(GlobalConstants.kMediumCurrentLimit);
+        leaderConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+        leaderConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+        leaderConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        leaderConfig.CurrentLimits.SupplyCurrentLimit = GlobalConstants.kMediumCurrentLimit;
+
+        followConfig.Feedback.SensorToMechanismRatio = LauncherConstants.kPositionFactor;
+        
+        var slot0Foll = followConfig.Slot0;
+        slot0Foll.kP = LauncherConstants.kLauncherP;
+        slot0Foll.kI = LauncherConstants.kLauncherI;
+        slot0Foll.kD = LauncherConstants.kLauncherD;
+        slot0Foll.kV = LauncherConstants.kLauncherkV; // This is your Velocity Feedforward
+        slot0Foll.kS = LauncherConstants.kLauncherStatic; // This is your Static Feedforward (The "Oomph")
+
+        followConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+        if (leaderConfig.MotorOutput.Inverted == InvertedValue.CounterClockwise_Positive)
+        {
+            followConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        } else {
+            followConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        }
+
+        followConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        followConfig.CurrentLimits.SupplyCurrentLimit = GlobalConstants.kMediumCurrentLimit;
+    }
+
+    public TalonFXConfiguration getTalonFXLeaderConfiguration() {
+        return leaderConfig;
+    }
+
+    public TalonFXConfiguration getTalonFXFollowConfiguration() {
+        return followConfig;
     }
 }

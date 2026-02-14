@@ -30,29 +30,28 @@ public class CanIdConstants {
     public static final int kFrontRightDrivingCanId = 4;
     public static final int kRearRightDrivingCanId = 2;
 
-   // CAN IDs for the Extender
-    public static final int kExtenderMotor1 = 9;
-    public static final int kExtenderMotor2 = 10;
+    // CAN IDs for the Extender
+    public static final int kExtenderMotor1 = 20;
+    public static final int kExtenderMotor2 = 21;
 
     // CAN IDs for Climber
-    public static final int kClimberMotor1 = 11;
-    public static final int kClimberMotor2 = 12;
+    public static final int kClimberMotor1 = 25;
+    public static final int kClimberMotor2 = 26;
 
-   // CAN IDs for the Intake
-    public static final int kIntakeMotor = 13;
-
+    // CAN IDs for the Intake
     // CAN IDs for the Intake Rotator
-    public static final int kIntakeRaiseMotor = 17;
+    public static final int kIntakeMotor = 10;
+    public static final int kIntakeRaiseMotor = 11;
 
-   // CAN IDs for the Rollers
-    public static final int kRollerMotor = 14;
+    // CAN IDs for the Rollers
+    public static final int kRollerMotor = 15;
 
-   // CAN IDs for the Feeder
-    public static final int kFeederMotor = 16;
+    // CAN IDs for the Feeder
+    public static final int kFeederMotor = 30;
 
-   // CAN IDs for the Launcher
-    public static final int kLauncherMotor = 15;
+    // CAN IDs for the Launcher
+    public static final int kLauncherLeaderMotor = 35;
+    public static final int kLauncherFollowMotor = 36;
 
-    
 
 }

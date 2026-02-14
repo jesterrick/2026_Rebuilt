@@ -65,10 +65,7 @@ public class RealSparkMax implements MotorControllerWrapper {
         return m_useAbsolute ? m_absoluteEncoder.getVelocity() : m_relativeEncoder.getVelocity();
     }
 
-    @Override
-    public void setConfiguration(SparkMaxConfig config){
-        this.m_motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    };
+
 
     @Override
     public void setOutputVoltage(double voltage){

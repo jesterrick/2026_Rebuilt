@@ -230,7 +230,7 @@ private void emergencyStop(String reason) {
   public void prepareForHoming() {
     // Apply homing configuration to the leader motor, without resetting other
     // parameters and without persisting to flash.
-    m_ExtenderLeaderMotor.setConfiguration(ExtenderConfigs.homingConfig);
+
   }
 
   /**
@@ -241,8 +241,8 @@ private void emergencyStop(String reason) {
   public void enableSoftLimits() {
     // Apply the standard leader configuration to the leader motor, without
     // resetting other parameters and without persisting to flash.
-    m_ExtenderLeaderMotor.setConfiguration(ExtenderConfigs.leaderConfig);
-    m_ExtenderFollowMotor.setConfiguration(ExtenderConfigs.followConfig);
+
+
     System.out.println("Extender Configurations Set");
   }
 }

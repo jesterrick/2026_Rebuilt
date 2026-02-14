@@ -72,7 +72,7 @@ public class RobotContainer {
   /** The robot's drive subsystem, controlling movement. */
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   /** The robot's launcher subsystem, responsible for shooting game pieces. */
-  private final LauncherSubsystem m_Launcher = new LauncherSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kLauncherMotor, LauncherConfigs.config));
+  private final LauncherSubsystem m_Launcher = new LauncherSubsystem(HardwareFactory.createKrakenPair(CanIdConstants.kLauncherLeaderMotor, CanIdConstants.kLauncherFollowMotor, LauncherConfigs.leaderConfig, true));
   /** The robot's intake subsystem, for acquiring game pieces. */
   private final IntakeSubsystem m_Intake = new IntakeSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kIntakeMotor, IntakeConfigs.config));
   /** The robot's extender subsystem, for extending and retracting mechanisms. */
@@ -83,7 +83,7 @@ public class RobotContainer {
   /** The robot's feeder subsystem, for transferring game pieces to the launcher. */
   private final FeederSubsystem m_Feeder = new FeederSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kFeederMotor, FeederConfigs.config));
   /** The robot's climber subsystem, for ascending vertical structures. */
- // private final ClimberSubsystem m_Climber = new ClimberSubsystem(HardwareFactory.createFollowerSparkMax(CanIdConstants.kClimberMotor1, CanIdConstants.kClimberMotor2, ClimberConfigs.leaderConfig, true));
+  private final ClimberSubsystem m_Climber = new ClimberSubsystem(HardwareFactory.createSparkMaxPair(CanIdConstants.kClimberMotor1, CanIdConstants.kClimberMotor2, ClimberConfigs.leaderConfig, true));
 
   /** A boolean flag to toggle between field-relative and robot-relative driving. */
   private boolean m_fieldRelative = false;

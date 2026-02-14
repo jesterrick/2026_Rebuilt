@@ -2,8 +2,7 @@ package frc.robot.util.hardware;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 public interface MotorControllerWrapper {
     /** Basic speed control (-1.0 to 1.0) used by all 7 subsystems. */
@@ -14,7 +13,7 @@ public interface MotorControllerWrapper {
      */
     default void setTargetValue(double value, ControlType controlType) {
         // Mock behavior: just convert to a rough percentage for testing
-        set(value / 5700.0); 
+        set(value / 5700.0);
     }
 
     default SparkClosedLoopController getPIDController() {
@@ -24,8 +23,6 @@ public interface MotorControllerWrapper {
     default void setPosition(double position) {
         // Mock does nothing, or you could update a internal 'fake' position variable
     }
-
-    default void setConfiguration(SparkMaxConfig config){};
 
     default void setOutputVoltage(double voltage){}
 
@@ -64,10 +61,21 @@ public interface MotorControllerWrapper {
 
     default SparkMaxConfig getSparkMaxConfig(){ return new SparkMaxConfig();}
 
+    default double getTarget(){return 0.0;}
+
+    default double getSpeed(){return 0.0;}
+
+    default SparkMaxConfig getSparkMaxConfig(){ return new SparkMaxConfig();}
+
     /**
-     * @return The underlying SparkMax object.
+     * @return The underlying SparkMax object, or null if not a SparkMax.
      */
     default SparkMax getSparkMax() { return null; }
+
+    /**
+     * @return The underlying TalonFX object, or null if not a TalonFX.
+     */
+    default TalonFX getTalonFX() { return null; }
 
     /**
      * Sets this motor controller to follow another.
