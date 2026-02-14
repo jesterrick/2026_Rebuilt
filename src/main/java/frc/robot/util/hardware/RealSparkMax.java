@@ -35,6 +35,11 @@ public class RealSparkMax implements MotorControllerWrapper {
     }
 
     @Override
+    public SparkClosedLoopController getPIDController() {
+        return this.m_controller;
+    }
+
+    @Override
     public void set(double speed) {
         this.m_motor.set(speed);
     }
@@ -76,7 +81,7 @@ public class RealSparkMax implements MotorControllerWrapper {
     }
 
     @Override
-    public void setPID(double p, double i, double d, double ff){
+    public void updateHardwarePID(double p, double i, double d, double kV , double kS){
         SparkMaxConfig config = new SparkMaxConfig();
 
         config.closedLoop
@@ -84,7 +89,8 @@ public class RealSparkMax implements MotorControllerWrapper {
         .pid(p, i, d);
         
         config.closedLoop.feedForward
-        .kV(ff);
+        .kV(kV)
+        .kS(kS);
 
         this.m_motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     }

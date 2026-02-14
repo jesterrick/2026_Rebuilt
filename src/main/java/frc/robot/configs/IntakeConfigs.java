@@ -19,8 +19,8 @@ public class IntakeConfigs {
         config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
 
         config.closedLoop.feedForward
-        .kS(IntakeConstants.kIntakeStatic)
-        .kV(IntakeConstants.kIntakeFF);
+        .kS(IntakeConstants.kIntakeStatic.get())
+        .kV(IntakeConstants.kIntakeFF.get());
 
         config.inverted(false);        
         config.idleMode(IdleMode.kCoast); 

@@ -23,7 +23,7 @@ public class ExtenderConfigs {
     public static final SparkMaxConfig homingConfig = new SparkMaxConfig();
     // Indicates if the leader motor's direction needs to be inverted.
     // This value will be applied to leaderConfig.
-    private static boolean leaderInverted = false;
+    private static boolean leaderInverted = true;
 
     static {
         // Configure the leader motor's encoder for position and velocity conversion
@@ -35,19 +35,19 @@ public class ExtenderConfigs {
         // Configure PID constants for closed-loop control.
         leaderConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pid(ExtenderConstants.kExtenderP, ExtenderConstants.kExtenderI, ExtenderConstants.kExtenderD);
+                .pid(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(), ExtenderConstants.kExtenderD.get());
 
         // Configure Feedforward constants to improve control accuracy.
         leaderConfig.closedLoop.feedForward
-                .kV(ExtenderConstants.kExtenderFF)
-                .kS(ExtenderConstants.kExtenderStatic);
+                .kV(ExtenderConstants.kExtenderFF.get())
+                .kS(ExtenderConstants.kExtenderStatic.get());
 
         // Configure motion profiling parameters for smooth movement.
         leaderConfig.closedLoop.maxMotion
                 .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
                 .cruiseVelocity(ExtenderConstants.kExtenderCruiseVelocity)
-                .maxAcceleration(ExtenderConstants.kExtAcceleration)
-                .allowedProfileError(ExtenderConstants.kExtenderAllowedError);
+                .maxAcceleration(ExtenderConstants.kExtAcceleration.get())
+                .allowedProfileError(ExtenderConstants.kExtenderAllowedError.get());
 
         // Configure soft limits to prevent physical over-extension or retraction.
         leaderConfig.softLimit
@@ -59,7 +59,7 @@ public class ExtenderConfigs {
         // Apply the inverted setting to the leader motor.
         leaderConfig.inverted(leaderInverted);
         // Set a smart current limit to protect the motor and battery.
-        leaderConfig.smartCurrentLimit(GlobalConstants.kLowCurrentLimit);
+        leaderConfig.smartCurrentLimit(GlobalConstants.kMediumCurrentLimit);
         // Set the idle mode to brake when the motor is not actively driven.
         leaderConfig.idleMode(IdleMode.kBrake);
 
@@ -70,9 +70,9 @@ public class ExtenderConfigs {
                 .positionConversionFactor(ExtenderConstants.kPositionFactor)
                 .velocityConversionFactor(ExtenderConstants.kVelocityFactor);
 
-        followConfig.inverted(leaderInverted); // Match physical direction
+        followConfig.inverted(!leaderInverted); // Match physical direction
         followConfig.idleMode(IdleMode.kBrake);
-        followConfig.smartCurrentLimit(GlobalConstants.kLowCurrentLimit);
+        followConfig.smartCurrentLimit(GlobalConstants.kMediumCurrentLimit);
 
         // FOLLOWER CONFIGURATION IS SET IN THE SUBSYSTEM CONSTRUCTOR
         // NO PID, NO FF, NO MOTION MAGIC. JUST FOLLOW.

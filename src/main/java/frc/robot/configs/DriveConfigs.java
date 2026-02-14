@@ -27,7 +27,7 @@ public final class DriveConfigs {
 
             drivingConfig.closedLoop
                     .feedbackSensor(FeedbackSensor.kPrimaryEncoder) //
-                    .pid(DriveConstants.kDriveP, DriveConstants.kDriveI, DriveConstants.kDriveD) //
+                    .pid(DriveConstants.kDriveP.get(), DriveConstants.kDriveI.get(), DriveConstants.kDriveD.get()) //
                     .outputRange(-1, 1); //
 
             // --- Turning Motor Configuration ---
@@ -42,7 +42,7 @@ public final class DriveConfigs {
 
             turningConfig.closedLoop
                     .feedbackSensor(FeedbackSensor.kAbsoluteEncoder) //
-                    .pid(DriveConstants.kTurnP, DriveConstants.kTurnI, DriveConstants.kTurnD) //
+                    .pid(DriveConstants.kTurnP.get(), DriveConstants.kTurnI.get(), DriveConstants.kTurnD.get()) //
                     .outputRange(-1, 1) //
                     .positionWrappingEnabled(true) //
                     .positionWrappingInputRange(0, NeoSwerveModuleConstants.kTurningEncoderPositionFactor); //

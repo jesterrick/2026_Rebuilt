@@ -22,11 +22,11 @@ public class LauncherConfigs {
 
         config.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(LauncherConstants.kLauncherP, LauncherConstants.kLauncherI, LauncherConstants.kLauncherD);
+        .pid(LauncherConstants.kLauncherP.get(), LauncherConstants.kLauncherI.get(), LauncherConstants.kLauncherD.get());
         
         config.closedLoop.feedForward
-        .kV(LauncherConstants.kLauncherkV)
-        .kS(LauncherConstants.kLauncherStatic);
+        .kV(LauncherConstants.kLauncherkV.get())
+        .kS(LauncherConstants.kLauncherStatic.get());
 
         config.inverted(false);        
         config.idleMode(IdleMode.kCoast); 

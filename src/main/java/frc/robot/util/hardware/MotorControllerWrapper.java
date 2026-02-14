@@ -2,6 +2,7 @@ package frc.robot.util.hardware;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public interface MotorControllerWrapper {
@@ -14,6 +15,10 @@ public interface MotorControllerWrapper {
     default void setTargetValue(double value, ControlType controlType) {
         // Mock behavior: just convert to a rough percentage for testing
         set(value / 5700.0); 
+    }
+
+    default SparkClosedLoopController getPIDController() {
+        return null;
     }
 
     default void setPosition(double position) {
@@ -35,11 +40,29 @@ public interface MotorControllerWrapper {
     /** Used to stop any motor safely. */
     default void stop() { set(0); }
 
-    default void setPID(double p, double i, double d, double ff){}
+    default void setPID(double p, double i, double d){
+        updateHardwarePID(p, i, d, 0.0, 0.0);
+    }
+
+    default void setPID(double p, double i, double d, double kV){
+        updateHardwarePID(p, i, d, kV, 0.0);
+    }
+
+    default void setPID(double p, double i, double d, double kV, double kS){
+        updateHardwarePID(p, i, d, kV, kS);
+    }
+
+    void updateHardwarePID(double p, double i, double d, double kV, double kS);
 
     default void setMaxAccel(double accel){}
 
     default double getPositionConversion(){return 0.0;}
+
+    default double getTarget(){return 0.0;}
+
+    default double getSpeed(){return 0.0;}
+
+    default SparkMaxConfig getSparkMaxConfig(){ return new SparkMaxConfig();}
 
     /**
      * @return The underlying SparkMax object.

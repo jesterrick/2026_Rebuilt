@@ -4,7 +4,9 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.RollerConstants;
 import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
@@ -21,6 +23,15 @@ public class Rollers extends SubsystemBase {
      */
     public Rollers(MotorControllerWrapper motor) {
       this.m_RollerMotor = motor;
+    }
+
+    @Override
+    public void periodic() {
+        if (DriverStation.isDisabled()) {
+            if (RollerConstants.kRollerFF.hasChanged() || RollerConstants.kRollerStatic.hasChanged()) {
+                m_RollerMotor.setPID(0,0,0,RollerConstants.kRollerFF.get(), RollerConstants.kRollerStatic.get());
+            }
+        }
     }
 
     /**

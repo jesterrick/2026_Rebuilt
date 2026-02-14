@@ -13,12 +13,12 @@ public class MockSparkMax implements MotorControllerWrapper {
     @Override
     public void set(double speed) {
         // We save the speed just for debugging, but we don't talk to CAN
-        m_lastSpeed = speed;
+        this.m_lastSpeed = speed;
     }
 
     @Override
     public double getPosition() {
-        return m_lastPos; // The ghost never moves
+        return this.m_lastPos; // The ghost never moves
     }
 
     @Override
@@ -28,17 +28,36 @@ public class MockSparkMax implements MotorControllerWrapper {
 
     @Override
     public void setPosition(double pos) {
-        m_lastPos = pos;
+        this.m_lastPos = pos;
+    }
+
+    @Override
+    public double getTarget() {
+        return this.m_target;
     }
 
     @Override
     public void setTargetValue(double value, ControlType type) {
-        m_target = value;
-        m_type = type;
+        this.m_target = value;
+        this.m_type = type;
     }
 
     @Override
     public void setConfiguration(SparkMaxConfig config) {
-        m_config = config;
+        this.m_config = config;
+    }
+
+    @Override
+    public void updateHardwarePID(double p, double i, double d, double kV , double kS){
+        this.m_config.closedLoop.feedForward
+        .kV(kV)
+        .kS(kS);
+
+        this.m_config.closedLoop.pid(p, i, d);
+    }
+
+    @Override
+    public com.revrobotics.spark.SparkClosedLoopController getPIDController() {
+        return null;
     }
 }

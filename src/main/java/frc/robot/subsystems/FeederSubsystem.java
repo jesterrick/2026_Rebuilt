@@ -4,7 +4,9 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.FeederConstants;
 import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
@@ -21,6 +23,15 @@ public class FeederSubsystem extends SubsystemBase {
    */
   public FeederSubsystem(MotorControllerWrapper motor) {
     this.m_FeederMotor = motor;
+  }
+
+  @Override
+  public void periodic() {
+    if (DriverStation.isDisabled()) {
+      if (FeederConstants.kFeederFF.hasChanged() || FeederConstants.kFeederStatic.hasChanged()) {
+        m_FeederMotor.setPID(0, 0, 0, FeederConstants.kFeederFF.get(), FeederConstants.kFeederStatic.get());
+      }
+    }
   }
 
   /**

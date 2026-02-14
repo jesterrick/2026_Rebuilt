@@ -4,7 +4,9 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.IntakeConstants;
 import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
@@ -21,6 +23,15 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public IntakeSubsystem(MotorControllerWrapper motor) {
     this.m_FrontPickupMotor = motor;
+  }
+
+  @Override
+  public void periodic() {
+    if (DriverStation.isDisabled()) {
+      if (IntakeConstants.kIntakeFF.hasChanged() || IntakeConstants.kIntakeStatic.hasChanged()) {
+        m_FrontPickupMotor.setPID(0, 0, 0, IntakeConstants.kIntakeFF.get(), IntakeConstants.kIntakeStatic.get());
+      }
+    }
   }
 
   /**

@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkBase.ControlType;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.configs.ClimberConfigs;
@@ -55,6 +57,13 @@ public class ClimberSubsystem extends SubsystemBase {
       SmartDashboard.putString("Climber/Status", "RE-ZERO REQUIRED");
     } else {
       SmartDashboard.putString("Climber/Status", "READY");
+    }
+
+    if (DriverStation.isDisabled()) {
+      if (ClimberConstants.kClimberP.hasChanged() || ClimberConstants.kClimberI.hasChanged()
+           || ClimberConstants.kClimberD.hasChanged() || ClimberConstants.kClimberFF.hasChanged()) {
+        m_ClimberLeaderMotor.setPID(ClimberConstants.kClimberP.get(), ClimberConstants.kClimberI.get(), ClimberConstants.kClimberD.get(), ClimberConstants.kClimberFF.get());
+      }
     }
   }
 
@@ -118,7 +127,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public boolean isAtBottom() {
     // If the motor is drawing more than our threshold, it has hit the mechanical stop
-    return m_ClimberLeaderMotor.getOutputCurrent() > ClimberConstants.kMaxHomingVoltage;
+    return m_ClimberLeaderMotor.getOutputCurrent() > ClimberConstants.kMaxHomingVoltage.get();
   }
 
   public void prepareForHoming()
