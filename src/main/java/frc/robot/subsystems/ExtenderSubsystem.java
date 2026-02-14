@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkBase.ControlType;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.configs.ExtenderConfigs;
@@ -63,12 +64,16 @@ public class ExtenderSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Extender Ldr Pos", leaderPos);
     SmartDashboard.putNumber("Extender Flw Pos", followPos);
     SmartDashboard.putNumber("Extender Error", error);
+    SmartDashboard.putBoolean("EXT HOMED", m_isHomed);
+    SmartDashboard.putNumber("Extender Target", m_globalTargetInches);
+    SmartDashboard.putNumber("EXT LEAD VOLTAGE", m_ExtenderLeaderMotor.getOutputCurrent());
+    SmartDashboard.putNumber("EXT FOLL VOLTAGE", m_ExtenderFollowMotor.getOutputCurrent());
 
     //System.out.println("L Units: " + m_ExtenderLeaderMotor.getPosition());
     //System.out.println("F Units: " + m_ExtenderFollowMotor.getPosition());
     
     // Safety 1: The Skew Check (0.5 inches is a good 'real world' limit)
-    if (error > ExtenderConstants.kMaxPositionDifference) { // kMaxPositionDifference was 10.5, which is 'frame-snapping' territory
+    if (error > ExtenderConstants.kMaxPositionDifference.get()) { // kMaxPositionDifference was 10.5, which is 'frame-snapping' territory
         emergencyStop("SKEW DETECTED: " + error);
         return;
     }
@@ -81,11 +86,23 @@ public class ExtenderSubsystem extends SubsystemBase {
         return;
     }
 
+    if (DriverStation.isDisabled()) {
+        if (ExtenderConstants.kExtenderP.hasChanged() || ExtenderConstants.kExtenderI.hasChanged()
+               || ExtenderConstants.kExtenderD.hasChanged() || ExtenderConstants.kExtenderFF.hasChanged()) {
+            m_ExtenderLeaderMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
+             ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(), ExtenderConstants.kExtenderStatic.get());
+            m_ExtenderFollowMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
+             ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(), ExtenderConstants.kExtenderStatic.get());
+        }
+    }
+/*
     if (m_isHomed) {
         // Only the leader needs a command now! 
         // The follower hardware will mirror this automatically.
         m_ExtenderLeaderMotor.setTargetValue(m_globalTargetInches, ControlType.kMAXMotionPositionControl);
-    }
+    }*/
+    m_ExtenderLeaderMotor.setTargetValue(m_globalTargetInches, ControlType.kMAXMotionPositionControl);
+    m_ExtenderFollowMotor.setTargetValue(m_globalTargetInches, ControlType.kMAXMotionPositionControl);
 }
 
 private void emergencyStop(String reason) {
@@ -103,9 +120,9 @@ private void emergencyStop(String reason) {
   public void moveOut() {
     // Safety check: Do not move if the system is not homed, as position is
     // untrusted
-    if (!m_isHomed) {
+    /*if (!m_isHomed) {
       return;
-    }
+    }*/
     m_globalTargetInches = ExtenderConstants.kExtenderMotorOut;
   }
 
@@ -116,9 +133,9 @@ private void emergencyStop(String reason) {
    */
   public void moveIn() {
     // Safety check: Do not move if the system is not homed
-    if (!m_isHomed) {
+    /*if (!m_isHomed) {
       return;
-    }
+    }*/
     m_globalTargetInches = ExtenderConstants.kExtenderMotorIn;
   }
 
@@ -164,7 +181,7 @@ private void emergencyStop(String reason) {
    */
   public boolean atTarget(double target) {
     // Checking leader is usually enough, but you can check both for extra safety
-    return Math.abs(target - getPositionInInches(m_ExtenderLeaderMotor)) < ExtenderConstants.kAtTargetTolerance;
+    return Math.abs(target - getPositionInInches(m_ExtenderLeaderMotor)) < ExtenderConstants.kAtTargetTolerance.get();
   }
 
   /**
@@ -189,8 +206,8 @@ private void emergencyStop(String reason) {
    *         threshold, false otherwise.
    */
   public boolean isAtHome() {
-    return m_ExtenderLeaderMotor.getOutputCurrent() > ExtenderConstants.kMaxHomingVoltage
-        && m_ExtenderFollowMotor.getOutputCurrent() > ExtenderConstants.kMaxHomingVoltage;
+    return m_ExtenderLeaderMotor.getOutputCurrent() > ExtenderConstants.kMaxHomingVoltage.get()
+        && m_ExtenderFollowMotor.getOutputCurrent() > ExtenderConstants.kMaxHomingVoltage.get();
   }
 
   /**

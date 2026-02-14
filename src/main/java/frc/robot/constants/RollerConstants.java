@@ -4,19 +4,33 @@
 
 package frc.robot.constants;
 
+import frc.robot.util.TunableNumber;
+import frc.robot.util.TuningManager;
+
 /**
  * The RollerConstants class stores all constant values related to the robot's roller mechanism.
  * These constants define motor speeds and other operational parameters for the rollers.
  */
 public class RollerConstants {
-    /** The default operational speed for the roller motor. */
-    public static final double kRollerSpeed = 0.05;
 
+    /*
+     ****** TUNABLE VARIABLES ******
+     */
+
+    /** The target velocity for the rollers (e.g., in RPM or 0-1 duty cycle). */
+    public static final TunableNumber kRollerTargetSpeed = TuningManager.register("Roller/TargetSpeed", 0.05);
+    
+    /** kS: The 'Oomph' required to break static friction. Units: Volts or Percent. */
+    public static final TunableNumber kRollerFF = TuningManager.register("Roller/kS", 0.02);
+    
+    /** kV: The voltage required to sustain a given velocity. Units: Volts/(Unit of Speed). */
+    public static final TunableNumber kRollerStatic = TuningManager.register("Roller/kV", 0.2);
+
+    /*
+     ****** NON TUNABLE VARIABLES ******
+     */
     // direct motor - no gears, sprockets, chains etc.
     // measure with direct RPM
     public static final double kPositionFactor = 1.0;
     public static final double kVelocityFactor = 1.0;
-
-    public static final double kFeederStatic = 0.02;
-    public static final double kFeederFF = 0.2;
 }

@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -73,10 +74,9 @@ public DriveSubsystem() {
   HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
 }
 
-  @Override
-  public void periodic() {
+@Override
+public void periodic() {
     // Update the odometry in the periodic block
-    // This updates the robot's estimated position and heading on the field.
     m_odometry.update(
         Rotation2d.fromDegrees(m_gyro.getAngle()),
         new SwerveModulePosition[] {
@@ -85,7 +85,33 @@ public DriveSubsystem() {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
-  }
+
+    if (DriverStation.isDisabled()) {
+      if (DriveConstants.kDriveP.hasChanged() || DriveConstants.kDriveI.hasChanged() || DriveConstants.kDriveD.hasChanged() 
+            || DriveConstants.kDriveV.hasChanged() || DriveConstants.kDriveS.hasChanged()) {
+        this.m_frontRight.setDrivePID(DriveConstants.kDriveP.get(), DriveConstants.kDriveI.get(), DriveConstants.kDriveD.get(),
+            DriveConstants.kDriveV.get(), DriveConstants.kDriveS.get());
+        this.m_frontLeft.setDrivePID(DriveConstants.kDriveP.get(), DriveConstants.kDriveI.get(), DriveConstants.kDriveD.get(),
+            DriveConstants.kDriveV.get(), DriveConstants.kDriveS.get());
+        this.m_rearRight.setDrivePID(DriveConstants.kDriveP.get(), DriveConstants.kDriveI.get(), DriveConstants.kDriveD.get(),
+            DriveConstants.kDriveV.get(), DriveConstants.kDriveS.get());
+        this.m_rearLeft.setDrivePID(DriveConstants.kDriveP.get(), DriveConstants.kDriveI.get(), DriveConstants.kDriveD.get(),
+            DriveConstants.kDriveV.get(), DriveConstants.kDriveS.get());
+      }
+      if (DriveConstants.kTurnP.hasChanged() || DriveConstants.kTurnI.hasChanged() || DriveConstants.kTurnD.hasChanged()
+            || DriveConstants.kTurnV.hasChanged() || DriveConstants.kTurnS.hasChanged()){
+        this.m_frontRight.setTurnPID(DriveConstants.kTurnP.get(), DriveConstants.kTurnI.get(), DriveConstants.kTurnD.get(),
+            DriveConstants.kTurnV.get(), DriveConstants.kTurnS.get());
+        this.m_frontLeft.setTurnPID(DriveConstants.kTurnP.get(), DriveConstants.kTurnI.get(), DriveConstants.kTurnD.get(),
+            DriveConstants.kTurnV.get(), DriveConstants.kTurnS.get());
+        this.m_rearRight.setTurnPID(DriveConstants.kTurnP.get(), DriveConstants.kTurnI.get(), DriveConstants.kTurnD.get(),
+            DriveConstants.kTurnV.get(), DriveConstants.kTurnS.get());
+        this.m_rearLeft.setTurnPID(DriveConstants.kTurnP.get(), DriveConstants.kTurnI.get(), DriveConstants.kTurnD.get(),
+            DriveConstants.kTurnV.get(), DriveConstants.kTurnS.get());
+      }
+    }
+}
+
 
   /**
    * Returns the currently-estimated pose of the robot.
@@ -126,27 +152,28 @@ public DriveSubsystem() {
    * @param fieldRelative Whether the provided x and y speeds are relative to the
    *                      field (true) or to the robot's current orientation (false).
    */
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    // Convert the commanded speeds into the correct units for the drivetrain
-    double xSpeedDelivered = xSpeed * DriveConstants.kAdjustedMaxSpeedMbpsTeleOp;
-    double ySpeedDelivered = ySpeed * DriveConstants.kAdjustedMaxSpeedMbpsTeleOp;
-    double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
+    public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+        // Convert the commanded speeds into the correct units for the drivetrain
+        double xSpeedDelivered = xSpeed * DriveConstants.kAdjustedMaxSpeedMbpsTeleOp;
+        double ySpeedDelivered = ySpeed * DriveConstants.kAdjustedMaxSpeedMbpsTeleOp;
+        double rotDelivered = rot * DriveConstants.kMaxAngularSpeed.get();
 
-    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-        fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                Rotation2d.fromDegrees(m_gyro.getAngle()))
-            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
-   
-    // Desaturate wheel speeds to ensure no wheel exceeds the maximum allowed speed.
-    SwerveDriveKinematics.desaturateWheelSpeeds(
-        swerveModuleStates, DriveConstants.kAdjustedMaxSpeedMbpsTeleOp);
+        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
+            fieldRelative
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
+                    Rotation2d.fromDegrees(m_gyro.getAngle()))
+                : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     
-    m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    m_frontRight.setDesiredState(swerveModuleStates[1]);
-    m_rearLeft.setDesiredState(swerveModuleStates[2]);
-    m_rearRight.setDesiredState(swerveModuleStates[3]);
-  }
+        // Desaturate wheel speeds to ensure no wheel exceeds the maximum allowed speed.
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+            swerveModuleStates, DriveConstants.kAdjustedMaxSpeedMbpsTeleOp);
+        
+        m_frontLeft.setDesiredState(swerveModuleStates[0]);
+        m_frontRight.setDesiredState(swerveModuleStates[1]);
+        m_rearLeft.setDesiredState(swerveModuleStates[2]);
+        m_rearRight.setDesiredState(swerveModuleStates[3]);
+    }
+
 
   /**
    * Sets the swerve modules into an "X" formation.

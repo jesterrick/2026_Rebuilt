@@ -35,20 +35,20 @@ public class ClimberConfigs {
         // Configure PID constants for closed-loop control.
         leaderConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pid(ClimberConstants.kClimberP, ClimberConstants.kClimberI, ClimberConstants.kClimberD);
+            .pid(ClimberConstants.kClimberP.get(), ClimberConstants.kClimberI.get(), ClimberConstants.kClimberD.get());
         
         // Configure Feedforward constants to improve control accuracy.
         leaderConfig.closedLoop.feedForward
-            .kV(ClimberConstants.kClimberFF)
-            .kS(ClimberConstants.kClimberStatic)
-            .kG(ClimberConstants.kClimberGravity);
+            .kV(ClimberConstants.kClimberFF.get())
+            .kS(ClimberConstants.kClimberStatic.get())
+            .kG(ClimberConstants.kClimberGravity.get());
 
         // Configure motion profiling parameters for smooth movement.
         leaderConfig.closedLoop.maxMotion
             .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
             .cruiseVelocity(ClimberConstants.kClimberCruiseVelocity)
-            .maxAcceleration(ClimberConstants.kClimberAcceleration)
-            .allowedProfileError(ClimberConstants.kClimberAllowedError);
+            .maxAcceleration(ClimberConstants.kClimberAcceleration.get())
+            .allowedProfileError(ClimberConstants.kClimberAllowedError.get());
 
         // Configure soft limits to prevent physical over-extension or retraction.
         leaderConfig.softLimit

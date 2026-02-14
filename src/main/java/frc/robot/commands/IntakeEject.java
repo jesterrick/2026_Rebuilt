@@ -37,7 +37,7 @@ public class IntakeEject extends Command {
   public void execute() {
     // Engage the intake motor in reverse to eject game pieces.
     SmartDashboard.putString("Current Command", this.getClass().getSimpleName());
-    this.intakeSubsystem.engageIntake(-IntakeConstants.kIntakeMotorSpeed);
+    this.intakeSubsystem.engageIntake(-IntakeConstants.kIntakeMotorSpeed.get());
   }
 
   // Called once the command ends or is interrupted.

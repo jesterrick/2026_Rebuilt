@@ -47,7 +47,7 @@ public class HomeClimber extends Command {
   @Override
   public void execute() {
     SmartDashboard.putString("Current Command", this.getClass().getSimpleName());
-    this.m_climber.setHomingVoltages(ClimberConstants.kHomingVoltage);
+    this.m_climber.setHomingVoltages(ClimberConstants.kHomingVoltage.get());
   }
 
   /**

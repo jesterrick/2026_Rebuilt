@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import com.revrobotics.spark.SparkClosedLoopController;
 
 import com.revrobotics.spark.SparkBase.ControlType;
 
@@ -110,4 +111,34 @@ public class MAXSwerveModule {
   public void resetEncoders() {
     m_drivingMotor.setPosition(0);
   }
+
+  public SparkClosedLoopController getDrivingPIDController() {
+    return m_drivingMotor.getPIDController();
+  }
+
+  public SparkClosedLoopController getTurningPIDController() {
+    return m_turningMotor.getPIDController();
+  }
+
+  public void setDrivePID(double p, double i, double d)
+  {
+    this.m_drivingMotor.setPID(p, i, d, 0.0, 0.0);
+  }
+
+  public void setDrivePID(double p, double i, double d, double kV)
+  {
+    this.m_drivingMotor.setPID(p, i, d, kV, 0.0);
+  }
+
+  public void setDrivePID(double p, double i, double d, double kV, double kS)
+  {
+    this.m_drivingMotor.setPID(p, i, d, kV, kS);
+  }
+
+  public void setTurnPID(double p, double i, double d, double kV, double kS)
+  {
+    this.m_turningMotor.setPID(p, i, d, kV, kS);
+  }
+
+
 }

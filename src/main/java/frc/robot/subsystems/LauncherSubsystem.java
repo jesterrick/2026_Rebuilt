@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,7 +47,18 @@ public class LauncherSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (DriverStation.isDisabled()) {
+        if (LauncherConstants.kLauncherP.hasChanged() || LauncherConstants.kLauncherI.hasChanged() || LauncherConstants.kLauncherD.hasChanged()
+          || LauncherConstants.kLauncherkV.hasChanged() || LauncherConstants.kLauncherStatic.hasChanged()) {
+
+            m_LauncherMotor.setPID(LauncherConstants.kLauncherP.get(), LauncherConstants.kLauncherI.get(), LauncherConstants.kLauncherD.get(),
+                LauncherConstants.kLauncherkV.get(), LauncherConstants.kLauncherStatic.get());
+        }
+    }
     // This method will be called once per scheduler run
+    /*
+     * We don't have a sensor yet
+     
     boolean ballPresent = isBallPresent();
 
     // 1. Manage the Timer:
@@ -72,12 +84,12 @@ public class LauncherSubsystem extends SubsystemBase {
     else if (ballPresent) {
         // Scenario B: A ball is detected in the hopper, but no explicit shoot command is active.
         // Maintain an IDLE speed to be ready for a quick launch.
-        this.targetRPM = LauncherConstants.kLauncherMotorSpeedIdle;
+        this.targetRPM = LauncherConstants.kLauncherMotorSpeedIdle.get();
     }
     // Scenario C: Ball just left (timer < kWaitForEmptyTime) and no command is running.
     // The targetRPM will naturally stay at whatever it was last (e.g., high speed after a shot)
     // until the timer hits kWaitForEmptyTime. Then, it transitions to Scenario A and shuts off.
-
+    */
     // 3. Actuator Output: Apply the calculated target RPM to the motor.
     if (this.targetRPM > 0) {
         // If a positive target RPM is set, use the closed-loop velocity controller.
@@ -132,11 +144,11 @@ public class LauncherSubsystem extends SubsystemBase {
    */
   public boolean atSpeed() {
     // 1. Calculate if the actual RPM is within an acceptable tolerance of the target RPM.
-    boolean isNearTarget = Math.abs(this.targetRPM - getActualVelocity()) < LauncherConstants.kLauncherTolerance;
+    boolean isNearTarget = Math.abs(this.targetRPM - getActualVelocity()) < LauncherConstants.kLauncherTolerance.get();
 
     // 2. Ensure the target speed is a "launch" speed (i.e., significantly above idle),
     // to differentiate from idle state or a stopped state.
-    boolean isNotIdle = this.targetRPM > (LauncherConstants.kLauncherMotorSpeedIdle + LauncherConstants.kLaunchMinShotBuffer);
+    boolean isNotIdle = this.targetRPM > (LauncherConstants.kLauncherMotorSpeedIdle.get() + LauncherConstants.kLaunchMinShotBuffer.get());
 
     return isNearTarget && isNotIdle;
 }
@@ -153,8 +165,8 @@ public class LauncherSubsystem extends SubsystemBase {
     // Because sometimes joysticks are garbage and give you -0.001
     double clampedValue = Math.max(0.0, Math.min(1.0, sliderValue));
 
-    double minRPM = LauncherConstants.kLaunchMinRPM;
-    double maxRPM = LauncherConstants.kLaunchMaxRPM;
+    double minRPM = LauncherConstants.kLaunchMinRPM.get();
+    double maxRPM = LauncherConstants.kLaunchMaxRPM.get();
 
     // Formula: Min + (Range * Percentage)
     return minRPM + ((maxRPM - minRPM) * clampedValue);
@@ -184,15 +196,15 @@ public class LauncherSubsystem extends SubsystemBase {
           Math.tan(Math.toRadians(LauncherConstants.kMountAngle + ty));
 
       // Calculate the required RPM based on distance and predefined constants.
-      double calculatedRPM = (distance * LauncherConstants.kRPMPerInch) + LauncherConstants.kBaseRPM;
+      double calculatedRPM = (distance * LauncherConstants.kRPMPerInch.get()) + LauncherConstants.kBaseRPM.get();
       
       // Clamps the calculated speed between your minimum viable shot and your maximum safe speed.
-      return MathUtil.clamp(calculatedRPM, LauncherConstants.kLaunchMinRPM, LauncherConstants.kLaunchMaxRPM);
+      return MathUtil.clamp(calculatedRPM, LauncherConstants.kLaunchMinRPM.get(), LauncherConstants.kLaunchMaxRPM.get());
     } else {
       // IMPORTANT: If we lose the target or it's not the correct one, return IDLE speed.
       // This will cause the `atSpeed()` method to return FALSE, effectively stopping the feeder,
       // and signaling the robot is not ready to shoot.
-      return LauncherConstants.kLauncherMotorSpeedIdle;
+      return LauncherConstants.kLauncherMotorSpeedIdle.get();
     }
   }
 }

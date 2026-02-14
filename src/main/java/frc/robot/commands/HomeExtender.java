@@ -53,7 +53,7 @@ public class HomeExtender extends Command {
   @Override
   public void execute() {
     if (!GlobalConstants.IS_BENCHTOP) {
-      this.m_extender.setHomingVoltages(ExtenderConstants.kHomingVoltage);
+      this.m_extender.setHomingVoltages(ExtenderConstants.kHomingVoltage.get());
     }
   }
 

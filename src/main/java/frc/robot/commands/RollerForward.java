@@ -35,7 +35,7 @@ public class RollerForward extends Command {
   @Override
   public void execute() {
     // Turn the rollers on at the predefined forward speed.
-    m_rollers.rollerOn(RollerConstants.kRollerSpeed);
+    m_rollers.rollerOn(RollerConstants.kRollerTargetSpeed.get());
   }
 
   // Called once the command ends or is interrupted.

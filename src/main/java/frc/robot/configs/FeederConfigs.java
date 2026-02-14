@@ -24,8 +24,8 @@ public class FeederConfigs {
         config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
 
         config.closedLoop.feedForward
-            .kS(FeederConstants.kFeederStatic)
-            .kV(FeederConstants.kFeederFF);
+            .kS(FeederConstants.kFeederStatic.get())
+            .kV(FeederConstants.kFeederFF.get());
 
         config.inverted(false);        
         config.idleMode(IdleMode.kBrake); 

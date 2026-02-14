@@ -19,8 +19,8 @@ public class RollerConfigs {
         config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
 
         config.closedLoop.feedForward
-            .kS(RollerConstants.kFeederStatic)
-            .kV(RollerConstants.kFeederFF);
+            .kS(RollerConstants.kRollerStatic.get())
+            .kV(RollerConstants.kRollerFF.get());
 
         config.inverted(false);
         config.idleMode(IdleMode.kCoast);

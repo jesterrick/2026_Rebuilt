@@ -36,7 +36,7 @@ public class FeederOn extends Command {
   @Override
   public void execute() {
     // Engage the feeder motor at the predefined constant speed.
-    this.m_Feeder.engageFeeder(FeederConstants.kFeederSpeed);
+    this.m_Feeder.engageFeeder(FeederConstants.kFeederSpeed.get());
   }
 
   // Called once the command ends or is interrupted.

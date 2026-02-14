@@ -83,7 +83,7 @@ public class RobotContainer {
   /** The robot's feeder subsystem, for transferring game pieces to the launcher. */
   private final FeederSubsystem m_Feeder = new FeederSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kFeederMotor, FeederConfigs.config));
   /** The robot's climber subsystem, for ascending vertical structures. */
-  private final ClimberSubsystem m_Climber = new ClimberSubsystem(HardwareFactory.createFollowerSparkMax(CanIdConstants.kClimberMotor1, CanIdConstants.kClimberMotor2, ClimberConfigs.leaderConfig, true));
+ // private final ClimberSubsystem m_Climber = new ClimberSubsystem(HardwareFactory.createFollowerSparkMax(CanIdConstants.kClimberMotor1, CanIdConstants.kClimberMotor2, ClimberConfigs.leaderConfig, true));
 
   /** A boolean flag to toggle between field-relative and robot-relative driving. */
   private boolean m_fieldRelative = false;
@@ -204,7 +204,8 @@ public class RobotContainer {
     launcherIdleOff.onTrue(
         new LauncherOff(m_Launcher));
 
-    // climbExtend: When held, extends the climber and turns off other systems.
+/* CLIMBER HAS NOT BEEN INSTALLED
+        // climbExtend: When held, extends the climber and turns off other systems.
     climbExtend.whileTrue(
       new ParallelCommandGroup(
         new LauncherOff(m_Launcher),
@@ -223,6 +224,7 @@ public class RobotContainer {
         new FeederOff(m_Feeder),
         new ClimberRetract(m_Climber)
         ));
+        */
   }
 
   /**
@@ -235,12 +237,12 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // 1. Get whatever auto the driver picked from the dashboard
     Command selectedAuto = m_autoChooser.getSelected();
-
-    // 2. Wrap it: Run HomeExtender FIRST, then run the selected auto
+    return selectedAuto;
+    /*/ 2. Wrap it: Run HomeExtender FIRST, then run the selected auto
     // This ensures the extender is in a known state before autonomous actions begin.
     return Commands.parallel(
         new HomeExtender(m_Extender),
         new HomeClimber(m_Climber)
-    ).andThen(selectedAuto);
+    ).andThen(selectedAuto);*/
   }
 }
