@@ -3,11 +3,13 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkBase.ControlType;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.configs.ExtenderConfigs;
 import frc.robot.constants.ExtenderConstants;
 import frc.robot.constants.GlobalConstants;
+import frc.robot.util.hardware.MockSparkMax;
 import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
@@ -31,17 +33,18 @@ public class ExtenderSubsystem extends SubsystemBase {
    */
   private boolean m_isHomed;
 
+  private final Notifier m_configNotifier;
+
   /**
    * Constructs a new ExtenderSubsystem.
    * Initializes the leader and follower motors, their closed-loop controllers,
    * and configures them with predefined settings.
    */
-  public ExtenderSubsystem(MotorControllerWrapper leader, MotorControllerWrapper follower) {
-    this.m_ExtenderLeaderMotor = leader;
-    this.m_ExtenderFollowMotor = follower;
+  public ExtenderSubsystem(MotorControllerWrapper[] motors) {
+    this.m_ExtenderLeaderMotor = motors[0];
+    this.m_ExtenderFollowMotor = (motors.length > 1) ? motors[1] : new MockSparkMax();
 
     // Set the follower to mirror the leader's output, inverting it as needed.
-    // This is the most reliable way to keep two motors in sync.
     this.m_ExtenderFollowMotor.follow(this.m_ExtenderLeaderMotor, true);
 
     if (GlobalConstants.IS_BENCHTOP) {
@@ -53,6 +56,22 @@ public class ExtenderSubsystem extends SubsystemBase {
       this.m_isHomed = false;
     }
     enableSoftLimits();
+
+    m_configNotifier = new Notifier(this::updateConfigs);
+    // COMMENTED OUT to avoid periodic blocking calls. User will manually trigger updateConfigs for tuning.
+    // m_configNotifier.startPeriodic(0.1);
+  }
+
+  public void updateConfigs() {
+    if (DriverStation.isDisabled()) {
+        if (ExtenderConstants.kExtenderP.hasChanged() || ExtenderConstants.kExtenderI.hasChanged()
+               || ExtenderConstants.kExtenderD.hasChanged() || ExtenderConstants.kExtenderFF.hasChanged()) {
+            m_ExtenderLeaderMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
+             ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(), ExtenderConstants.kExtenderStatic.get());
+            m_ExtenderFollowMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
+             ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(), ExtenderConstants.kExtenderStatic.get());
+        }
+    }
   }
 
   @Override
@@ -85,24 +104,15 @@ public class ExtenderSubsystem extends SubsystemBase {
         emergencyStop("CURRENT IMBALANCE: L:" + leaderCurrent + " F:" + followCurrent);
         return;
     }
-
-    if (DriverStation.isDisabled()) {
-        if (ExtenderConstants.kExtenderP.hasChanged() || ExtenderConstants.kExtenderI.hasChanged()
-               || ExtenderConstants.kExtenderD.hasChanged() || ExtenderConstants.kExtenderFF.hasChanged()) {
-            m_ExtenderLeaderMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
-             ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(), ExtenderConstants.kExtenderStatic.get());
-            m_ExtenderFollowMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
-             ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(), ExtenderConstants.kExtenderStatic.get());
-        }
-    }
 /*
     if (m_isHomed) {
         // Only the leader needs a command now! 
         // The follower hardware will mirror this automatically.
         m_ExtenderLeaderMotor.setTargetValue(m_globalTargetInches, ControlType.kMAXMotionPositionControl);
     }*/
-    m_ExtenderLeaderMotor.setTargetValue(m_globalTargetInches, ControlType.kMAXMotionPositionControl);
-    m_ExtenderFollowMotor.setTargetValue(m_globalTargetInches, ControlType.kMAXMotionPositionControl);
+    if (m_isHomed) {
+        m_ExtenderLeaderMotor.setTargetValue(m_globalTargetInches, ControlType.kMAXMotionPositionControl);
+    }
 }
 
 private void emergencyStop(String reason) {

@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,7 +23,8 @@ import com.studica.frc.AHRS;
 
 /**
  * The DriveSubsystem manages the robot's swerve drive train.
- * It controls the four individual swerve modules, integrates gyroscope data for field-relative driving,
+ * It controls the four individual swerve modules, integrates gyroscope data for
+ * field-relative driving,
  * and uses odometry to track the robot's position on the field.
  */
 public class DriveSubsystem extends SubsystemBase {
@@ -54,6 +56,8 @@ public class DriveSubsystem extends SubsystemBase {
   /** The gyroscope sensor for measuring robot heading. */
   private final AHRS m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
 
+  private final Notifier m_configNotifier;
+
   /** Odometry class for tracking robot pose on the field. */
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
@@ -69,23 +73,15 @@ public class DriveSubsystem extends SubsystemBase {
    * Constructs a new DriveSubsystem.
    * Initializes swerve modules, gyroscope, and odometry.
    */
-public DriveSubsystem() {
-  // Report usage of the MAXSwerve template to WPILib for analytics.
-  HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
-}
+  public DriveSubsystem() {
+    // Report usage of the MAXSwerve template to WPILib for analytics.
+    HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
+    m_configNotifier = new Notifier(this::updateConfigs);
+    // COMMENTED OUT to avoid periodic blocking calls. User will manually trigger updateConfigs for tuning.
+    // m_configNotifier.startPeriodic(0.1);
+  }
 
-@Override
-public void periodic() {
-    // Update the odometry in the periodic block
-    m_odometry.update(
-        Rotation2d.fromDegrees(m_gyro.getAngle()),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        });
-
+  public void updateConfigs() {
     if (DriverStation.isDisabled()) {
       if (DriveConstants.kDriveP.hasChanged() || DriveConstants.kDriveI.hasChanged() || DriveConstants.kDriveD.hasChanged() 
             || DriveConstants.kDriveV.hasChanged() || DriveConstants.kDriveS.hasChanged()) {
@@ -110,8 +106,20 @@ public void periodic() {
             DriveConstants.kTurnV.get(), DriveConstants.kTurnS.get());
       }
     }
-}
+  }
 
+  @Override
+  public void periodic() {
+    // Update the odometry in the periodic block
+    m_odometry.update(
+        Rotation2d.fromDegrees(m_gyro.getAngle()),
+        new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        });
+  }
 
   /**
    * Returns the currently-estimated pose of the robot.
@@ -144,36 +152,38 @@ public void periodic() {
   /**
    * Method to drive the robot using joystick input.
    *
-   * @param xSpeed        Speed of the robot in the x direction (forward/backward).
+   * @param xSpeed        Speed of the robot in the x direction
+   *                      (forward/backward).
    *                      A positive value moves the robot forward.
    * @param ySpeed        Speed of the robot in the y direction (sideways/strafe).
    *                      A positive value moves the robot left.
-   * @param rot           Angular rate of the robot. A positive value rotates counter-clockwise.
+   * @param rot           Angular rate of the robot. A positive value rotates
+   *                      counter-clockwise.
    * @param fieldRelative Whether the provided x and y speeds are relative to the
-   *                      field (true) or to the robot's current orientation (false).
+   *                      field (true) or to the robot's current orientation
+   *                      (false).
    */
-    public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-        // Convert the commanded speeds into the correct units for the drivetrain
-        double xSpeedDelivered = xSpeed * DriveConstants.kAdjustedMaxSpeedMbpsTeleOp;
-        double ySpeedDelivered = ySpeed * DriveConstants.kAdjustedMaxSpeedMbpsTeleOp;
-        double rotDelivered = rot * DriveConstants.kMaxAngularSpeed.get();
+  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+    // Convert the commanded speeds into the correct units for the drivetrain
+    double xSpeedDelivered = xSpeed * DriveConstants.kAdjustedMaxSpeedMbpsTeleOp;
+    double ySpeedDelivered = ySpeed * DriveConstants.kAdjustedMaxSpeedMbpsTeleOp;
+    double rotDelivered = rot * DriveConstants.kMaxAngularSpeed.get();
 
-        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-            fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                    Rotation2d.fromDegrees(m_gyro.getAngle()))
-                : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
-    
-        // Desaturate wheel speeds to ensure no wheel exceeds the maximum allowed speed.
-        SwerveDriveKinematics.desaturateWheelSpeeds(
-            swerveModuleStates, DriveConstants.kAdjustedMaxSpeedMbpsTeleOp);
-        
-        m_frontLeft.setDesiredState(swerveModuleStates[0]);
-        m_frontRight.setDesiredState(swerveModuleStates[1]);
-        m_rearLeft.setDesiredState(swerveModuleStates[2]);
-        m_rearRight.setDesiredState(swerveModuleStates[3]);
-    }
+    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
+        fieldRelative
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
+                Rotation2d.fromDegrees(m_gyro.getAngle()))
+            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
 
+    // Desaturate wheel speeds to ensure no wheel exceeds the maximum allowed speed.
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        swerveModuleStates, DriveConstants.kAdjustedMaxSpeedMbpsTeleOp);
+
+    m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    m_frontRight.setDesiredState(swerveModuleStates[1]);
+    m_rearLeft.setDesiredState(swerveModuleStates[2]);
+    m_rearRight.setDesiredState(swerveModuleStates[3]);
+  }
 
   /**
    * Sets the swerve modules into an "X" formation.
@@ -189,9 +199,11 @@ public void periodic() {
 
   /**
    * Sets the desired states for each individual swerve module.
-   * This method is typically used by autonomous routines or advanced control algorithms.
+   * This method is typically used by autonomous routines or advanced control
+   * algorithms.
    *
-   * @param desiredStates An array of {@link SwerveModuleState} objects, one for each module,
+   * @param desiredStates An array of {@link SwerveModuleState} objects, one for
+   *                      each module,
    *                      specifying the desired speed and angle for that module.
    */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -203,7 +215,9 @@ public void periodic() {
     m_rearRight.setDesiredState(desiredStates[3]);
   }
 
-  /** Resets the position encoders of all swerve modules to read a position of 0. */
+  /**
+   * Resets the position encoders of all swerve modules to read a position of 0.
+   */
   public void resetEncoders() {
     m_frontLeft.resetEncoders();
     m_rearLeft.resetEncoders();
@@ -211,7 +225,10 @@ public void periodic() {
     m_rearRight.resetEncoders();
   }
 
-  /** Zeroes the heading of the robot's gyroscope, effectively setting the current orientation as 0 degrees. */
+  /**
+   * Zeroes the heading of the robot's gyroscope, effectively setting the current
+   * orientation as 0 degrees.
+   */
   public void zeroHeading() {
     m_gyro.reset();
   }
@@ -231,15 +248,18 @@ public void periodic() {
    * @return The turn rate of the robot, in degrees per second.
    */
   public double getTurnRate() {
-    // Apply a reversal to the gyro rate if kGyroReversed is true, ensuring correct sign.
+    // Apply a reversal to the gyro rate if kGyroReversed is true, ensuring correct
+    // sign.
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
   /**
-   * Returns the current chassis speeds (translational and rotational velocities) of the robot.
+   * Returns the current chassis speeds (translational and rotational velocities)
+   * of the robot.
    * These are derived from the states of the individual swerve modules.
    *
-   * @return A {@link ChassisSpeeds} object representing the robot's current velocities.
+   * @return A {@link ChassisSpeeds} object representing the robot's current
+   *         velocities.
    */
   public ChassisSpeeds getChassisSpeeds() {
     return DriveConstants.kDriveKinematics.toChassisSpeeds(

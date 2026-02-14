@@ -20,11 +20,11 @@ public class LauncherConfigs {
         leaderConfig.Feedback.SensorToMechanismRatio = LauncherConstants.kPositionFactor;
         
         var slot0Lead = leaderConfig.Slot0;
-        slot0Lead.kP = LauncherConstants.kLauncherP;
-        slot0Lead.kI = LauncherConstants.kLauncherI;
-        slot0Lead.kD = LauncherConstants.kLauncherD;
-        slot0Lead.kV = LauncherConstants.kLauncherkV; // This is your Velocity Feedforward
-        slot0Lead.kS = LauncherConstants.kLauncherStatic; // This is your Static Feedforward (The "Oomph")
+        slot0Lead.kP = LauncherConstants.kLauncherP.get();
+        slot0Lead.kI = LauncherConstants.kLauncherI.get();
+        slot0Lead.kD = LauncherConstants.kLauncherD.get();
+        slot0Lead.kV = LauncherConstants.kLauncherkV.get(); // This is your Velocity Feedforward
+        slot0Lead.kS = LauncherConstants.kLauncherStatic.get(); // This is your Static Feedforward (The "Oomph")
 
         leaderConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
@@ -36,11 +36,11 @@ public class LauncherConfigs {
         followConfig.Feedback.SensorToMechanismRatio = LauncherConstants.kPositionFactor;
         
         var slot0Foll = followConfig.Slot0;
-        slot0Foll.kP = LauncherConstants.kLauncherP;
-        slot0Foll.kI = LauncherConstants.kLauncherI;
-        slot0Foll.kD = LauncherConstants.kLauncherD;
-        slot0Foll.kV = LauncherConstants.kLauncherkV; // This is your Velocity Feedforward
-        slot0Foll.kS = LauncherConstants.kLauncherStatic; // This is your Static Feedforward (The "Oomph")
+        slot0Foll.kP = LauncherConstants.kLauncherP.get();
+        slot0Foll.kI = LauncherConstants.kLauncherI.get();
+        slot0Foll.kD = LauncherConstants.kLauncherD.get();
+        slot0Foll.kV = LauncherConstants.kLauncherkV.get(); // This is your Velocity Feedforward
+        slot0Foll.kS = LauncherConstants.kLauncherStatic.get(); // This is your Static Feedforward (The "Oomph")
 
         followConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 

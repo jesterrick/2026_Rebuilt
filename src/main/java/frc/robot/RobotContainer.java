@@ -72,18 +72,20 @@ public class RobotContainer {
   /** The robot's drive subsystem, controlling movement. */
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   /** The robot's launcher subsystem, responsible for shooting game pieces. */
-  private final LauncherSubsystem m_Launcher = new LauncherSubsystem(HardwareFactory.createKrakenPair(CanIdConstants.kLauncherLeaderMotor, CanIdConstants.kLauncherFollowMotor, LauncherConfigs.leaderConfig, true));
+  private final LauncherSubsystem m_Launcher = new LauncherSubsystem(HardwareFactory.createKrakenPair(CanIdConstants.kLauncherLeaderMotor, 
+        CanIdConstants.kLauncherFollowMotor, LauncherConfigs.leaderConfig, true));
   /** The robot's intake subsystem, for acquiring game pieces. */
-  private final IntakeSubsystem m_Intake = new IntakeSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kIntakeMotor, IntakeConfigs.config));
+  private final IntakeSubsystem m_Intake = new IntakeSubsystem(HardwareFactory.createSparkFlex(CanIdConstants.kIntakeMotor, IntakeConfigs.getFlexConfig()));
   /** The robot's extender subsystem, for extending and retracting mechanisms. */
-  private final ExtenderSubsystem m_Extender = new ExtenderSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kExtenderMotor1, ExtenderConfigs.leaderConfig), 
-                            HardwareFactory.createSparkMax(CanIdConstants.kExtenderMotor2,ExtenderConfigs.followConfig));
+  private final ExtenderSubsystem m_Extender = new ExtenderSubsystem(HardwareFactory.createSparkMaxPair(CanIdConstants.kExtenderMotor1, 
+        CanIdConstants.kExtenderMotor2, ExtenderConfigs.leaderConfig, true));
   /** The robot's roller subsystem, for manipulating game pieces within the robot. */
-  private final Rollers m_Rollers = new Rollers(HardwareFactory.createSparkMax(CanIdConstants.kRollerMotor, RollerConfigs.config));
+  private final Rollers m_Rollers = new Rollers(HardwareFactory.createSparkFlex(CanIdConstants.kRollerMotor, RollerConfigs.getFlexConfig()));
   /** The robot's feeder subsystem, for transferring game pieces to the launcher. */
-  private final FeederSubsystem m_Feeder = new FeederSubsystem(HardwareFactory.createSparkMax(CanIdConstants.kFeederMotor, FeederConfigs.config));
+  private final FeederSubsystem m_Feeder = new FeederSubsystem(HardwareFactory.createSparkFlex(CanIdConstants.kFeederMotor, FeederConfigs.getFlexConfig()));
   /** The robot's climber subsystem, for ascending vertical structures. */
-  private final ClimberSubsystem m_Climber = new ClimberSubsystem(HardwareFactory.createSparkMaxPair(CanIdConstants.kClimberMotor1, CanIdConstants.kClimberMotor2, ClimberConfigs.leaderConfig, true));
+  //private final ClimberSubsystem m_Climber = new ClimberSubsystem(HardwareFactory.createSparkMaxPair(CanIdConstants.kClimberMotor1, 
+  //      CanIdConstants.kClimberMotor2, ClimberConfigs.leaderConfig, true));
 
   /** A boolean flag to toggle between field-relative and robot-relative driving. */
   private boolean m_fieldRelative = false;
@@ -125,6 +127,27 @@ public class RobotContainer {
    * mappings are established.
    */
   public RobotContainer() {
+    HardwareFactory.scanAndLogHardware(
+      CanIdConstants.kFrontLeftTurningCanId,
+      CanIdConstants.kRearLeftTurningCanId,
+      CanIdConstants.kFrontRightTurningCanId,
+      CanIdConstants.kRearRightTurningCanId,
+      CanIdConstants.kFrontLeftDrivingCanId,
+      CanIdConstants.kRearLeftDrivingCanId,
+      CanIdConstants.kFrontRightDrivingCanId,
+      CanIdConstants.kRearRightDrivingCanId,
+      CanIdConstants.kExtenderMotor1,
+      CanIdConstants.kExtenderMotor2,
+      CanIdConstants.kClimberMotor1,
+      CanIdConstants.kClimberMotor2,
+      CanIdConstants.kIntakeMotor,
+      CanIdConstants.kIntakeRaiseMotor,
+      CanIdConstants.kRollerMotor,
+      CanIdConstants.kFeederMotor,
+      CanIdConstants.kLauncherLeaderMotor,
+      CanIdConstants.kLauncherFollowMotor
+    );
+    
     // 1. Check the serial number the code is actually reading
     System.out.println("System Serial: " + edu.wpi.first.wpilibj.RobotController.getSerialNumber());
     
@@ -152,6 +175,31 @@ public class RobotContainer {
     // Put the autonomous command chooser on the SmartDashboard for driver selection.
     SmartDashboard.putData("Auto choices", m_autoChooser);
   }
+
+  public LauncherSubsystem getLauncher() {
+    return m_Launcher;
+  }
+
+  public ExtenderSubsystem getExtender() {
+    return m_Extender;
+  }
+
+  public DriveSubsystem getDriveSubsystem() {
+    return m_robotDrive;
+  }
+
+  public IntakeSubsystem getIntakeSubsystem() {
+    return m_Intake;
+  }
+
+  public Rollers getRollersSubsystem() {
+    return m_Rollers;
+  }
+
+  public FeederSubsystem getFeederSubsystem() {
+    return m_Feeder;
+  }
+
 
   /**
    * Use this method to define your trigger->command mappings.

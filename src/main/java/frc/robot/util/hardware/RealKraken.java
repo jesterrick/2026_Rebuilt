@@ -90,14 +90,16 @@ public class RealKraken implements MotorControllerWrapper {
     }
 
     @Override
-    public void setPID(double p, double i, double d, double ff) {
+    public void updateHardwarePID(double p, double i, double d, double kV, double kS) {
         TalonFXConfiguration config = new TalonFXConfiguration();
         m_motor.getConfigurator().refresh(config); // Get current config to modify
         config.Slot0.kP = p;
         config.Slot0.kI = i;
         config.Slot0.kD = d;
-        config.Slot0.kS = ff; // Phoenix6 uses kS for static feedforward, k V for velocity feedforward, this
+        config.Slot0.kV = kV;
+        config.Slot0.kS = kS; // Phoenix6 uses kS for static feedforward, k V for velocity feedforward, this
                               // is a rough mapping
+
         m_motor.getConfigurator().apply(config);
     }
 

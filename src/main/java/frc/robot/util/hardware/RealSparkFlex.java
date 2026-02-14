@@ -3,8 +3,9 @@ package frc.robot.util.hardware;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import com.revrobotics.ResetMode;
@@ -12,16 +13,16 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 
-public class RealSparkMax implements MotorControllerWrapper {
-    private final SparkMax m_motor;
+public class RealSparkFlex implements MotorControllerWrapper {
+    private final SparkFlex m_motor;
     private final SparkClosedLoopController m_controller;
     private RelativeEncoder m_relativeEncoder;
     private AbsoluteEncoder m_absoluteEncoder;
     private boolean m_useAbsolute;
         
 
-    public RealSparkMax(int deviceId, SparkMaxConfig config, boolean isAbsolute) {
-        this.m_motor = new SparkMax(deviceId, MotorType.kBrushless);
+    public RealSparkFlex(int deviceId, SparkFlexConfig config, boolean isAbsolute) {
+        this.m_motor = new SparkFlex(deviceId, MotorType.kBrushless);
         this.m_controller = this.m_motor.getClosedLoopController();
         
         if (isAbsolute) {
@@ -101,7 +102,7 @@ public class RealSparkMax implements MotorControllerWrapper {
     }
 
     @Override
-    public SparkMax getSparkMax() {
+    public SparkFlex getSparkFlex() {
         return this.m_motor;
     }
 }

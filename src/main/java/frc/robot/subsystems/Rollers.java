@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.RollerConstants;
 import frc.robot.util.hardware.MotorControllerWrapper;
@@ -13,41 +14,50 @@ import frc.robot.util.hardware.MotorControllerWrapper;
  * The Rollers subsystem controls the robot's roller mechanism,
  * typically used for intaking, indexing, or outtaking game pieces.
  */
-public class Rollers extends SubsystemBase { 
-   /** The motor responsible for driving the rollers. */
-   public final MotorControllerWrapper m_RollerMotor;
+public class Rollers extends SubsystemBase {
+  /** The motor responsible for driving the rollers. */
+  public final MotorControllerWrapper m_RollerMotor;
+  private final Notifier m_configNotifier;
 
-    /**
-     * Constructs a new Rollers subsystem.
-     * Initializes the roller motor and configures it with predefined settings.
-     */
-    public Rollers(MotorControllerWrapper motor) {
-      this.m_RollerMotor = motor;
-    }
+  /**
+   * Constructs a new Rollers subsystem.
+   * Initializes the roller motor and configures it with predefined settings.
+   */
+  public Rollers(MotorControllerWrapper motor) {
+    this.m_RollerMotor = motor;
+    m_configNotifier = new Notifier(this::updateConfigs);
+    // COMMENTED OUT to avoid periodic blocking calls. User will manually trigger updateConfigs for tuning.
+    // m_configNotifier.startPeriodic(0.1);
+  }
 
-    @Override
-    public void periodic() {
-        if (DriverStation.isDisabled()) {
-            if (RollerConstants.kRollerFF.hasChanged() || RollerConstants.kRollerStatic.hasChanged()) {
-                m_RollerMotor.setPID(0,0,0,RollerConstants.kRollerFF.get(), RollerConstants.kRollerStatic.get());
-            }
-        }
+  public void updateConfigs() {
+    if (DriverStation.isDisabled()) {
+      if (RollerConstants.kRollerFF.hasChanged() || RollerConstants.kRollerStatic.hasChanged()) {
+        m_RollerMotor.setPID(0, 0, 0, RollerConstants.kRollerFF.get(), RollerConstants.kRollerStatic.get());
+      }
     }
+  }
 
-    /**
-     * Turns the roller motor on at a specified speed.
-     * A positive speed typically means intake, while a negative speed means outtake.
-     * @param speed The speed to set the roller motor to, typically a value between -1.0 and 1.0.
-     */
-    public void rollerOn(double speed) {
-      this.m_RollerMotor.set(speed);
-    }
+  @Override
+  public void periodic() {
+  }
 
-    /**
-     * Turns the roller motor off by setting its speed to zero.
-     */
-    public void rollerOff(){
-      this.m_RollerMotor.set(0);
-    }
+  /**
+   * Turns the roller motor on at a specified speed.
+   * A positive speed typically means intake, while a negative speed means
+   * outtake.
+   * 
+   * @param speed The speed to set the roller motor to, typically a value between
+   *              -1.0 and 1.0.
+   */
+  public void rollerOn(double speed) {
+    this.m_RollerMotor.set(speed);
+  }
+
+  /**
+   * Turns the roller motor off by setting its speed to zero.
+   */
+  public void rollerOff() {
+    this.m_RollerMotor.set(0);
+  }
 }
-  

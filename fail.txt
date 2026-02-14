@@ -1,0 +1,26 @@
+        "details": "CANSparkMax object created for CAN ID 6, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 6, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 5, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 5, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 4, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 4, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 3, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 3, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 8, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 8, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 7, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 7, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 2, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 2, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 1, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 1, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 10, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 10, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 20, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 20, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 21, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 21, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 15, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 15, which is not a SPARK MAX. Some functionalities may not work."
+        "details": "CANSparkMax object created for CAN ID 30, which is not a SPARK MAX. Some functionalities may not work.",
+        "line": "Warning at com.revrobotics.spark.SparkMax.<init>(SparkMax.java:80): CANSparkMax object created for CAN ID 30, which is not a SPARK MAX. Some functionalities may not work."

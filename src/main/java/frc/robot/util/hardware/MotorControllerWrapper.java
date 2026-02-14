@@ -3,6 +3,9 @@ package frc.robot.util.hardware;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
 
 public interface MotorControllerWrapper {
     /** Basic speed control (-1.0 to 1.0) used by all 7 subsystems. */
@@ -61,16 +64,15 @@ public interface MotorControllerWrapper {
 
     default SparkMaxConfig getSparkMaxConfig(){ return new SparkMaxConfig();}
 
-    default double getTarget(){return 0.0;}
-
-    default double getSpeed(){return 0.0;}
-
-    default SparkMaxConfig getSparkMaxConfig(){ return new SparkMaxConfig();}
-
     /**
      * @return The underlying SparkMax object, or null if not a SparkMax.
      */
     default SparkMax getSparkMax() { return null; }
+
+     /**
+     * @return The underlying SparkFlex object, or null if not a SparkFlex.
+     */
+    default SparkFlex getSparkFlex() { return null; }
 
     /**
      * @return The underlying TalonFX object, or null if not a TalonFX.

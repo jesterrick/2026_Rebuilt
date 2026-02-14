@@ -62,7 +62,15 @@ public class Robot extends TimedRobot {
    * Use this for tasks that need to run continuously during disabled.
    */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.getLauncher().updateConfigs();
+    m_robotContainer.getExtender().updateConfigs();
+    //m_robotContainer.getClimber().updateConfigs();
+    m_robotContainer.getDriveSubsystem().updateConfigs();
+    m_robotContainer.getIntakeSubsystem().updateConfigs();
+    m_robotContainer.getRollersSubsystem().updateConfigs();
+    m_robotContainer.getFeederSubsystem().updateConfigs();
+  }
 
   /**
    * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.

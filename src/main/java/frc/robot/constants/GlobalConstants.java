@@ -18,9 +18,9 @@ public class GlobalConstants {
     private static final String BENCHTOP_SERIAL = "030F25BC";
     
     // if the serial number is the benchtop or we are in simulation mode, IS_BENCHTOP is true
-    public static final boolean IS_BENCHTOP = 
-        RobotController.getSerialNumber().trim().equalsIgnoreCase(BENCHTOP_SERIAL) || 
-            RobotBase.isSimulation();
+    public static final boolean IS_BENCHTOP = false;
+    //    RobotController.getSerialNumber().trim().equalsIgnoreCase(BENCHTOP_SERIAL) || 
+    //        RobotBase.isSimulation();
 
     static {
         System.out.println("******************************************");

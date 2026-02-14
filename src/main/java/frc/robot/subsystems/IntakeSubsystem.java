@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.util.hardware.MotorControllerWrapper;
@@ -16,6 +17,7 @@ import frc.robot.util.hardware.MotorControllerWrapper;
 public class IntakeSubsystem extends SubsystemBase {
   /** The motor responsible for driving the front pickup mechanism of the intake. */
   private final MotorControllerWrapper m_FrontPickupMotor;
+  private final Notifier m_configNotifier;
 
   /**
    * Constructs a new IntakeSubsystem.
@@ -23,15 +25,21 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public IntakeSubsystem(MotorControllerWrapper motor) {
     this.m_FrontPickupMotor = motor;
+    m_configNotifier = new Notifier(this::updateConfigs);
+    // COMMENTED OUT to avoid periodic blocking calls. User will manually trigger updateConfigs for tuning.
+    // m_configNotifier.startPeriodic(0.1);
   }
 
-  @Override
-  public void periodic() {
+  public void updateConfigs() {
     if (DriverStation.isDisabled()) {
       if (IntakeConstants.kIntakeFF.hasChanged() || IntakeConstants.kIntakeStatic.hasChanged()) {
         m_FrontPickupMotor.setPID(0, 0, 0, IntakeConstants.kIntakeFF.get(), IntakeConstants.kIntakeStatic.get());
       }
     }
+  }
+
+  @Override
+  public void periodic() {
   }
 
   /**
