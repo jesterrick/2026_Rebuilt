@@ -27,8 +27,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void updateConfigs() {
     if (DriverStation.isDisabled()) {
-      if (IntakeConstants.kIntakeFF.hasChanged() || IntakeConstants.kIntakeStatic.hasChanged()) {
-        m_FrontPickupMotor.setPID(0, 0, 0, IntakeConstants.kIntakeFF.get(), IntakeConstants.kIntakeStatic.get());
+      if (IntakeConstants.kIntakeP.hasChanged() || IntakeConstants.kIntakeI.hasChanged()
+          || IntakeConstants.kIntakeD.hasChanged() || IntakeConstants.kIntakeFF.hasChanged()
+          || IntakeConstants.kIntakeStatic.hasChanged()) {
+        m_FrontPickupMotor.setPID(IntakeConstants.kIntakeP.get(), IntakeConstants.kIntakeI.get(),
+            IntakeConstants.kIntakeD.get(), IntakeConstants.kIntakeFF.get(), IntakeConstants.kIntakeStatic.get());
       }
     }
   }

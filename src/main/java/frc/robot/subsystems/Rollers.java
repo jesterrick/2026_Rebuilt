@@ -27,8 +27,11 @@ public class Rollers extends SubsystemBase {
 
   public void updateConfigs() {
     if (DriverStation.isDisabled()) {
-      if (RollerConstants.kRollerFF.hasChanged() || RollerConstants.kRollerStatic.hasChanged()) {
-        m_RollerMotor.setPID(0, 0, 0, RollerConstants.kRollerFF.get(), RollerConstants.kRollerStatic.get());
+      if (RollerConstants.kRollerP.hasChanged() || RollerConstants.kRollerI.hasChanged()
+          || RollerConstants.kRollerD.hasChanged() || RollerConstants.kRollerFF.hasChanged()
+          || RollerConstants.kRollerStatic.hasChanged()) {
+        m_RollerMotor.setPID(RollerConstants.kRollerP.get(), RollerConstants.kRollerI.get(),
+            RollerConstants.kRollerD.get(), RollerConstants.kRollerFF.get(), RollerConstants.kRollerStatic.get());
       }
     }
   }

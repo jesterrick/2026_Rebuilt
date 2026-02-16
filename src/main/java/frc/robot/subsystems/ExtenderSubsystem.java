@@ -30,6 +30,7 @@ public class ExtenderSubsystem extends SubsystemBase {
    * position control.
    */
   private boolean m_isHomed;
+
   /**
    * Constructs a new ExtenderSubsystem.
    * Initializes the leader and follower motors, their closed-loop controllers,
@@ -55,13 +56,16 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   public void updateConfigs() {
     if (DriverStation.isDisabled()) {
-        if (ExtenderConstants.kExtenderP.hasChanged() || ExtenderConstants.kExtenderI.hasChanged()
-               || ExtenderConstants.kExtenderD.hasChanged() || ExtenderConstants.kExtenderFF.hasChanged()) {
-            m_ExtenderLeaderMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
-             ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(), ExtenderConstants.kExtenderStatic.get());
-            m_ExtenderFollowMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
-             ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(), ExtenderConstants.kExtenderStatic.get());
-        }
+      if (ExtenderConstants.kExtenderP.hasChanged() || ExtenderConstants.kExtenderI.hasChanged()
+          || ExtenderConstants.kExtenderD.hasChanged() || ExtenderConstants.kExtenderFF.hasChanged()
+          || ExtenderConstants.kExtenderStatic.hasChanged()) {
+        m_ExtenderLeaderMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
+            ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(),
+            ExtenderConstants.kExtenderStatic.get());
+        m_ExtenderFollowMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
+            ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(),
+            ExtenderConstants.kExtenderStatic.get());
+      }
     }
   }
 
@@ -69,7 +73,7 @@ public class ExtenderSubsystem extends SubsystemBase {
   public void periodic() {
     double leaderPos = getPositionInInches(m_ExtenderLeaderMotor);
     double followPos = getPositionInInches(m_ExtenderFollowMotor);
-    double error = Math.abs(leaderPos - followPos); 
+    double error = Math.abs(leaderPos - followPos);
 
     SmartDashboard.putNumber("Extender Ldr Pos", leaderPos);
     SmartDashboard.putNumber("Extender Flw Pos", followPos);
@@ -79,39 +83,42 @@ public class ExtenderSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("EXT LEAD VOLTAGE", m_ExtenderLeaderMotor.getOutputCurrent());
     SmartDashboard.putNumber("EXT FOLL VOLTAGE", m_ExtenderFollowMotor.getOutputCurrent());
 
-    //System.out.println("L Units: " + m_ExtenderLeaderMotor.getPosition());
-    //System.out.println("F Units: " + m_ExtenderFollowMotor.getPosition());
-    
+    // System.out.println("L Units: " + m_ExtenderLeaderMotor.getPosition());
+    // System.out.println("F Units: " + m_ExtenderFollowMotor.getPosition());
+
     // Safety 1: The Skew Check (0.5 inches is a good 'real world' limit)
-    if (error > ExtenderConstants.kMaxPositionDifference.get()) { // kMaxPositionDifference was 10.5, which is 'frame-snapping' territory
-        emergencyStop("SKEW DETECTED: " + error);
-        return;
+    if (error > ExtenderConstants.kMaxPositionDifference.get()) { // kMaxPositionDifference was 10.5, which is
+                                                                  // 'frame-snapping' territory
+      emergencyStop("SKEW DETECTED: " + error);
+      return;
     }
 
     // Safety 2: The Current Imbalance
     double leaderCurrent = m_ExtenderLeaderMotor.getOutputCurrent();
     double followCurrent = m_ExtenderFollowMotor.getOutputCurrent();
-    if (Math.abs(leaderCurrent - followCurrent) > GlobalConstants.kHighCurrentLimit) { 
-        emergencyStop("CURRENT IMBALANCE: L:" + leaderCurrent + " F:" + followCurrent);
-        return;
+    if (Math.abs(leaderCurrent - followCurrent) > GlobalConstants.kHighCurrentLimit) {
+      emergencyStop("CURRENT IMBALANCE: L:" + leaderCurrent + " F:" + followCurrent);
+      return;
     }
-/*
+    /*
+     * if (m_isHomed) {
+     * // Only the leader needs a command now!
+     * // The follower hardware will mirror this automatically.
+     * m_ExtenderLeaderMotor.setTargetValue(m_globalTargetInches,
+     * ControlType.kMAXMotionPositionControl);
+     * }
+     */
     if (m_isHomed) {
-        // Only the leader needs a command now! 
-        // The follower hardware will mirror this automatically.
-        m_ExtenderLeaderMotor.setTargetValue(m_globalTargetInches, ControlType.kMAXMotionPositionControl);
-    }*/
-    if (m_isHomed) {
-        m_ExtenderLeaderMotor.setTargetValue(m_globalTargetInches, ControlType.kMAXMotionPositionControl);
+      m_ExtenderLeaderMotor.setTargetValue(m_globalTargetInches, ControlType.kMAXMotionPositionControl);
     }
-}
+  }
 
-private void emergencyStop(String reason) {
+  private void emergencyStop(String reason) {
     stop();
     m_isHomed = false;
     SmartDashboard.putString("Extender/Status", "CRITICAL FAILURE: " + reason);
     System.out.println(">>> [EXTENDER] " + reason);
-}
+  }
 
   /**
    * Sets the global target position for the extender to its maximum outward
@@ -121,9 +128,11 @@ private void emergencyStop(String reason) {
   public void moveOut() {
     // Safety check: Do not move if the system is not homed, as position is
     // untrusted
-    /*if (!m_isHomed) {
-      return;
-    }*/
+    /*
+     * if (!m_isHomed) {
+     * return;
+     * }
+     */
     m_globalTargetInches = ExtenderConstants.kExtenderMotorOut;
   }
 
@@ -134,9 +143,11 @@ private void emergencyStop(String reason) {
    */
   public void moveIn() {
     // Safety check: Do not move if the system is not homed
-    /*if (!m_isHomed) {
-      return;
-    }*/
+    /*
+     * if (!m_isHomed) {
+     * return;
+     * }
+     */
     m_globalTargetInches = ExtenderConstants.kExtenderMotorIn;
   }
 
@@ -242,7 +253,6 @@ private void emergencyStop(String reason) {
   public void enableSoftLimits() {
     // Apply the standard leader configuration to the leader motor, without
     // resetting other parameters and without persisting to flash.
-
 
     System.out.println("Extender Configurations Set");
   }

@@ -27,19 +27,24 @@ public class FeederSubsystem extends SubsystemBase {
 
   public void updateConfigs() {
     if (DriverStation.isDisabled()) {
-      if (FeederConstants.kFeederFF.hasChanged() || FeederConstants.kFeederStatic.hasChanged()) {
-        m_FeederMotor.setPID(0, 0, 0, FeederConstants.kFeederFF.get(), FeederConstants.kFeederStatic.get());
+      if (FeederConstants.kFeederP.hasChanged() || FeederConstants.kFeederI.hasChanged()
+          || FeederConstants.kFeederD.hasChanged() || FeederConstants.kFeederFF.hasChanged()
+          || FeederConstants.kFeederStatic.hasChanged()) {
+        m_FeederMotor.setPID(FeederConstants.kFeederP.get(), FeederConstants.kFeederI.get(),
+            FeederConstants.kFeederD.get(), FeederConstants.kFeederFF.get(), FeederConstants.kFeederStatic.get());
       }
     }
   }
 
   @Override
-  public void periodic() {    
+  public void periodic() {
   }
 
   /**
    * Engages the feeder motor at a specified speed.
-   * @param speed The speed to set the feeder motor to, typically a value between -1.0 and 1.0.
+   * 
+   * @param speed The speed to set the feeder motor to, typically a value between
+   *              -1.0 and 1.0.
    */
   public void engageFeeder(double speed) {
     this.m_FeederMotor.set(speed);

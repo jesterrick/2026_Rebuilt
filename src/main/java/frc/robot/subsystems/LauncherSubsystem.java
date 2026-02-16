@@ -53,19 +53,22 @@ public class LauncherSubsystem extends SubsystemBase {
       if (LauncherConstants.kLauncherP.hasChanged()
           || LauncherConstants.kLauncherI.hasChanged()
           || LauncherConstants.kLauncherD.hasChanged()
-          || LauncherConstants.kLauncherkV.hasChanged()) {
+          || LauncherConstants.kLauncherkV.hasChanged()
+          || LauncherConstants.kLauncherStatic.hasChanged()) {
 
         m_LauncherLeaderMotor.setPID(
             LauncherConstants.kLauncherP.get(),
             LauncherConstants.kLauncherI.get(),
             LauncherConstants.kLauncherD.get(),
-            LauncherConstants.kLauncherkV.get());
+            LauncherConstants.kLauncherkV.get(),
+            LauncherConstants.kLauncherStatic.get());
 
         m_LauncherFollowMotor.setPID(
             LauncherConstants.kLauncherP.get(),
             LauncherConstants.kLauncherI.get(),
             LauncherConstants.kLauncherD.get(),
-            LauncherConstants.kLauncherkV.get());
+            LauncherConstants.kLauncherkV.get(),
+            LauncherConstants.kLauncherStatic.get());
       }
     }
   }
