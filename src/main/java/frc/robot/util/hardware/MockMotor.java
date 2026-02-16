@@ -3,7 +3,6 @@ package frc.robot.util.hardware;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class MockMotor implements MotorControllerWrapper {
     private double m_lastSpeed = 0;
@@ -89,4 +88,8 @@ public class MockMotor implements MotorControllerWrapper {
     public void updateHardwarePID(double p, double i, double d, double kV, double kS) {
         // No-op for mock
     }
+
+    public double getSpeed() { return m_lastSpeed;}
+
+    public ControlType getType() { return m_type;}
 }

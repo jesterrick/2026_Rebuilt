@@ -7,12 +7,11 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkBase.ControlType;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ClimberConstants;
 import frc.robot.constants.GlobalConstants;
-import frc.robot.constants.LauncherConstants;
+import frc.robot.util.hardware.MockMotor;
 import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
@@ -29,13 +28,11 @@ public class ClimberSubsystem extends SubsystemBase {
   private double m_targetPosition = 0.0;
   private boolean m_isHomed;
 
-  private final Notifier m_configNotifier;
-
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem(MotorControllerWrapper [] motors) {
     this.m_ClimberLeaderMotor = motors[0];
     // Safety check: make sure we actually have two motors before grabbing index 1
-    this.m_ClimberFollowMotor = (motors.length > 1) ? motors[1] : null;
+    this.m_ClimberFollowMotor = (motors.length > 1) ? motors[1] :  new MockMotor();
 
     if (GlobalConstants.IS_BENCHTOP) {
       this.m_isHomed = true;
@@ -43,9 +40,6 @@ public class ClimberSubsystem extends SubsystemBase {
     } else {
       this.m_isHomed = false;
     }
-    m_configNotifier = new Notifier(this::updateConfigs);
-    // COMMENTED OUT to avoid periodic blocking calls. User will manually trigger updateConfigs for tuning.
-    // m_configNotifier.startPeriodic(0.1);
   }
 
   public void updateConfigs() {

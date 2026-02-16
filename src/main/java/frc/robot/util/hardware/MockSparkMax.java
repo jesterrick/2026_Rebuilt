@@ -105,4 +105,8 @@ public class MockSparkMax implements MotorControllerWrapper {
     public com.revrobotics.spark.SparkClosedLoopController getPIDController() {
         return null;
     }
+
+    public double getSpeed() { return m_lastSpeed;}
+
+    public ControlType getType() { return m_type;}
 }

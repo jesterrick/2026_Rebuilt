@@ -7,9 +7,6 @@ package frc.robot.util.hardware;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
-import frc.robot.constants.ExtenderConstants;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -32,8 +29,8 @@ public class MotorConfig {
 
         // Translate for CTRE
         talonConfig.MotorOutput.NeutralMode = (behavior == MotorSettings.NeutralBehavior.kBrake)
-                ? com.ctre.phoenix6.signals.NeutralModeValue.Brake
-                : com.ctre.phoenix6.signals.NeutralModeValue.Coast;
+                ? NeutralModeValue.Brake
+                : NeutralModeValue.Coast;
 
         return this;
     }

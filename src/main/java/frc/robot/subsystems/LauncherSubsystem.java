@@ -9,7 +9,6 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,7 +16,7 @@ import edu.wpi.first.math.MathUtil;
 import frc.robot.constants.LauncherConstants;
 import frc.robot.constants.VisionConstants;
 import frc.robot.util.VisionUtils;
-import frc.robot.util.hardware.MockSparkMax;
+import frc.robot.util.hardware.MockMotor;
 import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
@@ -44,7 +43,7 @@ public class LauncherSubsystem extends SubsystemBase {
    */
   public LauncherSubsystem(MotorControllerWrapper[] motors) {
     this.m_LauncherLeaderMotor = motors[0];
-    this.m_LauncherFollowMotor = (motors.length > 1) ? motors[1] : new MockSparkMax();
+    this.m_LauncherFollowMotor = (motors.length > 1) ? motors[1] : new MockMotor();
     this.targetRPM = 0.0;
     m_emptyTimer.start();
   }

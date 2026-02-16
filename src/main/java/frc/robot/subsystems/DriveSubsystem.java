@@ -15,7 +15,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.constants.CanIdConstants;
 import frc.robot.constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -56,8 +55,6 @@ public class DriveSubsystem extends SubsystemBase {
   /** The gyroscope sensor for measuring robot heading. */
   private final AHRS m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
 
-  private final Notifier m_configNotifier;
-
   /** Odometry class for tracking robot pose on the field. */
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
@@ -76,9 +73,6 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
     // Report usage of the MAXSwerve template to WPILib for analytics.
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
-    m_configNotifier = new Notifier(this::updateConfigs);
-    // COMMENTED OUT to avoid periodic blocking calls. User will manually trigger updateConfigs for tuning.
-    // m_configNotifier.startPeriodic(0.1);
   }
 
   public void updateConfigs() {

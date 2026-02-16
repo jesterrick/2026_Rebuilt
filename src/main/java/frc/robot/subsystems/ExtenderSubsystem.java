@@ -3,12 +3,11 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkBase.ControlType;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ExtenderConstants;
 import frc.robot.constants.GlobalConstants;
-import frc.robot.util.hardware.MockSparkMax;
+import frc.robot.util.hardware.MockMotor;
 import frc.robot.util.hardware.MotorControllerWrapper;
 
 /**
@@ -38,7 +37,7 @@ public class ExtenderSubsystem extends SubsystemBase {
    */
   public ExtenderSubsystem(MotorControllerWrapper[] motors) {
     this.m_ExtenderLeaderMotor = motors[0];
-    this.m_ExtenderFollowMotor = (motors.length > 1) ? motors[1] : new MockSparkMax();
+    this.m_ExtenderFollowMotor = (motors.length > 1) ? motors[1] : new MockMotor();
 
     // Set the follower to mirror the leader's output, inverting it as needed.
     this.m_ExtenderFollowMotor.follow(this.m_ExtenderLeaderMotor, true);
