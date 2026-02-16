@@ -34,4 +34,7 @@ public class OIConstants {
     public static final int kClimberExtendButton = 1;
     /** Button ID to retract the climber mechanism. */
     public static final int kClimberRetractButton = 2;
+    /** Button ID to home or reset the climber mechanism. */
+    public static final int kClimberHomeButton = 8;
+    
 }

@@ -6,13 +6,17 @@ package frc.robot.constants;
 
 import frc.robot.util.TunableNumber;
 import frc.robot.util.TuningManager;
+import frc.robot.util.hardware.MotorConstants;
+import frc.robot.util.hardware.MotorSettings;
+import frc.robot.util.hardware.MotorSettings.MotorRotation;
+import frc.robot.util.hardware.MotorSettings.NeutralBehavior;
 
 /**
  * The LauncherConstants class stores all constant values related to the robot's launcher mechanism.
  * This includes motor speeds, tolerances, PID gains, sensor IDs, timing parameters,
  * and physical measurements used for Limelight calculations.
  */
-public class LauncherConstants {
+public class LauncherConstants implements MotorConstants {
 
     /*
      ****** TUNABLE VARIABLES ******
@@ -83,4 +87,40 @@ public class LauncherConstants {
     public static final double kCameraHeight = 12.0;
     /** The mounting angle of the Limelight camera, in degrees. */
     public static final double kMountAngle = 15.0;
+
+    /** The idle or neutral state of the motor when no power is applied */
+    public static final MotorSettings.NeutralBehavior kNeutralMode = MotorSettings.NeutralBehavior.kCoast;
+
+    /** Which direction does the motor spin? */
+    public static final MotorSettings.MotorRotation kMotorRotation = MotorRotation.kClockwise;
+
+    /** Max Current for the motor */
+    public static final int kCurrentLimit = GlobalConstants.kMediumCurrentLimit;
+
+    @Override
+    public double getP() { return kLauncherP.get(); }
+
+    @Override
+    public double getI() { return kLauncherI.get(); }
+
+    @Override
+    public double getD() { return kLauncherD.get(); }
+
+    @Override
+    public double getV() { return kLauncherkV.get(); }
+
+    @Override
+    public double getS() { return kLauncherStatic.get(); }
+
+    @Override
+    public NeutralBehavior getNeutralBehavior() { return kNeutralMode; }
+
+    @Override
+    public int getCurrentLimit() { return kCurrentLimit; }
+    
+    @Override
+    public MotorRotation getMotorRotation() { return kMotorRotation; }
+
+    @Override
+    public double getConversionRatio() { return kPositionFactor; }
 }

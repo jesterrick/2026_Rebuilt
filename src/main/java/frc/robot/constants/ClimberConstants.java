@@ -3,13 +3,17 @@ package frc.robot.constants;
 import frc.robot.util.RobotUtils;
 import frc.robot.util.TunableNumber;
 import frc.robot.util.TuningManager;
+import frc.robot.util.hardware.MotorConstants;
+import frc.robot.util.hardware.MotorSettings;
+import frc.robot.util.hardware.MotorSettings.MotorRotation;
+import frc.robot.util.hardware.MotorSettings.NeutralBehavior;
 
 /**
  * The ClimberConstants class stores constant values related to the robot's climber mechanism.
  * This includes motor speeds, extension limits, gear ratios, and PID controller gains
  * for controlling the climber's movement and position.
  */
-public class ClimberConstants {
+public class ClimberConstants implements MotorConstants {
 
     /*
      ****** TUNABLE VARIABLES ******
@@ -65,4 +69,61 @@ public class ClimberConstants {
     public static final double kVelocityFactor = RobotUtils.toVelocityPerSecond(kPositionFactor);
     
     public static final double kClimberCruiseVelocity = NeoMotorConstants.kFreeSpeedRpm * kClimberMotorSpeed.get() * kVelocityFactor;
+
+    public static final int kCurrentLimit = GlobalConstants.kLowCurrentLimit;
+
+    public static final MotorSettings.NeutralBehavior kNeutralMode = MotorSettings.NeutralBehavior.kCoast;
+
+    public static final MotorSettings.MotorRotation kRotation = MotorSettings.MotorRotation.kCounterClockwise;
+
+    @Override
+    public double getP() { return kClimberP.get(); }
+
+    @Override
+    public double getI() { return kClimberI.get(); }
+
+    @Override
+    public double getD() { return kClimberD.get(); }
+
+    @Override
+    public double getV() { return kClimberFF.get(); }
+
+    @Override
+    public double getS() { return kClimberStatic.get(); }
+
+    @Override
+    public NeutralBehavior getNeutralBehavior() { return kNeutralMode; }
+
+    @Override
+    public int getCurrentLimit() { return kCurrentLimit; }
+    
+    @Override
+    public MotorRotation getMotorRotation() { return kRotation; }
+
+    @Override
+    public double getConversionRatio() { return kPositionFactor; }
+
+    @Override
+    public boolean isMotionProfilingEnabled() { return true; } // Climber uses motion profiling
+    
+    @Override
+    public double getCruiseVelocity() { return kClimberCruiseVelocity; }
+
+    @Override
+    public double getMaxAcceleration() { return kClimberAcceleration.get(); }
+
+    @Override
+    public double getAllowedError() { return kClimberAllowedError.get(); }
+
+    @Override
+    public boolean isForwardLimitEnabled() { return true; }
+
+    @Override
+    public double getForwardLimit() { return kClimberMaxExtend; }
+
+    @Override
+    public boolean isReverseLimitEnabled() { return true; }
+
+    @Override
+    public double getReverseLimit() { return kClimberZero; }
 }

@@ -23,14 +23,14 @@ import frc.robot.commands.LauncherIdle;
 import frc.robot.commands.LauncherOff;
 import frc.robot.commands.LauncherOn;
 import frc.robot.commands.ClimberRetract;
-import frc.robot.configs.ClimberConfigs;
-import frc.robot.configs.ExtenderConfigs;
-import frc.robot.configs.FeederConfigs;
-import frc.robot.configs.IntakeConfigs;
-import frc.robot.configs.LauncherConfigs;
-import frc.robot.configs.RollerConfigs;
 import frc.robot.constants.CanIdConstants;
+import frc.robot.constants.ClimberConstants;
+import frc.robot.constants.ExtenderConstants;
+import frc.robot.constants.FeederConstants;
+import frc.robot.constants.IntakeConstants;
+import frc.robot.constants.LauncherConstants;
 import frc.robot.constants.OIConstants;
+import frc.robot.constants.RollerConstants;
 import frc.robot.constants.GlobalConstants;
 
 import frc.robot.subsystems.ClimberSubsystem;
@@ -41,8 +41,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.Rollers;
 import frc.robot.util.hardware.HardwareFactory;
-
-import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -71,23 +69,39 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   /** The robot's drive subsystem, controlling movement. */
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  /** The robot's launcher subsystem, responsible for shooting game pieces. */
-  private final LauncherSubsystem m_Launcher = new LauncherSubsystem(HardwareFactory.createKrakenPair(CanIdConstants.kLauncherLeaderMotor, 
-        CanIdConstants.kLauncherFollowMotor, LauncherConfigs.leaderConfig, true));
-  /** The robot's intake subsystem, for acquiring game pieces. */
-  private final IntakeSubsystem m_Intake = new IntakeSubsystem(HardwareFactory.createSparkFlex(CanIdConstants.kIntakeMotor, IntakeConfigs.getFlexConfig()));
-  /** The robot's extender subsystem, for extending and retracting mechanisms. */
-  private final ExtenderSubsystem m_Extender = new ExtenderSubsystem(HardwareFactory.createSparkMaxPair(CanIdConstants.kExtenderMotor1, 
-        CanIdConstants.kExtenderMotor2, ExtenderConfigs.leaderConfig, true));
-  /** The robot's roller subsystem, for manipulating game pieces within the robot. */
-  private final Rollers m_Rollers = new Rollers(HardwareFactory.createSparkFlex(CanIdConstants.kRollerMotor, RollerConfigs.getFlexConfig()));
-  /** The robot's feeder subsystem, for transferring game pieces to the launcher. */
-  private final FeederSubsystem m_Feeder = new FeederSubsystem(HardwareFactory.createSparkFlex(CanIdConstants.kFeederMotor, FeederConfigs.getFlexConfig()));
-  /** The robot's climber subsystem, for ascending vertical structures. */
-  //private final ClimberSubsystem m_Climber = new ClimberSubsystem(HardwareFactory.createSparkMaxPair(CanIdConstants.kClimberMotor1, 
-  //      CanIdConstants.kClimberMotor2, ClimberConfigs.leaderConfig, true));
 
-  /** A boolean flag to toggle between field-relative and robot-relative driving. */
+  /** The robot's launcher subsystem, responsible for shooting game pieces. */
+  private final LauncherSubsystem m_Launcher = new LauncherSubsystem(
+      HardwareFactory.createMotorPair(CanIdConstants.kLauncherLeaderMotor,
+          CanIdConstants.kLauncherFollowMotor, new LauncherConstants(), true));
+
+  /** The robot's intake subsystem, for acquiring game pieces. */
+  private final IntakeSubsystem m_Intake = new IntakeSubsystem(
+      HardwareFactory.createMotor(CanIdConstants.kIntakeMotor, new IntakeConstants()));
+
+  /** The robot's extender subsystem, for extending and retracting mechanisms. */
+  private final ExtenderSubsystem m_Extender = new ExtenderSubsystem(
+      HardwareFactory.createMotorPair(CanIdConstants.kExtenderMotor1,
+          CanIdConstants.kExtenderMotor2, new ExtenderConstants(), true));
+  /**
+   * The robot's roller subsystem, for manipulating game pieces within the robot.
+   */
+  private final Rollers m_Rollers = new Rollers(
+      HardwareFactory.createMotor(CanIdConstants.kRollerMotor, new RollerConstants()));
+  /**
+   * The robot's feeder subsystem, for transferring game pieces to the launcher.
+   */
+  private final FeederSubsystem m_Feeder = new FeederSubsystem(
+      HardwareFactory.createMotor(CanIdConstants.kFeederMotor, new FeederConstants()));
+
+  /** The robot's climber subsystem, for ascending vertical structures. */
+  private final ClimberSubsystem m_Climber = new ClimberSubsystem(
+      HardwareFactory.createMotorPair(CanIdConstants.kClimberMotor1,
+          CanIdConstants.kClimberMotor2, new ClimberConstants(), true));
+
+  /**
+   * A boolean flag to toggle between field-relative and robot-relative driving.
+   */
   private boolean m_fieldRelative = false;
 
   // Operator Interface (OI) devices and their button bindings
@@ -95,10 +109,11 @@ public class RobotContainer {
   Joystick m_driverJoystick = new Joystick(OIConstants.kDriverJoystickPort);
   /** The joystick used by the operator for controlling mechanisms. */
   Joystick m_operatorJoystick = new Joystick(OIConstants.kOperatorJoystickPort);
-  //XboxController m_operatorJoystick = new XboxController(OIConstants.kOperatorJoystickPort);
-  
+  // XboxController m_operatorJoystick = new
+  // XboxController(OIConstants.kOperatorJoystickPort);
+
   /** Button for initiating the intake receive action. */
-  JoystickButton intakeRecieve = new JoystickButton(m_operatorJoystick, OIConstants.kIntakeReceiveButton);
+  JoystickButton intakeReceive = new JoystickButton(m_operatorJoystick, OIConstants.kIntakeReceiveButton);
   /** Button for initiating the intake eject action. */
   JoystickButton intakeEject = new JoystickButton(m_operatorJoystick, OIConstants.kIntakeEjectButton);
   /** Button for launching game pieces. */
@@ -117,8 +132,13 @@ public class RobotContainer {
   JoystickButton climbExtend = new JoystickButton(m_operatorJoystick, OIConstants.kClimberExtendButton);
   /** Button for retracting the climber mechanism. */
   JoystickButton climbRetract = new JoystickButton(m_operatorJoystick, OIConstants.kClimberRetractButton);
+  /** Button for homing the extender mechanism. */
+  JoystickButton homeClimber = new JoystickButton(m_operatorJoystick, OIConstants.kClimberHomeButton);
 
-  /** A SendableChooser for selecting the autonomous command from the SmartDashboard. */
+  /**
+   * A SendableChooser for selecting the autonomous command from the
+   * SmartDashboard.
+   */
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
 
   /**
@@ -127,52 +147,57 @@ public class RobotContainer {
    * mappings are established.
    */
   public RobotContainer() {
-    HardwareFactory.scanAndLogHardware(
-      CanIdConstants.kFrontLeftTurningCanId,
-      CanIdConstants.kRearLeftTurningCanId,
-      CanIdConstants.kFrontRightTurningCanId,
-      CanIdConstants.kRearRightTurningCanId,
-      CanIdConstants.kFrontLeftDrivingCanId,
-      CanIdConstants.kRearLeftDrivingCanId,
-      CanIdConstants.kFrontRightDrivingCanId,
-      CanIdConstants.kRearRightDrivingCanId,
-      CanIdConstants.kExtenderMotor1,
-      CanIdConstants.kExtenderMotor2,
-      CanIdConstants.kClimberMotor1,
-      CanIdConstants.kClimberMotor2,
-      CanIdConstants.kIntakeMotor,
-      CanIdConstants.kIntakeRaiseMotor,
-      CanIdConstants.kRollerMotor,
-      CanIdConstants.kFeederMotor,
-      CanIdConstants.kLauncherLeaderMotor,
-      CanIdConstants.kLauncherFollowMotor
-    );
-    
+    int[] requiredMotors = { CanIdConstants.kFrontLeftTurningCanId,
+        CanIdConstants.kRearLeftTurningCanId,
+        CanIdConstants.kFrontRightTurningCanId,
+        CanIdConstants.kRearRightTurningCanId,
+        CanIdConstants.kFrontLeftDrivingCanId,
+        CanIdConstants.kRearLeftDrivingCanId,
+        CanIdConstants.kFrontRightDrivingCanId,
+        CanIdConstants.kRearRightDrivingCanId };
+
+    int[] auxMotors = { CanIdConstants.kExtenderMotor1,
+        CanIdConstants.kExtenderMotor2,
+        CanIdConstants.kClimberMotor1,
+        CanIdConstants.kClimberMotor2,
+        CanIdConstants.kIntakeMotor,
+        CanIdConstants.kIntakeRaiseMotor,
+        CanIdConstants.kRollerMotor,
+        CanIdConstants.kFeederMotor,
+        CanIdConstants.kLauncherLeaderMotor,
+        CanIdConstants.kLauncherFollowMotor };
+
+    HardwareFactory.scanAndLogHardware(requiredMotors, auxMotors);
+
     // 1. Check the serial number the code is actually reading
     System.out.println("System Serial: " + edu.wpi.first.wpilibj.RobotController.getSerialNumber());
-    
+
     // 2. Check the final boolean result
     System.out.println("Is Benchtop Detection: " + GlobalConstants.IS_BENCHTOP);
 
     SmartDashboard.putBoolean("Is Benchtop?", GlobalConstants.IS_BENCHTOP);
+    SmartDashboard.putBoolean("Enable Live Tuning", false);
     // Configure default commands for subsystems.
-    // The DriveSubsystem's default command allows the driver to control the robot's movement.
+    // The DriveSubsystem's default command allows the driver to control the robot's
+    // movement.
     m_robotDrive.setDefaultCommand(
         new DriveCommand(
             m_robotDrive,
             () -> m_driverJoystick.getY(), // Y-axis for forward/backward
             () -> m_driverJoystick.getX(), // X-axis for strafing
             () -> m_driverJoystick.getZ(), // Z-axis for rotation
-            () -> m_fieldRelative));       // Boolean supplier for field-relative control
+            () -> m_fieldRelative)); // Boolean supplier for field-relative control
 
     // Configure the button bindings and their associated commands.
     configureBindings();
 
-    // Add various autonomous commands to the chooser for selection via SmartDashboard.
+    // Add various autonomous commands to the chooser for selection via
+    // SmartDashboard.
     m_autoChooser.setDefaultOption("Do Nothing", Commands.none()); // Default: no autonomous action
     m_autoChooser.addOption("Simple Auto", Autos.exampleAuto(m_robotDrive)); // Example autonomous routine
 
-    // Put the autonomous command chooser on the SmartDashboard for driver selection.
+    // Put the autonomous command chooser on the SmartDashboard for driver
+    // selection.
     SmartDashboard.putData("Auto choices", m_autoChooser);
   }
 
@@ -200,79 +225,96 @@ public class RobotContainer {
     return m_Feeder;
   }
 
-
   /**
    * Use this method to define your trigger->command mappings.
    * This is where you connect joystick buttons to specific robot actions.
    */
   private void configureBindings() {
     // intakeRecieve: When held, runs the intake and rollers to receive a ball.
-    intakeRecieve.whileTrue(
-        new ParallelCommandGroup(
-            new IntakeReceive(m_Intake),
-            new RollerForward(m_Rollers)));
+    if (HardwareFactory.isDeviceConnected(CanIdConstants.kIntakeMotor) &&
+        HardwareFactory.isDeviceConnected(CanIdConstants.kIntakeRaiseMotor)) {
+      intakeReceive.whileTrue(
+          new ParallelCommandGroup(
+              new IntakeReceive(m_Intake),
+              new RollerForward(m_Rollers)));
 
-    // intakeEject: When held, runs the intake and rollers in reverse to eject a ball.
-    intakeEject.whileTrue(
-        new ParallelCommandGroup(
-            new IntakeEject(m_Intake),
-            new RollerReverse(m_Rollers)));
+      // intakeEject: When held, runs the intake and rollers in reverse to eject a
+      // ball.
+      intakeEject.whileTrue(
+          new ParallelCommandGroup(
+              new IntakeEject(m_Intake),
+              new RollerReverse(m_Rollers)));
+    } else {
 
-    // extenderOut: When pressed, extends the extender.
-    extenderOut.onTrue(
-        new ExtenderOut(m_Extender));
+    }
 
-    // extenderIn: When pressed, stops the intake and retracts the extender.
-    extenderIn.onTrue(
-        new ParallelCommandGroup(
-            new IntakeStop(m_Intake),
-            new ExtenderIn(m_Extender)));
+    if (HardwareFactory.isDeviceConnected(CanIdConstants.kExtenderMotor1) &&
+        HardwareFactory.isDeviceConnected(CanIdConstants.kExtenderMotor2)) {
+      // extenderOut: When pressed, extends the extender.
+      extenderOut.onTrue(
+          new ExtenderOut(m_Extender));
 
-    // launch: When held, runs the launcher, rollers, and feeder to shoot a ball.
-    // The feeder will only run after the launcher is at speed.
-    launch.whileTrue(
-        new ParallelCommandGroup(
-            new RollerForward(m_Rollers),
-            new LauncherOn(m_Launcher, () -> m_operatorJoystick.getRawAxis(6)),
-            //new LauncherOn(m_Launcher),
-            new WaitUntilCommand(() -> m_Launcher.atSpeed()).andThen(
-                new FeederOn(m_Feeder)
-            )
-        ).onlyIf(m_Launcher::isBallPresent)); // Only starts if there's actually a ball to shoot;
+      // extenderIn: When pressed, stops the intake and retracts the extender.
+      extenderIn.onTrue(
+          new ParallelCommandGroup(
+              new IntakeStop(m_Intake),
+              new ExtenderIn(m_Extender)));
 
-    // homeExtender: When pressed, homes the extender.
-    homeExtender.onTrue(
-        new HomeExtender(m_Extender));
+      // homeExtender: When pressed, homes the extender.
+      homeExtender.onTrue(new HomeExtender(m_Extender));
+    } else {
 
-    // launcherIdleOn: When pressed, sets the launcher to idle speed.
-    launcherIdleOn.onTrue(
-        new LauncherIdle(m_Launcher));
+    }
 
-    // launcherIdleOff: When pressed, turns the launcher off.
-    launcherIdleOff.onTrue(
-        new LauncherOff(m_Launcher));
+    if (HardwareFactory.isDeviceConnected(CanIdConstants.kFeederMotor) &&
+        HardwareFactory.isDeviceConnected(CanIdConstants.kLauncherLeaderMotor) &&
+        HardwareFactory.isDeviceConnected(CanIdConstants.kLauncherFollowMotor)) {
+      // launch: When held, runs the launcher, rollers, and feeder to shoot a ball.
+      // The feeder will only run after the launcher is at speed.
+      launch.whileTrue(
+          new ParallelCommandGroup(
+              new RollerForward(m_Rollers),
+              new LauncherOn(m_Launcher, () -> m_operatorJoystick.getRawAxis(6)),
+              // new LauncherOn(m_Launcher),
+              new WaitUntilCommand(() -> m_Launcher.atSpeed()).andThen(
+                  new FeederOn(m_Feeder)))
+              .onlyIf(m_Launcher::isBallPresent)); // Only starts if there's actually a ball to shoot;
 
-/* CLIMBER HAS NOT BEEN INSTALLED
-        // climbExtend: When held, extends the climber and turns off other systems.
-    climbExtend.whileTrue(
-      new ParallelCommandGroup(
-        new LauncherOff(m_Launcher),
-        new RollerOff(m_Rollers),
-        new IntakeStop(m_Intake),
-        new FeederOff(m_Feeder),
-        new ClimberExtend(m_Climber)
-        ));
+      // launcherIdleOn: When pressed, sets the launcher to idle speed.
+      launcherIdleOn.onTrue(
+          new LauncherIdle(m_Launcher));
 
-    // climbRetract: When held, retracts the climber and turns off other systems.
-    climbRetract.whileTrue(
-      new ParallelCommandGroup(
-        new LauncherOff(m_Launcher),
-        new RollerOff(m_Rollers),
-        new IntakeStop(m_Intake),
-        new FeederOff(m_Feeder),
-        new ClimberRetract(m_Climber)
-        ));
-        */
+      // launcherIdleOff: When pressed, turns the launcher off.
+      launcherIdleOff.onTrue(
+          new LauncherOff(m_Launcher));
+    } else {
+
+    }
+
+    if (HardwareFactory.isDeviceConnected(CanIdConstants.kClimberMotor1) &&
+        HardwareFactory.isDeviceConnected(CanIdConstants.kClimberMotor2)) {
+      // climbExtend: When held, extends the climber and turns off other systems.
+      climbExtend.whileTrue(
+          new ParallelCommandGroup(
+              new LauncherOff(m_Launcher),
+              new RollerOff(m_Rollers),
+              new IntakeStop(m_Intake),
+              new FeederOff(m_Feeder),
+              new ClimberExtend(m_Climber)));
+
+      // climbRetract: When held, retracts the climber and turns off other systems.
+      climbRetract.whileTrue(
+          new ParallelCommandGroup(
+              new LauncherOff(m_Launcher),
+              new RollerOff(m_Rollers),
+              new IntakeStop(m_Intake),
+              new FeederOff(m_Feeder),
+              new ClimberRetract(m_Climber)));
+
+      homeClimber.onTrue(new HomeClimber(m_Climber));
+    } else {
+    }
+
   }
 
   /**
@@ -286,11 +328,29 @@ public class RobotContainer {
     // 1. Get whatever auto the driver picked from the dashboard
     Command selectedAuto = m_autoChooser.getSelected();
     return selectedAuto;
-    /*/ 2. Wrap it: Run HomeExtender FIRST, then run the selected auto
-    // This ensures the extender is in a known state before autonomous actions begin.
-    return Commands.parallel(
-        new HomeExtender(m_Extender),
-        new HomeClimber(m_Climber)
-    ).andThen(selectedAuto);*/
+  }
+
+  /*
+   * / 2. Wrap it: Run HomeExtender FIRST, then run the selected auto
+   * // This ensures the extender is in a known state before autonomous actions
+   * begin.
+   * return Commands.parallel(
+   * new HomeExtender(m_Extender),
+   * new HomeClimber(m_Climber)
+   * ).andThen(selectedAuto);* /
+   * }
+   * 
+   * /**
+   * Calls the updateConfigs() method on all relevant subsystems.
+   * This is used for live tuning of constants.
+   */
+  public void updateSubsystemConfigs() {
+    m_robotDrive.updateConfigs();
+    m_Launcher.updateConfigs();
+    m_Intake.updateConfigs();
+    m_Extender.updateConfigs();
+    m_Rollers.updateConfigs();
+    m_Feeder.updateConfigs();
+    m_Climber.updateConfigs();
   }
 }

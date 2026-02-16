@@ -3,13 +3,17 @@ package frc.robot.constants;
 import frc.robot.util.RobotUtils;
 import frc.robot.util.TunableNumber;
 import frc.robot.util.TuningManager;
+import frc.robot.util.hardware.MotorConstants;
+import frc.robot.util.hardware.MotorSettings;
+import frc.robot.util.hardware.MotorSettings.MotorRotation;
+import frc.robot.util.hardware.MotorSettings.NeutralBehavior;
 
 /**
  * The ExtenderConstants class centralizes all constant values related to the robot's extender mechanism.
  * This includes motor speeds, extension limits, physical conversion factors (e.g., inches per rotation),
  * PID gains for control, homing parameters, and various operational tolerances.
  */
-public class ExtenderConstants {
+public class ExtenderConstants implements MotorConstants {
 
     /*
      ****** TUNABLE VARIABLES ******
@@ -32,8 +36,8 @@ public class ExtenderConstants {
     
     /** Derivative gain for the extender's position PID controller. */
     public static final TunableNumber kExtenderD = TuningManager.register("Extender/D", 0.0);
-    
 
+    /** How fast does the motor speed up */
     public static final TunableNumber kExtAcceleration = TuningManager.register("Extender/Acceleration", 25.0);
     
     /**
@@ -93,4 +97,61 @@ public class ExtenderConstants {
      * Calculated based on motor free speed, extender motor speed constant, and velocity conversion factor.
      */
     public static final double kExtenderCruiseVelocity = NeoMotorConstants.kFreeSpeedRpm * kExtenderMotorSpeed.get() * kVelocityFactor;
+
+    public static final int kCurrentLimit = GlobalConstants.kLowCurrentLimit;
+
+    public static final MotorSettings.NeutralBehavior kNeutralMode = MotorSettings.NeutralBehavior.kCoast;
+
+    public static final MotorSettings.MotorRotation kRotation = MotorSettings.MotorRotation.kCounterClockwise;
+
+    @Override
+    public double getP() { return kExtenderP.get(); }
+
+    @Override
+    public double getI() { return kExtenderI.get(); }
+
+    @Override
+    public double getD() { return kExtenderD.get(); }
+
+    @Override
+    public double getV() { return kExtenderFF.get(); }
+
+    @Override
+    public double getS() { return kExtenderStatic.get(); }
+
+    @Override
+    public NeutralBehavior getNeutralBehavior() { return kNeutralMode; }
+
+    @Override
+    public int getCurrentLimit() { return kCurrentLimit; }
+    
+    @Override
+    public MotorRotation getMotorRotation() { return kRotation; }
+
+    @Override
+    public double getConversionRatio() { return kPositionFactor; }
+
+    @Override
+    public boolean isMotionProfilingEnabled() { return true; } // Extender uses motion profiling
+    
+    @Override
+    public double getCruiseVelocity() { return kExtenderCruiseVelocity; }
+
+    @Override
+    public double getMaxAcceleration() { return kExtAcceleration.get(); }
+
+    @Override
+    public double getAllowedError() { return kExtenderAllowedError.get(); }
+
+    @Override
+    public boolean isForwardLimitEnabled() { return true; }
+
+    @Override
+    public double getForwardLimit() { return kExtenderMotorOut; }
+
+    @Override
+    public boolean isReverseLimitEnabled() { return true; }
+
+    @Override
+    public double getReverseLimit() { return kExtenderMotorIn; }
 }

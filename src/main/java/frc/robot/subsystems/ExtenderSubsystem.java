@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.configs.ExtenderConfigs;
 import frc.robot.constants.ExtenderConstants;
 import frc.robot.constants.GlobalConstants;
 import frc.robot.util.hardware.MockSparkMax;
@@ -32,9 +31,6 @@ public class ExtenderSubsystem extends SubsystemBase {
    * position control.
    */
   private boolean m_isHomed;
-
-  private final Notifier m_configNotifier;
-
   /**
    * Constructs a new ExtenderSubsystem.
    * Initializes the leader and follower motors, their closed-loop controllers,
@@ -56,10 +52,6 @@ public class ExtenderSubsystem extends SubsystemBase {
       this.m_isHomed = false;
     }
     enableSoftLimits();
-
-    m_configNotifier = new Notifier(this::updateConfigs);
-    // COMMENTED OUT to avoid periodic blocking calls. User will manually trigger updateConfigs for tuning.
-    // m_configNotifier.startPeriodic(0.1);
   }
 
   public void updateConfigs() {
