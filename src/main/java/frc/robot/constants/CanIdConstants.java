@@ -38,19 +38,11 @@ public class CanIdConstants {
     public static final int kRearLeftTurningCanId = 7;
     public static final int kFrontRightTurningCanId = 3;
     public static final int kRearRightTurningCanId = 1;
-    public static final int kFrontLeftTurningCanId = 5;
-    public static final int kRearLeftTurningCanId = 7;
-    public static final int kFrontRightTurningCanId = 3;
-    public static final int kRearRightTurningCanId = 1;
 
     public static final int kFrontLeftDrivingCanId = 6;
     public static final int kRearLeftDrivingCanId = 8;
     public static final int kFrontRightDrivingCanId = 4;
-    public static final int kRearRightDrivingCanId = 2;
-    public static final int kFrontLeftDrivingCanId = 6;
-    public static final int kRearLeftDrivingCanId = 8;
-    public static final int kFrontRightDrivingCanId = 4;
-    public static final int kRearRightDrivingCanId = 2;
+    public static final int kRearRightDrivingCanId = 2;;
 
     // CAN IDs for the Extender
     public static final int kExtenderMotor1 = 20;
