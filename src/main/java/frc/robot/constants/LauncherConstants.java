@@ -82,7 +82,7 @@ public class LauncherConstants implements MotorConstants {
     /** The height of the target on the field, in inches. */
     public static final double kTargetHeight = 72.0;
     /** The height of the AprilTag on the field, in inches. */
-    public static final double kAprilTagHeight = 44.25;
+    public static final double kAprilTagHeight = AprilTagConstants.kHubTagHeights;
     /** The height of the Limelight camera from the ground, in inches. */
     public static final double kCameraHeight = 12.0;
     /** The mounting angle of the Limelight camera, in degrees. */
