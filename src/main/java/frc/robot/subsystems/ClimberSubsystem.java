@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkBase.ControlType;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ClimberConstants;
@@ -43,11 +42,10 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void updateConfigs() {
-        if (DriverStation.isDisabled()) {
-      if (ClimberConstants.kClimberP.hasChanged() || ClimberConstants.kClimberI.hasChanged()
-           || ClimberConstants.kClimberD.hasChanged() || ClimberConstants.kClimberFF.hasChanged()) {
-        m_ClimberLeaderMotor.setPID(ClimberConstants.kClimberP.get(), ClimberConstants.kClimberI.get(), ClimberConstants.kClimberD.get(), ClimberConstants.kClimberFF.get());
-      }
+    ClimberConstants constants = new ClimberConstants();
+    if (constants.hasChanged()) {
+      m_ClimberLeaderMotor.applyConstants(constants);
+      m_ClimberFollowMotor.applyConstants(constants);
     }
   }
 
@@ -78,7 +76,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public void climberUp()
   {
     if (!m_isHomed) return; 
-    this.m_targetPosition = ClimberConstants.kClimberMaxExtend;
+    this.m_targetPosition = ClimberConstants.kMaxExtend;
   }
 
   /**
@@ -88,7 +86,7 @@ public class ClimberSubsystem extends SubsystemBase {
   public void climberDown()
   {
     if (!m_isHomed) return; 
-    this.m_targetPosition = ClimberConstants.kClimberZero;
+    this.m_targetPosition = ClimberConstants.kZero;
   }
 
   /**

@@ -55,16 +55,6 @@ public class MockMotor implements MotorControllerWrapper {
     }
 
     @Override
-    public void setPID(double p, double i, double d, double ff) {
-        // No-op for mock
-    }
-
-    @Override
-    public void setMaxAccel(double accel) {
-        // No-op for mock
-    }
-
-    @Override
     public double getPositionConversion() {
         return 0.0; // No conversion for mock
     }
@@ -85,7 +75,7 @@ public class MockMotor implements MotorControllerWrapper {
     }
 
     @Override
-    public void updateHardwarePID(double p, double i, double d, double kV, double kS) {
+    public void applyConstants(MotorConstants constants) {
         // No-op for mock
     }
 

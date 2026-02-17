@@ -35,7 +35,7 @@ public class RollerReverse extends Command {
   @Override
   public void execute() {
     // Turn the rollers on in reverse at the predefined speed.
-    m_rollers.rollerOn(-RollerConstants.kRollerTargetSpeed.get());
+    m_rollers.rollerOn(-RollerConstants.kMotorSpeed.get());
   }
 
   // Called once the command ends or is interrupted.

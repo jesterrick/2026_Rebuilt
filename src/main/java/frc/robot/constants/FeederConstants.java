@@ -22,22 +22,22 @@ public class FeederConstants implements MotorConstants {
      */
 
     /** The target velocity for the rollers (e.g., in RPM or 0-1 duty cycle). */
-    public static final TunableNumber kFeederSpeed = TuningManager.register("Feeder/Speed", 0.5);
+    public static final TunableNumber kMotorSpeed = TuningManager.register("Feeder/Speed", 0.5);
 
     /** Proportional gain for the Feeder's velocity PID controller. */
-    public static final TunableNumber kFeederP = TuningManager.register("Feeder/P", 0.0);
+    public static final TunableNumber kP = TuningManager.register("Feeder/P", 0.0);
     
     /** Integral gain for the Feeder's velocity PID controller. */
-    public static final TunableNumber kFeederI = TuningManager.register("Feeder/I", 0.0);
+    public static final TunableNumber kI = TuningManager.register("Feeder/I", 0.0);
     
     /** Derivative gain for the Feeder's velocity PID controller. */
-    public static final TunableNumber kFeederD = TuningManager.register("Feeder/D", 0.0);
+    public static final TunableNumber kD = TuningManager.register("Feeder/D", 0.0);
 
     /** kV: The voltage required to sustain a given velocity. Units: Volts/(Unit of Speed). */
-    public static final TunableNumber kFeederFF = TuningManager.register("Feeder/FF", 0.2);
+    public static final TunableNumber kV = TuningManager.register("Feeder/V", 0.2);
 
     /** kS: The 'Oomph' required to break static friction. Units: Volts or Percent. */
-    public static final TunableNumber kFeederStatic = TuningManager.register("Feeder/Static", 0.02);
+    public static final TunableNumber kS = TuningManager.register("Feeder/S", 0.02);
 
     /*
      ****** NON TUNABLE VARIABLES ******
@@ -54,19 +54,19 @@ public class FeederConstants implements MotorConstants {
     public static final MotorSettings.MotorRotation kRotation = MotorSettings.MotorRotation.kCounterClockwise;
 
     @Override
-    public double getP() { return kFeederP.get(); }
+    public double getP() { return kP.get(); }
 
     @Override
-    public double getI() { return kFeederI.get(); }
+    public double getI() { return kI.get(); }
 
     @Override
-    public double getD() { return kFeederD.get(); }
+    public double getD() { return kD.get(); }
 
     @Override
-    public double getV() { return kFeederFF.get(); }
+    public double getV() { return kV.get(); }
 
     @Override
-    public double getS() { return kFeederStatic.get(); }
+    public double getS() { return kS.get(); }
 
     @Override
     public NeutralBehavior getNeutralBehavior() { return kNeutralMode; }
@@ -79,4 +79,14 @@ public class FeederConstants implements MotorConstants {
 
     @Override
     public double getConversionRatio() { return kPositionFactor; }
+
+    @Override
+    public boolean hasChanged() {
+        return kMotorSpeed.hasChanged() ||
+               kP.hasChanged() ||
+               kI.hasChanged() ||
+               kD.hasChanged() ||
+               kV.hasChanged() ||
+               kS.hasChanged();
+    }
 }

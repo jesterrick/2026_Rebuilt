@@ -24,22 +24,22 @@ public class RollerConstants implements MotorConstants {
      */
 
     /** The target velocity for the rollers (e.g., in RPM or 0-1 duty cycle). */
-    public static final TunableNumber kRollerTargetSpeed = TuningManager.register("Roller/TargetSpeed", 0.05);
+    public static final TunableNumber kMotorSpeed = TuningManager.register("Roller/MotorSpeed", 0.05);
 
     /** Proportional gain for the Roller's velocity PID controller. */
-    public static final TunableNumber kRollerP = TuningManager.register("Roller/P", 0.0);
+    public static final TunableNumber kP = TuningManager.register("Roller/P", 0.0);
     
     /** Integral gain for the Roller's velocity PID controller. */
-    public static final TunableNumber kRollerI = TuningManager.register("Roller/I", 0.0);
+    public static final TunableNumber kI = TuningManager.register("Roller/I", 0.0);
     
     /** Derivative gain for the Roller's velocity PID controller. */
-    public static final TunableNumber kRollerD = TuningManager.register("Roller/D", 0.0);
+    public static final TunableNumber kD = TuningManager.register("Roller/D", 0.0);
 
     /** kV: The voltage required to sustain a given velocity. Units: Volts/(Unit of Speed). */
-    public static final TunableNumber kRollerFF = TuningManager.register("Roller/FF", 0.2);
+    public static final TunableNumber kV = TuningManager.register("Roller/V", 0.2);
     
     /** kS: The 'Oomph' required to break static friction. Units: Volts or Percent. */
-    public static final TunableNumber kRollerStatic = TuningManager.register("Roller/Static", 0.02);
+    public static final TunableNumber kS = TuningManager.register("Roller/S", 0.02);
     /*
      ****** NON TUNABLE VARIABLES ******
      */
@@ -55,19 +55,19 @@ public class RollerConstants implements MotorConstants {
     public static final MotorSettings.MotorRotation kRotation = MotorSettings.MotorRotation.kCounterClockwise;
 
     @Override
-    public double getP() { return kRollerP.get(); }
+    public double getP() { return kP.get(); }
 
     @Override
-    public double getI() { return kRollerI.get(); }
+    public double getI() { return kI.get(); }
 
     @Override
-    public double getD() { return kRollerD.get(); }
+    public double getD() { return kD.get(); }
 
     @Override
-    public double getV() { return kRollerFF.get(); }
+    public double getV() { return kV.get(); }
 
     @Override
-    public double getS() { return kRollerStatic.get(); }
+    public double getS() { return kS.get(); }
 
     @Override
     public NeutralBehavior getNeutralBehavior() { return kNeutralMode; }
@@ -80,4 +80,14 @@ public class RollerConstants implements MotorConstants {
 
     @Override
     public double getConversionRatio() { return kPositionFactor; }
+
+    @Override
+    public boolean hasChanged() {
+        return kMotorSpeed.hasChanged() ||
+               kP.hasChanged() ||
+               kI.hasChanged() ||
+               kD.hasChanged() ||
+               kV.hasChanged() ||
+               kS.hasChanged();
+    }
 }

@@ -58,16 +58,6 @@ public class MockSparkMax implements MotorControllerWrapper {
     }
 
     @Override
-    public void setPID(double p, double i, double d, double ff) {
-        // No-op for mock
-    }
-
-    @Override
-    public void setMaxAccel(double accel) {
-        // No-op for mock
-    }
-
-    @Override
     public double getPositionConversion() {
         return 0.0; // No conversion for mock
     }
@@ -86,20 +76,12 @@ public class MockSparkMax implements MotorControllerWrapper {
     public void follow(MotorControllerWrapper leader, boolean invert) {
         // No-op for mock
     }
-    /* 
-    @Override
-    public void setConfiguration(SparkMaxConfig config) {
-        this.m_config = config;
-    }
-    */
-    @Override
-    public void updateHardwarePID(double p, double i, double d, double kV , double kS){
-        this.m_config.closedLoop.feedForward
-        .kV(kV)
-        .kS(kS);
 
-        this.m_config.closedLoop.pid(p, i, d);
-    }
+    @Override
+    public void setPID(double p, double i, double d, double v, double s) {};
+
+    @Override
+    public void applyConstants(MotorConstants constants){}
 
     @Override
     public com.revrobotics.spark.SparkClosedLoopController getPIDController() {

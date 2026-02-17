@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.revrobotics.spark.SparkMax; // Required for getSparkMax() to compile, will be addressed
 
 public class RealKraken implements MotorControllerWrapper {
@@ -90,31 +91,65 @@ public class RealKraken implements MotorControllerWrapper {
     }
 
     @Override
-    public void updateHardwarePID(double p, double i, double d, double kV, double kS) {
+    public void applyConstants(MotorConstants constants) {
         TalonFXConfiguration config = new TalonFXConfiguration();
         m_motor.getConfigurator().refresh(config); // Get current config to modify
-        config.Slot0.kP = p;
-        config.Slot0.kI = i;
-        config.Slot0.kD = d;
-        config.Slot0.kV = kV;
-        config.Slot0.kS = kS; // Phoenix6 uses kS for static feedforward, k V for velocity feedforward, this
-                              // is a rough mapping
+
+        // PIDF
+        config.Slot0.kP = constants.getP();
+        config.Slot0.kI = constants.getI();
+        config.Slot0.kD = constants.getD();
+        config.Slot0.kV = constants.getV();
+        config.Slot0.kS = constants.getS();
+
+        // Neutral Behavior
+        config.MotorOutput.NeutralMode = (constants.getNeutralBehavior() == MotorSettings.NeutralBehavior.kBrake)
+                ? NeutralModeValue.Brake
+                : NeutralModeValue.Coast;
+
+        // Current Limit
+        config.CurrentLimits.SupplyCurrentLimit = constants.getCurrentLimit();
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+        // Conversion Ratio
+        config.Feedback.SensorToMechanismRatio = constants.getConversionRatio();
+
+        // Motor Rotation
+        config.MotorOutput.Inverted = (constants.getMotorRotation() == MotorSettings.MotorRotation.kCounterClockwise)
+                ? com.ctre.phoenix6.signals.InvertedValue.CounterClockwise_Positive
+                : com.ctre.phoenix6.signals.InvertedValue.Clockwise_Positive;
+
+        // Motion Profiling (needs to be configured more deeply for Phoenix6)
+        // For now, only set MaxAcceleration if it's explicitly enabled in constants
+        if (constants.isMotionProfilingEnabled()) {
+            // Phoenix6 Motion Magic requires setting a whole profile.
+            // This is a simplification, may need dedicated MotionMagic configs
+            config.MotionMagic.MotionMagicAcceleration = constants.getMaxAcceleration();
+            config.MotionMagic.MotionMagicCruiseVelocity = constants.getCruiseVelocity();
+        }
+
+        // Soft Limits (needs more complete configuration for Phoenix6)
+        // Phoenix6 uses "Feedback.SensorToMechanismRatio" and "SoftwareLimit" for soft
+        // limits
+        // This is a simplification.
+        if (constants.isForwardLimitEnabled() || constants.isReverseLimitEnabled()) {
+            var softLimits = config.SoftwareLimitSwitch;
+            softLimits.ForwardSoftLimitEnable = constants.isForwardLimitEnabled();
+            if (constants.isForwardLimitEnabled()) {
+                softLimits.ForwardSoftLimitThreshold = constants.getForwardLimit();
+            }
+            softLimits.ForwardSoftLimitEnable = constants.isReverseLimitEnabled();
+            if (constants.isReverseLimitEnabled()) {
+                softLimits.ReverseSoftLimitThreshold = constants.getReverseLimit();
+            }
+        }
 
         m_motor.getConfigurator().apply(config);
     }
 
     @Override
-    public void setMaxAccel(double accel) {
-        // Phoenix6 has motion magic for this (MotionMagicVoltage, MotionMagicVelocity)
-        // Implementing this would involve setting motion magic configs.
-        // For now, we'll log a warning.
-        System.err.println("RealKraken does not directly support setMaxAccel without full motion magic setup.");
-    }
-
-    @Override
     public SparkMax getSparkMax() {
-        // This method is SparkMax specific. RealKraken returns its TalonFX.
-        return null; // Or throw UnsupportedOperationException
+        return null;
     }
 
     public TalonFX getTalonFX() {
@@ -124,18 +159,13 @@ public class RealKraken implements MotorControllerWrapper {
     @Override
     public void follow(MotorControllerWrapper leader, boolean invert) {
         if (leader instanceof RealSparkMax) {
-            // Following a SparkMax from a Kraken is not directly supported by Phoenix6
-            // Follower control
-            // This would require custom logic or a more advanced wrapper
             System.err.println("RealKraken cannot directly follow a RealSparkMax.");
         } else if (leader instanceof RealKraken) {
             int leaderID = leader.getTalonFX().getDeviceID();
             MotorAlignmentValue align = MotorAlignmentValue.Aligned;
-            if(invert)
-            {
+            if (invert) {
                 align = MotorAlignmentValue.Opposed;
             }
-            // This is the "Nuclear Option" if the constructor is being difficult:
             m_followerRequest.LeaderID = leaderID;
             m_followerRequest.MotorAlignment = align;
 
@@ -148,6 +178,6 @@ public class RealKraken implements MotorControllerWrapper {
     @Override
     public void stop() {
         m_motor.setControl(m_dutyCycleOut.withOutput(0));
-        m_motor.setNeutralMode(NeutralModeValue.Brake); // Assuming we want brake when stopped
+        m_motor.setNeutralMode(NeutralModeValue.Brake);
     }
 }

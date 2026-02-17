@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.IntakeConstants;
 import frc.robot.util.hardware.MotorControllerWrapper;
@@ -26,13 +25,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void updateConfigs() {
-    if (DriverStation.isDisabled()) {
-      if (IntakeConstants.kIntakeP.hasChanged() || IntakeConstants.kIntakeI.hasChanged()
-          || IntakeConstants.kIntakeD.hasChanged() || IntakeConstants.kIntakeFF.hasChanged()
-          || IntakeConstants.kIntakeStatic.hasChanged()) {
-        m_FrontPickupMotor.setPID(IntakeConstants.kIntakeP.get(), IntakeConstants.kIntakeI.get(),
-            IntakeConstants.kIntakeD.get(), IntakeConstants.kIntakeFF.get(), IntakeConstants.kIntakeStatic.get());
-      }
+    IntakeConstants constants = new IntakeConstants();
+    if (constants.hasChanged()) {
+      m_FrontPickupMotor.applyConstants(constants);
     }
   }
 

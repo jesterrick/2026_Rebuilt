@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkBase.ControlType;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ExtenderConstants;
@@ -40,9 +39,6 @@ public class ExtenderSubsystem extends SubsystemBase {
     this.m_ExtenderLeaderMotor = motors[0];
     this.m_ExtenderFollowMotor = (motors.length > 1) ? motors[1] : new MockMotor();
 
-    // Set the follower to mirror the leader's output, inverting it as needed.
-    this.m_ExtenderFollowMotor.follow(this.m_ExtenderLeaderMotor, true);
-
     if (GlobalConstants.IS_BENCHTOP) {
       this.m_isHomed = true;
       this.m_ExtenderLeaderMotor.setPosition(0.0);
@@ -55,17 +51,10 @@ public class ExtenderSubsystem extends SubsystemBase {
   }
 
   public void updateConfigs() {
-    if (DriverStation.isDisabled()) {
-      if (ExtenderConstants.kExtenderP.hasChanged() || ExtenderConstants.kExtenderI.hasChanged()
-          || ExtenderConstants.kExtenderD.hasChanged() || ExtenderConstants.kExtenderFF.hasChanged()
-          || ExtenderConstants.kExtenderStatic.hasChanged()) {
-        m_ExtenderLeaderMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
-            ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(),
-            ExtenderConstants.kExtenderStatic.get());
-        m_ExtenderFollowMotor.setPID(ExtenderConstants.kExtenderP.get(), ExtenderConstants.kExtenderI.get(),
-            ExtenderConstants.kExtenderD.get(), ExtenderConstants.kExtenderFF.get(),
-            ExtenderConstants.kExtenderStatic.get());
-      }
+    ExtenderConstants constants = new ExtenderConstants();
+    if (constants.hasChanged()) {
+      m_ExtenderLeaderMotor.applyConstants(constants);
+      m_ExtenderFollowMotor.applyConstants(constants);
     }
   }
 
@@ -133,7 +122,7 @@ public class ExtenderSubsystem extends SubsystemBase {
      * return;
      * }
      */
-    m_globalTargetInches = ExtenderConstants.kExtenderMotorOut;
+    m_globalTargetInches = ExtenderConstants.kMotorOut;
   }
 
   /**
@@ -148,7 +137,7 @@ public class ExtenderSubsystem extends SubsystemBase {
      * return;
      * }
      */
-    m_globalTargetInches = ExtenderConstants.kExtenderMotorIn;
+    m_globalTargetInches = ExtenderConstants.kMotorIn;
   }
 
   /**

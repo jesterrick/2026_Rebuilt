@@ -8,7 +8,6 @@ import com.revrobotics.spark.SparkBase.ControlType;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,7 +33,7 @@ public class LauncherSubsystem extends SubsystemBase {
   /** Timer used to track how long the hopper has been empty. */
   private final Timer m_emptyTimer = new Timer();
   /** Digital input sensor to detect if a ball is present in the hopper. */
-  private final DigitalInput m_hopperSensor = new DigitalInput(LauncherConstants.kLauncherIdleSensor);
+  private final DigitalInput m_hopperSensor = new DigitalInput(LauncherConstants.kIdleSensor);
 
   /**
    * Constructs a new LauncherSubsystem.
@@ -49,27 +48,10 @@ public class LauncherSubsystem extends SubsystemBase {
   }
 
   public void updateConfigs() {
-    if (DriverStation.isDisabled()) {
-      if (LauncherConstants.kLauncherP.hasChanged()
-          || LauncherConstants.kLauncherI.hasChanged()
-          || LauncherConstants.kLauncherD.hasChanged()
-          || LauncherConstants.kLauncherkV.hasChanged()
-          || LauncherConstants.kLauncherStatic.hasChanged()) {
-
-        m_LauncherLeaderMotor.setPID(
-            LauncherConstants.kLauncherP.get(),
-            LauncherConstants.kLauncherI.get(),
-            LauncherConstants.kLauncherD.get(),
-            LauncherConstants.kLauncherkV.get(),
-            LauncherConstants.kLauncherStatic.get());
-
-        m_LauncherFollowMotor.setPID(
-            LauncherConstants.kLauncherP.get(),
-            LauncherConstants.kLauncherI.get(),
-            LauncherConstants.kLauncherD.get(),
-            LauncherConstants.kLauncherkV.get(),
-            LauncherConstants.kLauncherStatic.get());
-      }
+    LauncherConstants constants = new LauncherConstants();
+    if (constants.hasChanged()) {
+      m_LauncherLeaderMotor.applyConstants(constants);
+      m_LauncherFollowMotor.applyConstants(constants);
     }
   }
 
@@ -178,12 +160,12 @@ public class LauncherSubsystem extends SubsystemBase {
   public boolean atSpeed() {
     // 1. Calculate if the actual RPM is within an acceptable tolerance of the
     // target RPM.
-    boolean isNearTarget = Math.abs(this.targetRPM - getActualVelocity()) < LauncherConstants.kLauncherTolerance.get();
+    boolean isNearTarget = Math.abs(this.targetRPM - getActualVelocity()) < LauncherConstants.kTolerance.get();
 
     // 2. Ensure the target speed is a "launch" speed (i.e., significantly above
     // idle),
     // to differentiate from idle state or a stopped state.
-    boolean isNotIdle = this.targetRPM > (LauncherConstants.kLauncherMotorSpeedIdle.get()
+    boolean isNotIdle = this.targetRPM > (LauncherConstants.kMotorSpeedIdle.get()
         + LauncherConstants.kLaunchMinShotBuffer.get());
 
     return isNearTarget && isNotIdle;
@@ -249,7 +231,7 @@ public class LauncherSubsystem extends SubsystemBase {
       // This will cause the `atSpeed()` method to return FALSE, effectively stopping
       // the feeder,
       // and signaling the robot is not ready to shoot.
-      return LauncherConstants.kLauncherMotorSpeedIdle.get();
+      return LauncherConstants.kMotorSpeedIdle.get();
     }
   }
 }

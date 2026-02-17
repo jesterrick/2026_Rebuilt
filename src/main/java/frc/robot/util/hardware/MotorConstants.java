@@ -41,4 +41,13 @@ public interface MotorConstants {
     default double getForwardLimit() { return 0.0; }
     default boolean isReverseLimitEnabled() { return false; }
     default double getReverseLimit() { return 0.0; }
+
+    /**
+     * Checks if any of the tunable numbers represented by this MotorConstants
+     * instance have changed since the last check.
+     * Implementing classes must provide an implementation that checks all relevant
+     * TunableNumber instances.
+     * @return true if any tunable number has changed, false otherwise.
+     */
+    boolean hasChanged();
 }

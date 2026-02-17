@@ -40,22 +40,6 @@ public interface MotorControllerWrapper {
     /** Used to stop any motor safely. */
     default void stop() { set(0); }
 
-    default void setPID(double p, double i, double d){
-        updateHardwarePID(p, i, d, 0.0, 0.0);
-    }
-
-    default void setPID(double p, double i, double d, double kV){
-        updateHardwarePID(p, i, d, kV, 0.0);
-    }
-
-    default void setPID(double p, double i, double d, double kV, double kS){
-        updateHardwarePID(p, i, d, kV, kS);
-    }
-
-    void updateHardwarePID(double p, double i, double d, double kV, double kS);
-
-    default void setMaxAccel(double accel){}
-
     default double getPositionConversion(){return 0.0;}
 
     default double getTarget(){return 0.0;}
@@ -85,4 +69,13 @@ public interface MotorControllerWrapper {
      * @param invert True if this motor should be inverted relative to the leader.
      */
     default void follow(MotorControllerWrapper leader, boolean invert) {}
+
+    /**
+     * Applies new configuration settings from a MotorConstants object.
+     * This is used for live tuning during disabled mode.
+     * @param constants The MotorConstants object containing the new configuration.
+     */
+    void applyConstants(MotorConstants constants);
+
+    default void setPID(double p, double i, double d, double v, double s) {};
 }

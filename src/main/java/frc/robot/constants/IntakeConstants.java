@@ -12,8 +12,8 @@ import frc.robot.util.hardware.MotorSettings.MotorRotation;
 import frc.robot.util.hardware.MotorSettings.NeutralBehavior;
 
 /**
- * The IntakeConstants class stores all constant values related to the robot's intake mechanism.
- * These constants define motor speeds and other operational parameters for the intake.
+ * The Constants class stores all constant values related to the robot's  mechanism.
+ * These constants define motor speeds and other operational parameters for the .
  */
 public class IntakeConstants implements MotorConstants {
    
@@ -22,22 +22,22 @@ public class IntakeConstants implements MotorConstants {
      */
 
     /** The target velocity for the rollers (e.g., in RPM or 0-1 duty cycle). */
-    public static final TunableNumber kIntakeMotorSpeed = TuningManager.register("Intake/MotorSpeed", 0.5);
+    public static final TunableNumber kMotorSpeed = TuningManager.register("Intake/MotorSpeed", 0.5);
 
-    /** Proportional gain for the Intake's velocity PID controller. */
-    public static final TunableNumber kIntakeP = TuningManager.register("Intake/P", 0.0);
+    /** Proportional gain for the 's velocity PID controller. */
+    public static final TunableNumber kP = TuningManager.register("Intake/P", 0.0);
     
-    /** Integral gain for the Intake's velocity PID controller. */
-    public static final TunableNumber kIntakeI = TuningManager.register("Intake/I", 0.0);
+    /** Integral gain for the 's velocity PID controller. */
+    public static final TunableNumber kI = TuningManager.register("Intake/I", 0.0);
     
-    /** Derivative gain for the Intake's velocity PID controller. */
-    public static final TunableNumber kIntakeD = TuningManager.register("Intake/D", 0.0);
+    /** Derivative gain for the 's velocity PID controller. */
+    public static final TunableNumber kD = TuningManager.register("Intake/D", 0.0);
 
     /** kV: The voltage required to sustain a given velocity. Units: Volts/(Unit of Speed). */
-    public static final TunableNumber kIntakeFF = TuningManager.register("Intake/FF", 0.2);
+    public static final TunableNumber kV = TuningManager.register("Intake/V", 0.2);
     
     /** kS: The 'Oomph' required to break static friction. Units: Volts or Percent. */
-    public static final TunableNumber kIntakeStatic = TuningManager.register("Intake/Static", 0.02);
+    public static final TunableNumber kS = TuningManager.register("Intake/S", 0.02);
 
     /*
      ****** NON TUNABLE VARIABLES ******
@@ -54,19 +54,19 @@ public class IntakeConstants implements MotorConstants {
     public static final MotorSettings.MotorRotation kRotation = MotorSettings.MotorRotation.kCounterClockwise;
 
     @Override
-    public double getP() { return kIntakeP.get(); }
+    public double getP() { return kP.get(); }
 
     @Override
-    public double getI() { return kIntakeI.get(); }
+    public double getI() { return kI.get(); }
 
     @Override
-    public double getD() { return kIntakeD.get(); }
+    public double getD() { return kD.get(); }
 
     @Override
-    public double getV() { return kIntakeFF.get(); }
+    public double getV() { return kV.get(); }
 
     @Override
-    public double getS() { return kIntakeStatic.get(); }
+    public double getS() { return kS.get(); }
 
     @Override
     public NeutralBehavior getNeutralBehavior() { return kNeutralMode; }
@@ -79,4 +79,14 @@ public class IntakeConstants implements MotorConstants {
 
     @Override
     public double getConversionRatio() { return kPositionFactor; }
+
+    @Override
+    public boolean hasChanged() {
+        return kMotorSpeed.hasChanged() ||
+               kP.hasChanged() ||
+               kI.hasChanged() ||
+               kD.hasChanged() ||
+               kV.hasChanged() ||
+               kS.hasChanged();
+    }
 }

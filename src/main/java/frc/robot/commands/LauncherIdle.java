@@ -35,7 +35,7 @@ public class LauncherIdle extends Command {
   @Override
   public void execute() {
     double currentRPM = m_Launcher.getActualVelocity();
-    double idleRPM = LauncherConstants.kLauncherMotorSpeedIdle.get();
+    double idleRPM = LauncherConstants.kMotorSpeedIdle.get();
 
     if (currentRPM > idleRPM + 100) {
         // We are way above idle. Don't use PID! 
